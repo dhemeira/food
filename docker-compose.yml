@@ -1,0 +1,20 @@
+services:
+  app:
+    build: .
+    restart: unless-stopped
+    ports:
+      - '8080:80'
+    volumes:
+      - ./backend/api:/srv/backend/api
+      - ./backend/config.php:/srv/backend/config.php
+      - ./data:/srv/backend/data
+      - ./frontend/dist:/var/www/html
+    env_file:
+      - .env
+
+  tunnel:
+    image: cloudflare/cloudflared:latest
+    restart: unless-stopped
+    command: tunnel run --token ${TUNNEL_TOKEN}
+    depends_on:
+      - app

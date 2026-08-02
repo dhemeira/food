@@ -1,0 +1,9 @@
+{
+  "name": "dhemeira/recipe-app-backend",
+  "description": "Family recipe app PHP backend",
+  "type": "project",
+  "require": {
+    "php": ">=8.2",
+    "minishlink/web-push": "^9.0"
+  }
+}
