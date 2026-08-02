@@ -18,6 +18,10 @@ COPY apache/recipe.conf /etc/apache2/conf-available/recipe.conf
 RUN a2enconf recipe
 COPY backend/ /srv/backend/
 COPY --from=frontend /app/dist/ /var/www/html/
+COPY scripts/docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
 WORKDIR /srv/backend
-RUN composer install --no-dev --no-interaction --prefer-dist \
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh \
+    && composer install --no-dev --no-interaction --prefer-dist \
     && chown -R www-data:www-data /var/www /srv
+
+ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
