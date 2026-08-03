@@ -1,24 +1,47 @@
-import ErrorBoundary from '~/components/ui/ErrorBoundary';
-import NotificationPanel from '~/components/NotificationPanel';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { AuthProvider } from '~/context/AuthProvider';
+import ProtectedRoute from '~/components/ProtectedRoute';
 import OfflineBanner from '~/components/OfflineBanner';
 import UpdateBanner from '~/components/UpdateBanner';
+import Home from '~/pages/Home';
+import Login from '~/pages/Login';
+import NotFound from '~/pages/NotFound';
+import RecipeDetail from '~/pages/RecipeDetail';
+import RecipeForm from '~/pages/RecipeForm';
 import { useServerStatus } from '~/pwa/useServerStatus';
 
 function App() {
   const { isOnline } = useServerStatus();
 
   return (
-    <>
-      <UpdateBanner />
-      <OfflineBanner isVisible={isOnline === false} />
-      <main className="mx-auto flex min-h-screen max-w-4xl flex-col items-center justify-center gap-6 p-6">
-        <ErrorBoundary>
-          <h1 className="font-title text-text text-4xl font-semibold">Receptek</h1>
-          <p className="text-text-muted text-lg">Kedvenc receptjeink egy helyen.</p>
-          <NotificationPanel />
-        </ErrorBoundary>
-      </main>
-    </>
+    <AuthProvider>
+      <BrowserRouter>
+        <UpdateBanner />
+        <OfflineBanner isVisible={isOnline === false} />
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/recipe/:id" element={<RecipeDetail />} />
+          <Route
+            path="/recipe/new"
+            element={
+              <ProtectedRoute>
+                <RecipeForm />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/recipe/:id/edit"
+            element={
+              <ProtectedRoute>
+                <RecipeForm />
+              </ProtectedRoute>
+            }
+          />
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      </BrowserRouter>
+    </AuthProvider>
   );
 }
 
