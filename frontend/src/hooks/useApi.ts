@@ -17,35 +17,32 @@ export function useApi<T>(fetcher: () => Promise<T>): UseApiResult<T> {
     fetcherRef.current = fetcher;
   });
 
-  const execute = useCallback((signal: AbortSignal) => {
-    fetcherRef
-      .current()
-      .then((result) => {
-        if (!signal.aborted) {
-          setData(result);
-        }
-      })
-      .catch((err: unknown) => {
-        if (!signal.aborted) {
-          setError(err instanceof Error ? err.message : 'A kérés sikertelen.');
-        }
-      })
-      .finally(() => {
-        if (!signal.aborted) {
-          setLoading(false);
-        }
-      });
+  const execute = useCallback(async (signal: AbortSignal) => {
+    try {
+      const result = await fetcherRef.current();
+      if (!signal.aborted) {
+        setData(result);
+      }
+    } catch (err: unknown) {
+      if (!signal.aborted) {
+        setError(err instanceof Error ? err.message : 'A kérés sikertelen.');
+      }
+    } finally {
+      if (!signal.aborted) {
+        setLoading(false);
+      }
+    }
   }, []);
 
   const reload = useCallback(() => {
     setError(null);
     setLoading(true);
-    execute(new AbortController().signal);
+    void execute(new AbortController().signal);
   }, [execute]);
 
   useEffect(() => {
     const controller = new AbortController();
-    execute(controller.signal);
+    void execute(controller.signal);
     return () => {
       controller.abort();
     };
