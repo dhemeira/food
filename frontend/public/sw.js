@@ -47,7 +47,17 @@ self.addEventListener('message', function (event) {
     self.skipWaiting();
   }
   if (event.data && event.data.type === 'CHECK_ONLINE') {
-    event.ports[0].postMessage({ online: lastOnline });
+    event.waitUntil(
+      fetch('/api/vapid-public-key.php')
+        .then(function (r) {
+          setOnline(r.ok);
+          event.ports[0].postMessage({ online: r.ok });
+        })
+        .catch(function () {
+          setOnline(false);
+          event.ports[0].postMessage({ online: false });
+        })
+    );
   }
 });
 
