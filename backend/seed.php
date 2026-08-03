@@ -27,7 +27,6 @@ if ($count > 0) {
 }
 
 $adminPassword = random_password();
-$familyPassword = random_password();
 
 $stmt = $pdo->prepare('INSERT INTO users (username, password_hash, role) VALUES (:username, :hash, :role)');
 $stmt->execute([
@@ -35,13 +34,8 @@ $stmt->execute([
     'hash' => password_hash($adminPassword, PASSWORD_BCRYPT),
     'role' => 'admin',
 ]);
-$stmt->execute([
-    'username' => 'csalad',
-    'hash' => password_hash($familyPassword, PASSWORD_BCRYPT),
-    'role' => 'family',
-]);
 
-echo "=== Felhasználók létrehozva ===\n";
+echo "=== Admin fiók létrehozva ===\n";
 echo "dhemeira jelszó: {$adminPassword}\n";
-echo "csalad jelszó: {$familyPassword}\n";
-echo "=== Őrizd meg ezeket a jelszavakat! ===" . PHP_EOL;
+echo "=== Őrizd meg ezt a jelszót! ===" . PHP_EOL;
+echo "További fiókokat az admin felületen (/admin) hozhatsz létre." . PHP_EOL;

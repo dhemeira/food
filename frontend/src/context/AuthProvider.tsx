@@ -39,12 +39,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser(null);
   }
 
+  async function refreshUser(): Promise<void> {
+    try {
+      setUser(await getMe());
+    } catch {
+      /* keep current user */
+    }
+  }
+
   const value: AuthContextValue = {
     user,
     isAdmin: user?.role === 'admin',
     isLoading,
     login,
     logout,
+    refreshUser,
   };
 
   return <AuthContext value={value}>{children}</AuthContext>;

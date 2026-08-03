@@ -22,6 +22,7 @@ $routes = [
         '/^\/push\/unsubscribe$/' => 'push_unsubscribe',
         '/^\/menus$/' => 'menu_create',
         '/^\/menus\/(\d+)$/' => 'menu_update',
+        '/^\/admin\/users$/' => 'admin_create_user',
     ],
     'GET' => [
         '/^\/auth\/me$/' => 'auth_me',
@@ -36,10 +37,12 @@ $routes = [
     ],
     'PUT' => [
         '/^\/admin\/users\/(\d+)\/password$/' => 'admin_change_password',
+        '/^\/admin\/users\/(\d+)\/username$/' => 'admin_change_username',
     ],
     'DELETE' => [
         '/^\/recipes\/(\d+)$/' => 'recipe_delete',
         '/^\/menus\/(\d+)$/' => 'menu_delete',
+        '/^\/admin\/users\/(\d+)$/' => 'admin_delete_user',
     ],
 ];
 
