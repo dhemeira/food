@@ -6,6 +6,10 @@ services:
       - '8080:80'
     volumes:
       - ./backend/api:/srv/backend/api
+      - ./backend/lib:/srv/backend/lib
+      - ./backend/routes:/srv/backend/routes
+      - ./backend/index.php:/srv/backend/index.php
+      - ./backend/seed.php:/srv/backend/seed.php
       - ./backend/config.php:/srv/backend/config.php
       - ./data:/srv/backend/data
       - ./frontend/dist:/var/www/html
