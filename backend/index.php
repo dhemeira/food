@@ -10,6 +10,7 @@ require_once __DIR__ . '/routes/auth.php';
 require_once __DIR__ . '/routes/recipes.php';
 require_once __DIR__ . '/routes/admin.php';
 require_once __DIR__ . '/routes/push.php';
+require_once __DIR__ . '/routes/menus.php';
 
 $routes = [
     'POST' => [
@@ -19,6 +20,8 @@ $routes = [
         '/^\/recipes\/(\d+)$/' => 'recipe_update',
         '/^\/push\/subscribe$/' => 'push_subscribe',
         '/^\/push\/unsubscribe$/' => 'push_unsubscribe',
+        '/^\/menus$/' => 'menu_create',
+        '/^\/menus\/(\d+)$/' => 'menu_update',
     ],
     'GET' => [
         '/^\/auth\/me$/' => 'auth_me',
@@ -28,12 +31,15 @@ $routes = [
         '/^\/recipes\/(\d+)\/thumbnail$/' => 'recipe_thumbnail',
         '/^\/admin\/users$/' => 'admin_users',
         '/^\/push\/vapid-public-key$/' => 'push_vapid_public_key',
+        '/^\/menus$/' => 'menu_list',
+        '/^\/menus\/(\d+)$/' => 'menu_get',
     ],
     'PUT' => [
         '/^\/admin\/users\/(\d+)\/password$/' => 'admin_change_password',
     ],
     'DELETE' => [
         '/^\/recipes\/(\d+)$/' => 'recipe_delete',
+        '/^\/menus\/(\d+)$/' => 'menu_delete',
     ],
 ];
 

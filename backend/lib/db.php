@@ -67,5 +67,23 @@ function migrate(PDO $pdo): void
 
         CREATE INDEX IF NOT EXISTS idx_ingredients_recipe ON ingredients(recipe_id);
         CREATE INDEX IF NOT EXISTS idx_steps_recipe ON steps(recipe_id);
+
+        CREATE TABLE IF NOT EXISTS menus (
+            id          INTEGER PRIMARY KEY AUTOINCREMENT,
+            title       TEXT NOT NULL,
+            created_by  INTEGER REFERENCES users(id),
+            created_at  TEXT NOT NULL DEFAULT (datetime('now')),
+            updated_at  TEXT NOT NULL DEFAULT (datetime('now'))
+        );
+
+        CREATE TABLE IF NOT EXISTS menu_items (
+            id         INTEGER PRIMARY KEY AUTOINCREMENT,
+            menu_id    INTEGER NOT NULL REFERENCES menus(id) ON DELETE CASCADE,
+            recipe_id  INTEGER NOT NULL REFERENCES recipes(id) ON DELETE RESTRICT,
+            quantity   REAL NOT NULL,
+            sort_order INTEGER NOT NULL DEFAULT 0
+        );
+
+        CREATE INDEX IF NOT EXISTS idx_menu_items_menu ON menu_items(menu_id);
         SQL);
 }
