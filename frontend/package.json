@@ -10,8 +10,7 @@
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "format:check": "prettier --check .",
-    "format:fix": "prettier --write .",
-    "icons": "node scripts/generate-icons.mjs"
+    "format:fix": "prettier --write ."
   },
   "dependencies": {
     "@fontsource-variable/inter": "^5.2.8",
