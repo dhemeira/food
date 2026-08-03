@@ -1,5 +1,6 @@
 import { useEffect, useState, type ReactNode } from 'react';
-import { getMe, login as apiLogin, logout as apiLogout, type User } from '~/api/auth';
+import { getMe, login as apiLogin, logout as apiLogout } from '~/api/auth';
+import type { User } from '~/types';
 import { AuthContext, type AuthContextValue } from '~/context/auth';
 
 export function AuthProvider({ children }: { children: ReactNode }) {
@@ -7,11 +8,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    let cancelled = false;
+    const controller = new AbortController();
 
     void getMe()
       .then((current) => {
-        if (!cancelled) {
+        if (!controller.signal.aborted) {
           setUser(current);
         }
       })
@@ -19,13 +20,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         /* offline or unauthenticated: stay signed out */
       })
       .finally(() => {
-        if (!cancelled) {
+        if (!controller.signal.aborted) {
           setIsLoading(false);
         }
       });
 
     return () => {
-      cancelled = true;
+      controller.abort();
     };
   }, []);
 

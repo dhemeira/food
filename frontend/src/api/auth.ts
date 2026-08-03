@@ -1,10 +1,7 @@
+import type { User } from '~/types';
 import { api } from '~/api/client';
 
-export interface User {
-  id: number;
-  username: string;
-  role: 'admin' | 'family';
-}
+export { type User };
 
 export async function getMe(): Promise<User | null> {
   const data = await api<{ user: User | null }>('/auth/me');

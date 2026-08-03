@@ -1,3 +1,4 @@
+import { api } from '~/api/client';
 import { urlBase64ToUint8Array } from '~/utils/urlBase64ToUint8Array';
 
 export function isPushSupported(): boolean {
@@ -14,8 +15,7 @@ export async function registerServiceWorker(): Promise<ServiceWorkerRegistration
 }
 
 export async function getVapidPublicKey(): Promise<string> {
-  const response = await fetch('/api/vapid-public-key.php');
-  const data = (await response.json()) as { publicKey?: string };
+  const data = await api<{ publicKey: string }>('/push/vapid-public-key');
   if (!data.publicKey) throw new Error('VAPID public key not available');
   return data.publicKey;
 }
@@ -37,20 +37,17 @@ export async function subscribeToPush(
 }
 
 export async function saveSubscription(subscription: PushSubscription): Promise<void> {
-  const body = JSON.stringify(subscription.toJSON());
-  const response = await fetch('/api/subscribe.php', {
+  await api('/push/subscribe', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body,
+    body: JSON.stringify(subscription.toJSON()),
   });
-  if (!response.ok) throw new Error('Failed to save subscription');
 }
 
 export async function removeSubscription(subscription: PushSubscription): Promise<void> {
-  const response = await fetch('/api/unsubscribe.php', {
+  await api('/push/unsubscribe', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ endpoint: subscription.endpoint }),
   });
-  if (!response.ok) throw new Error('Failed to remove subscription');
 }

@@ -3,8 +3,6 @@ import { createRoot } from 'react-dom/client';
 import './index.css';
 import App from './app.tsx';
 import '@fontsource-variable/inter/index.css';
-import '@fontsource-variable/fraunces/wght-italic.css';
-import '@fontsource-variable/fraunces/wght.css';
 
 const root = document.getElementById('root');
 if (!root) throw new Error('Root element #root not found');

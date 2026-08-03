@@ -1,6 +1,7 @@
 import { Navigate, useLocation } from 'react-router-dom';
 import type { ReactNode } from 'react';
 import { useAuth } from '~/context/auth';
+import { Spinner } from '~/components/ui';
 
 interface ProtectedRouteProps {
   children: ReactNode;
@@ -12,7 +13,7 @@ function ProtectedRoute({ children, adminOnly = false }: ProtectedRouteProps) {
   const location = useLocation();
 
   if (isLoading) {
-    return <div className="text-text-muted p-10 text-center">Betöltés...</div>;
+    return <Spinner />;
   }
 
   if (!user) {

@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 
 interface OnlineStatusMessage {
   type: string;
@@ -21,28 +21,42 @@ async function checkViaSw(): Promise<boolean> {
 
 export function useServerStatus() {
   const [isOnline, setIsOnline] = useState<boolean | null>(null);
+  const mountedRef = useRef(true);
 
   const check = useCallback(() => {
+    if (!navigator.serviceWorker.controller) return;
+
     void checkViaSw().then((online) => {
-      setIsOnline(online);
+      if (mountedRef.current) {
+        setIsOnline(online);
+      }
     });
   }, []);
 
   useEffect(() => {
-    check();
+    mountedRef.current = true;
+
+    void navigator.serviceWorker.ready.then(() => {
+      if (mountedRef.current) {
+        check();
+      }
+    });
 
     const id = setInterval(check, POLL_INTERVAL);
 
     function handleSwMessage(event: MessageEvent) {
       const payload = event.data as OnlineStatusMessage | null;
       if (payload?.type === 'ONLINE_STATUS') {
-        setIsOnline(payload.online);
+        if (mountedRef.current) {
+          setIsOnline(payload.online);
+        }
       }
     }
 
     navigator.serviceWorker.addEventListener('message', handleSwMessage);
 
     return () => {
+      mountedRef.current = false;
       clearInterval(id);
       navigator.serviceWorker.removeEventListener('message', handleSwMessage);
     };

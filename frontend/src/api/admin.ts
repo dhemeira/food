@@ -1,5 +1,5 @@
+import type { User } from '~/types';
 import { api } from '~/api/client';
-import type { User } from '~/api/auth';
 
 export async function listUsers(): Promise<User[]> {
   const data = await api<{ users: User[] }>('/admin/users');

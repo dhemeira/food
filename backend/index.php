@@ -9,6 +9,7 @@ require_once __DIR__ . '/lib/auth.php';
 require_once __DIR__ . '/routes/auth.php';
 require_once __DIR__ . '/routes/recipes.php';
 require_once __DIR__ . '/routes/admin.php';
+require_once __DIR__ . '/routes/push.php';
 
 $routes = [
     'POST' => [
@@ -16,6 +17,8 @@ $routes = [
         '/^\/auth\/logout$/' => 'auth_logout',
         '/^\/recipes$/' => 'recipe_create',
         '/^\/recipes\/(\d+)$/' => 'recipe_update',
+        '/^\/push\/subscribe$/' => 'push_subscribe',
+        '/^\/push\/unsubscribe$/' => 'push_unsubscribe',
     ],
     'GET' => [
         '/^\/auth\/me$/' => 'auth_me',
@@ -24,6 +27,7 @@ $routes = [
         '/^\/recipes\/(\d+)\/image$/' => 'recipe_image',
         '/^\/recipes\/(\d+)\/thumbnail$/' => 'recipe_thumbnail',
         '/^\/admin\/users$/' => 'admin_users',
+        '/^\/push\/vapid-public-key$/' => 'push_vapid_public_key',
     ],
     'PUT' => [
         '/^\/admin\/users\/(\d+)\/password$/' => 'admin_change_password',

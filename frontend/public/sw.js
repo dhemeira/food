@@ -48,7 +48,7 @@ self.addEventListener('message', function (event) {
   }
   if (event.data && event.data.type === 'CHECK_ONLINE') {
     event.waitUntil(
-      fetch('/api/vapid-public-key.php')
+      fetch('/api/push/vapid-public-key')
         .then(function (r) {
           setOnline(r.ok);
           event.ports[0].postMessage({ online: r.ok });
@@ -161,7 +161,7 @@ self.addEventListener('notificationclick', function (event) {
 
 self.addEventListener('pushsubscriptionchange', function (event) {
   event.waitUntil(
-    fetch('/api/vapid-public-key.php')
+    fetch('/api/push/vapid-public-key')
       .then(function (r) {
         return r.json();
       })
@@ -172,7 +172,7 @@ self.addEventListener('pushsubscriptionchange', function (event) {
         });
       })
       .then(function (subscription) {
-        return fetch('/api/subscribe.php', {
+        return fetch('/api/push/subscribe', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(subscription.toJSON()),
