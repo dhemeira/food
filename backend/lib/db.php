@@ -35,5 +35,37 @@ function migrate(PDO $pdo): void
             role          TEXT NOT NULL CHECK (role IN ('admin', 'family')),
             created_at    TEXT NOT NULL DEFAULT (datetime('now'))
         );
+
+        CREATE TABLE IF NOT EXISTS recipes (
+            id             INTEGER PRIMARY KEY AUTOINCREMENT,
+            title          TEXT NOT NULL,
+            description    TEXT,
+            image_blob     BLOB,
+            thumbnail_blob BLOB,
+            image_type     TEXT,
+            calorie_value  REAL,
+            calorie_unit   TEXT CHECK (calorie_unit IN ('kcal/100g', 'kcal/adag', 'kcal/db')),
+            created_by     INTEGER REFERENCES users(id),
+            created_at     TEXT NOT NULL DEFAULT (datetime('now')),
+            updated_at     TEXT NOT NULL DEFAULT (datetime('now'))
+        );
+
+        CREATE TABLE IF NOT EXISTS ingredients (
+            id         INTEGER PRIMARY KEY AUTOINCREMENT,
+            recipe_id  INTEGER NOT NULL REFERENCES recipes(id) ON DELETE CASCADE,
+            quantity   TEXT NOT NULL DEFAULT '',
+            name       TEXT NOT NULL,
+            sort_order INTEGER NOT NULL DEFAULT 0
+        );
+
+        CREATE TABLE IF NOT EXISTS steps (
+            id          INTEGER PRIMARY KEY AUTOINCREMENT,
+            recipe_id   INTEGER NOT NULL REFERENCES recipes(id) ON DELETE CASCADE,
+            step_number INTEGER NOT NULL,
+            instruction TEXT NOT NULL
+        );
+
+        CREATE INDEX IF NOT EXISTS idx_ingredients_recipe ON ingredients(recipe_id);
+        CREATE INDEX IF NOT EXISTS idx_steps_recipe ON steps(recipe_id);
         SQL);
 }

@@ -129,7 +129,7 @@ self.addEventListener('push', function (event) {
     hour12: false,
   }).format(stamp);
 
-  var body = [data.body, '(' + timeStr + ')'].filter(Boolean).join(' ');
+  var body = [timeStr + ':', data.body].filter(Boolean).join(' ');
 
   event.waitUntil(
     self.registration.showNotification(data.title || 'Receptek', {
