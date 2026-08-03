@@ -3,6 +3,7 @@ import { AuthProvider } from '~/context/AuthProvider';
 import ProtectedRoute from '~/components/ProtectedRoute';
 import OfflineBanner from '~/components/OfflineBanner';
 import UpdateBanner from '~/components/UpdateBanner';
+import Admin from '~/pages/Admin';
 import Home from '~/pages/Home';
 import Login from '~/pages/Login';
 import NotFound from '~/pages/NotFound';
@@ -22,6 +23,14 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/recipe/:id" element={<RecipeDetail />} />
+          <Route
+            path="/admin"
+            element={
+              <ProtectedRoute adminOnly>
+                <Admin />
+              </ProtectedRoute>
+            }
+          />
           <Route
             path="/recipe/new"
             element={

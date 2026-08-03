@@ -72,6 +72,16 @@ The `http://app:80` service URL resolves to the `app` container because both run
 
 A test notification should arrive on your device.
 
+### Seeding user accounts
+
+On first deploy, create the two accounts (admin + family) and note the printed passwords — they can be changed later from the admin panel at `/admin`:
+
+```sh
+docker compose exec -u www-data app php seed.php
+```
+
+Run it as `www-data` so the SQLite file stays writable by the web server. Re-running is a no-op. If the database file was ever created by root, the container fixes ownership automatically on startup.
+
 ## Development workflow
 
 There is no rebuild needed for most changes — the container renders your files live via bind mounts.

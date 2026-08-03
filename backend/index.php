@@ -8,6 +8,7 @@ require_once __DIR__ . '/lib/db.php';
 require_once __DIR__ . '/lib/auth.php';
 require_once __DIR__ . '/routes/auth.php';
 require_once __DIR__ . '/routes/recipes.php';
+require_once __DIR__ . '/routes/admin.php';
 
 $routes = [
     'POST' => [
@@ -22,6 +23,10 @@ $routes = [
         '/^\/recipes\/(\d+)$/' => 'recipe_get',
         '/^\/recipes\/(\d+)\/image$/' => 'recipe_image',
         '/^\/recipes\/(\d+)\/thumbnail$/' => 'recipe_thumbnail',
+        '/^\/admin\/users$/' => 'admin_users',
+    ],
+    'PUT' => [
+        '/^\/admin\/users\/(\d+)\/password$/' => 'admin_change_password',
     ],
     'DELETE' => [
         '/^\/recipes\/(\d+)$/' => 'recipe_delete',

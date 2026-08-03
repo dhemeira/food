@@ -1,4 +1,4 @@
-const CACHE_NAME = 'recipe-shell-v1';
+const CACHE_NAME = 'recipe-shell-v2';
 const SHELL_URLS = ['/', '/index.html', '/manifest.json', '/icon-192.png', '/icon-512.png'];
 
 let lastOnline = true;
@@ -69,6 +69,8 @@ self.addEventListener('fetch', function (event) {
   if (url.origin !== self.location.origin) return;
   if (url.pathname === '/sw.js') return;
 
+  var isAuth = url.pathname.indexOf('/api/auth/') === 0;
+
   if (request.mode === 'navigate') {
     event.respondWith(
       fetch(request)
@@ -89,26 +91,26 @@ self.addEventListener('fetch', function (event) {
     return;
   }
 
+  if (isAuth) {
+    event.respondWith(fetch(request));
+    return;
+  }
+
   event.respondWith(
-    caches.match(request).then(function (cached) {
-      return (
-        cached ||
-        fetch(request)
-          .then(function (response) {
-            if (!response.ok) throw new Error('non-ok response');
-            setOnline(true);
-            var copy = response.clone();
-            caches.open(CACHE_NAME).then(function (cache) {
-              cache.put(request, copy);
-            });
-            return response;
-          })
-          .catch(function () {
-            setOnline(false);
-            throw new Error('offline');
-          })
-      );
-    })
+    fetch(request)
+      .then(function (response) {
+        if (!response.ok) throw new Error('non-ok response');
+        setOnline(true);
+        var copy = response.clone();
+        caches.open(CACHE_NAME).then(function (cache) {
+          cache.put(request, copy);
+        });
+        return response;
+      })
+      .catch(function () {
+        setOnline(false);
+        return caches.match(request);
+      })
   );
 });
 
