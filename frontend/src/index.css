@@ -9,6 +9,9 @@
   --color-text-muted: #6b5544;
   --color-success: #5f7a3d;
   --color-success-bg: #e8ebd3;
+  --color-warning: #b45309;
+  --color-warning-bg: #fef3c7;
+  --color-warning-border: #fcd34d;
   --font-sans: 'Inter Variable', sans-serif;
   --font-title: 'Fraunces Variable', serif;
   --default-font-family: 'Inter Variable', sans-serif;

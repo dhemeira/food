@@ -1,11 +1,16 @@
 import ErrorBoundary from '~/components/ui/ErrorBoundary';
 import NotificationPanel from '~/components/NotificationPanel';
+import OfflineBanner from '~/components/OfflineBanner';
 import UpdateBanner from '~/components/UpdateBanner';
+import { useServerStatus } from '~/pwa/useServerStatus';
 
 function App() {
+  const { isOnline } = useServerStatus();
+
   return (
     <>
       <UpdateBanner />
+      <OfflineBanner isVisible={isOnline === false} />
       <main className="mx-auto flex min-h-screen max-w-4xl flex-col items-center justify-center gap-6 p-6">
         <ErrorBoundary>
           <h1 className="font-title text-text text-4xl font-semibold">Receptek</h1>

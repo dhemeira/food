@@ -6,6 +6,7 @@ import {
   removeSubscription,
   isPushSupported,
 } from '~/pwa/push';
+import { useServerStatus } from '~/pwa/useServerStatus';
 
 type Phase = 'idle' | 'loading' | 'checking' | 'unsupported' | 'denied' | 'subscribed' | 'error';
 
@@ -16,18 +17,9 @@ interface Status {
 
 function NotificationPanel() {
   const [status, setStatus] = useState<Status>({ phase: 'checking', message: '' });
-  const [backendOk, setBackendOk] = useState<boolean | null>(null);
+  const { isOnline, check: recheckServer } = useServerStatus();
 
   useEffect(() => {
-    fetch('/api/status.php')
-      .then((r) => r.json())
-      .then((d: { ok?: boolean }) => {
-        setBackendOk(d.ok === true);
-      })
-      .catch(() => {
-        setBackendOk(false);
-      });
-
     void Promise.resolve()
       .then(async () => {
         if (!isPushSupported()) {
@@ -93,14 +85,7 @@ function NotificationPanel() {
 
   function handleRetry() {
     setStatus({ phase: 'idle', message: '' });
-    fetch('/api/status.php')
-      .then((r) => r.json())
-      .then((d: { ok?: boolean }) => {
-        setBackendOk(d.ok === true);
-      })
-      .catch(() => {
-        setBackendOk(false);
-      });
+    recheckServer();
   }
 
   async function handleUnsubscribe() {
@@ -137,21 +122,23 @@ function NotificationPanel() {
         <div className="border-success-border bg-success-bg text-success rounded-xl border px-4 py-3 text-sm">
           {status.message}
         </div>
-        <button
-          className="border-border hover:bg-surface rounded-xl border px-5 py-2.5 text-base font-medium transition-colors"
-          disabled={buttonDisabled}
-          onClick={() => void handleUnsubscribe()}>
-          {buttonDisabled ? 'Folyamatban...' : 'Értesítések lemondása'}
-        </button>
+        {isOnline !== false && (
+          <button
+            className="border-border hover:bg-surface rounded-xl border px-5 py-2.5 text-base font-medium transition-colors"
+            disabled={buttonDisabled}
+            onClick={() => void handleUnsubscribe()}>
+            {buttonDisabled ? 'Folyamatban...' : 'Értesítések lemondása'}
+          </button>
+        )}
       </div>
     );
   }
 
   return (
     <div className="flex flex-col items-center gap-3">
-      {backendOk !== null && (
-        <p className={`text-sm ${backendOk ? 'text-success' : 'text-accent'}`}>
-          Szerver: {backendOk ? 'elérhető' : 'nem érhető el'}
+      {isOnline !== null && (
+        <p className={`text-sm ${isOnline ? 'text-success' : 'text-accent'}`}>
+          Szerver: {isOnline ? 'elérhető' : 'nem érhető el'}
         </p>
       )}
       {status.phase === 'error' && <p className="text-accent text-sm">{status.message}</p>}
