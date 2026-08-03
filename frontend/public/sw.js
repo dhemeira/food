@@ -5,7 +5,6 @@ self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => cache.addAll(SHELL_URLS).catch(() => {}))
   );
-  self.skipWaiting();
 });
 
 self.addEventListener('activate', (event) => {
@@ -19,12 +18,22 @@ self.addEventListener('activate', (event) => {
   );
 });
 
+self.addEventListener('message', (event) => {
+  if (event.data && event.data.type === 'SKIP_WAITING') {
+    self.skipWaiting();
+  }
+});
+
 self.addEventListener('fetch', (event) => {
   const { request } = event;
   if (request.method !== 'GET') return;
 
   const url = new URL(request.url);
   if (url.origin !== self.location.origin) return;
+
+  // Never cache or intercept the service worker script itself, otherwise the
+  // browser would keep getting a stale copy and could never load updates.
+  if (url.pathname === '/sw.js') return;
 
   if (request.mode === 'navigate') {
     event.respondWith(
@@ -55,7 +64,7 @@ self.addEventListener('fetch', (event) => {
 });
 
 self.addEventListener('push', (event) => {
-  let data = { title: 'Receptek', body: 'Új recept elérhető!' };
+  let data = { title: 'Receptek', body: '' };
   if (event.data) {
     try {
       data = event.data.json();
@@ -63,9 +72,19 @@ self.addEventListener('push', (event) => {
       data = { title: 'Receptek', body: event.data.text() };
     }
   }
+
+  const stamp = data.sentAt ? new Date(data.sentAt) : new Date();
+  const timeStr = new Intl.DateTimeFormat(undefined, {
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false,
+  }).format(stamp);
+
+  const body = [data.body, `(${timeStr})`].filter(Boolean).join(' ');
+
   event.waitUntil(
     self.registration.showNotification(data.title || 'Receptek', {
-      body: data.body || '',
+      body,
       icon: '/icon-192.png',
       data: { url: data.url || '/' },
     })

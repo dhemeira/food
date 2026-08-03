@@ -13,6 +13,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer \
     && docker-php-ext-install gmp \
     && a2enmod rewrite \
+    && a2enmod headers \
     && rm -rf /var/lib/apt/lists/*
 COPY apache/recipe.conf /etc/apache2/conf-available/recipe.conf
 RUN a2enconf recipe
@@ -21,6 +22,7 @@ COPY --from=frontend /app/dist/ /var/www/html/
 COPY scripts/docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
 WORKDIR /srv/backend
 RUN chmod +x /usr/local/bin/docker-entrypoint.sh \
+    && printf 'date.timezone = Europe/Budapest\n' > /usr/local/etc/php/conf.d/timezone.ini \
     && composer install --no-dev --no-interaction --prefer-dist \
     && chown -R www-data:www-data /var/www /srv
 

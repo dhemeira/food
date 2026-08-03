@@ -25,8 +25,9 @@ if (!is_array($subscriptions) || count($subscriptions) === 0) {
 
 $payload = json_encode([
     'title' => 'Teszt recept',
-    'body' => 'Ez egy teszt push üzenet ' . date('H:i:s') . ' időpontban',
+    'body' => 'Ez egy teszt push üzenet.',
     'url' => '/',
+    'sentAt' => gmdate('c'),
 ]);
 
 foreach ($subscriptions as $sub) {

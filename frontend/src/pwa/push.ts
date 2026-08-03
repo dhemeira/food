@@ -7,7 +7,7 @@ export function isPushSupported(): boolean {
 export async function registerServiceWorker(): Promise<ServiceWorkerRegistration | null> {
   if (!isPushSupported()) return null;
   try {
-    return await navigator.serviceWorker.register('/sw.js');
+    return await navigator.serviceWorker.register('/sw.js', { updateViaCache: 'none' });
   } catch {
     return null;
   }
