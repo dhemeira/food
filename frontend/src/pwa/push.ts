@@ -5,10 +5,22 @@ export function isPushSupported(): boolean {
   return 'serviceWorker' in navigator && 'PushManager' in window;
 }
 
+let cachedRegistration: Promise<ServiceWorkerRegistration | null> | null = null;
+
+export function getServiceWorkerRegistration(): Promise<ServiceWorkerRegistration | null> {
+  if (!isPushSupported()) return Promise.resolve(null);
+  cachedRegistration ??= navigator.serviceWorker.ready.catch(() => null);
+  return cachedRegistration;
+}
+
 export async function registerServiceWorker(): Promise<ServiceWorkerRegistration | null> {
   if (!isPushSupported()) return null;
   try {
-    return await navigator.serviceWorker.register('/sw.js', { updateViaCache: 'none' });
+    const registration = await navigator.serviceWorker.register('/sw.js', {
+      updateViaCache: 'none',
+    });
+    cachedRegistration = Promise.resolve(registration);
+    return registration;
   } catch {
     return null;
   }
