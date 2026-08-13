@@ -64,7 +64,7 @@ function AdminView({ users, onUsersChanged, currentUser }: AdminViewProps) {
 
       <div className="bg-surface border-border overflow-hidden rounded-xl border">
         {users.length === 0 ? (
-          <p className="text-text-muted p-6 text-center">Nincsenek felhasználók.</p>
+          <p className="text-text p-6 text-center brightness-80">Nincsenek felhasználók.</p>
         ) : (
           users.map((user) => (
             <div
@@ -73,7 +73,7 @@ function AdminView({ users, onUsersChanged, currentUser }: AdminViewProps) {
               <div className="flex items-center gap-3">
                 <span className="text-text font-medium">{user.username}</span>
                 {currentUser?.id === user.id && (
-                  <span className="text-text-muted text-xs">(te)</span>
+                  <span className="text-text text-xs brightness-80">(te)</span>
                 )}
                 <span className="bg-accent/10 text-accent rounded-full px-2.5 py-0.5 text-xs font-medium">
                   {user.role === 'admin' ? 'Admin' : 'Családtag'}
@@ -153,7 +153,7 @@ function DeleteUserButton({ user, onDeleted }: { user: User; onDeleted: () => vo
 
   return (
     <span className="flex items-center gap-2">
-      <span className="text-text-muted text-sm">Biztosan?</span>
+      <span className="text-text text-sm brightness-80">Biztosan?</span>
       <Button variant="danger" onClick={handleDelete} loading={deleting}>
         Igen
       </Button>

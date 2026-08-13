@@ -12,7 +12,7 @@ function ErrorUI({ error, onRetry }: { error: Error; onRetry: () => void }) {
   return (
     <div className="flex flex-1 flex-col items-center justify-center gap-4 text-center">
       <p className="text-text text-lg font-semibold">Hiba történt</p>
-      <p className="text-text-muted text-sm">{error.message}</p>
+      <p className="text-text text-sm brightness-80">{error.message}</p>
       <button
         className="bg-accent text-surface rounded-xl px-4 py-2 text-sm font-medium"
         onClick={onRetry}>

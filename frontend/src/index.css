@@ -2,16 +2,15 @@
 
 @theme {
   --color-background: #11111e;
-  --color-surface: #181827;
-  --color-surface-2: #1f1f33;
+  --color-surface: color-mix(in oklch, var(--color-accent), black 73%);
+  --color-surface-2: color-mix(in oklch, var(--color-accent), black 75%);
   --color-border: #2d2d4c;
   --color-border-hover: #3c3c63;
   --color-border-focus: #4b4b7c;
   --color-accent: #818cf8;
-  --color-accent-hover: #6e79e6;
+  --color-accent-hover: color-mix(in oklch, var(--color-accent), black 10%);
   --color-accent-soft: rgba(129 140 248 / 0.14);
   --color-text: #eef0fb;
-  --color-text-muted: #8b8fb0;
   --color-success: #34d399;
   --color-success-bg: #0d2818;
   --color-warning: #fbbf24;
@@ -26,5 +25,9 @@
   body {
     @apply bg-background text-text;
     -webkit-font-smoothing: antialiased;
+  }
+
+  button {
+    @apply cursor-pointer;
   }
 }

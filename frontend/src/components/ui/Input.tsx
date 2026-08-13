@@ -19,7 +19,9 @@ function Input({ label, error, hint, hintError = false, id, className = '', ...r
         {...rest}
       />
       {hint && (
-        <p className={hintError ? 'text-accent text-sm' : 'text-text-muted text-sm'}>{hint}</p>
+        <p className={hintError ? 'text-accent text-sm' : 'text-text text-sm brightness-80'}>
+          {hint}
+        </p>
       )}
       {error && <p className="text-accent text-sm">{error}</p>}
     </label>

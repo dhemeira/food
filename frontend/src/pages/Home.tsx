@@ -5,7 +5,7 @@ function Home() {
     <Layout>
       <div className="flex flex-col items-center justify-center gap-4 py-20">
         <h1 className="text-text text-4xl font-semibold">Receptek</h1>
-        <p className="text-text-muted text-lg">A receptlista itt fog megjelenni.</p>
+        <p className="text-text text-lg brightness-80">A receptlista itt fog megjelenni.</p>
       </div>
     </Layout>
   );

@@ -59,7 +59,9 @@ function Login() {
       <div className="mx-auto flex max-w-sm flex-col gap-6 py-20">
         <div className="text-center">
           <h1 className="text-text text-3xl font-semibold">Bejelentkezés</h1>
-          <p className="text-text-muted mt-1 text-sm">Jelentkezz be, hogy elérd a recepteket.</p>
+          <p className="text-text mt-1 text-sm brightness-80">
+            Jelentkezz be, hogy elérd a recepteket.
+          </p>
         </div>
 
         <form
