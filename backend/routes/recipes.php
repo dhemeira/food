@@ -12,13 +12,34 @@ const CALORIE_UNITS = ['kcal/100g', 'kcal/adag', 'kcal/db'];
 
 function recipe_list(): never
 {
-    $rows = db()->query(
-        'SELECT id, title, description,
-                CASE WHEN image_blob IS NOT NULL THEN 1 ELSE 0 END AS has_image,
-                calorie_value, calorie_unit, created_by, created_at, updated_at
-         FROM recipes
-         ORDER BY updated_at DESC, id DESC'
-    )->fetchAll();
+    $sql = 'SELECT id, title, description,
+                   CASE WHEN image_blob IS NOT NULL THEN 1 ELSE 0 END AS has_image,
+                   calorie_value, calorie_unit, created_by, created_at, updated_at
+            FROM recipes';
+    $params = [];
+
+    $q = trim((string) ($_GET['q'] ?? ''));
+
+    if ($q !== '') {
+        $terms = preg_split('/\s+/', $q, -1, PREG_SPLIT_NO_EMPTY);
+        $clauses = [];
+
+        foreach ($terms as $i => $term) {
+            $like = '%' . strtolower($term) . '%';
+            $clauses[] = "(LOWER(title) LIKE :t{$i} OR LOWER(description) LIKE :t{$i})";
+            $params["t{$i}"] = $like;
+        }
+
+        if ($clauses !== []) {
+            $sql .= ' WHERE ' . implode(' AND ', $clauses);
+        }
+    }
+
+    $sql .= ' ORDER BY updated_at DESC, id DESC';
+
+    $stmt = db()->prepare($sql);
+    $stmt->execute($params);
+    $rows = $stmt->fetchAll();
 
     foreach ($rows as &$row) {
         set_image_urls($row);

@@ -9,8 +9,10 @@ import {
 
 type PushStatus = 'checking' | 'unsupported' | 'denied' | 'subscribed' | 'unsubscribed';
 
+let cachedStatus: PushStatus | null = null;
+
 export function usePushSubscription() {
-  const [status, setStatus] = useState<PushStatus>('checking');
+  const [status, setStatus] = useState<PushStatus>(cachedStatus ?? 'checking');
   const [busy, setBusy] = useState(false);
 
   useEffect(() => {
@@ -40,6 +42,10 @@ export function usePushSubscription() {
       cancelled = true;
     };
   }, []);
+
+  useEffect(() => {
+    cachedStatus = status;
+  }, [status]);
 
   const toggle = useCallback(async () => {
     if (busy || (status !== 'subscribed' && status !== 'unsubscribed' && status !== 'denied'))

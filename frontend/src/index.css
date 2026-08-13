@@ -2,8 +2,8 @@
 
 @theme {
   --color-background: #11111e;
-  --color-surface: color-mix(in oklch, var(--color-accent), black 73%);
-  --color-surface-2: color-mix(in oklch, var(--color-accent), black 75%);
+  --color-surface: #181827;
+  --color-surface-2: #1f1f33;
   --color-border: #2d2d4c;
   --color-border-hover: #3c3c63;
   --color-border-focus: #4b4b7c;
@@ -29,5 +29,34 @@
 
   button {
     @apply cursor-pointer;
+  }
+
+  input:-webkit-autofill,
+  input:-webkit-autofill:hover,
+  input:-webkit-autofill:focus {
+    -webkit-text-fill-color: var(--color-background);
+    box-shadow: 0 0 0 1000px var(--color-text) inset;
+    transition: background-color 9999s ease-out;
+  }
+
+  input[type='search']::-webkit-search-decoration,
+  input[type='search']::-webkit-search-cancel-button {
+    -webkit-appearance: none;
+    appearance: none;
+  }
+
+  input[type='search']::-webkit-search-cancel-button {
+    width: 1.25rem;
+    height: 1.25rem;
+    width: 1.2lh;
+    height: 1.2lh;
+    background-color: color-mix(in oklch, var(--color-text), transparent 55%);
+    -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M5 5l6 6M11 5l-6 6' stroke='%23000' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E");
+    mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M5 5l6 6M11 5l-6 6' stroke='%23000' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E");
+    cursor: pointer;
+  }
+
+  input[type='search']::-webkit-search-cancel-button:hover {
+    background-color: var(--color-text);
   }
 }

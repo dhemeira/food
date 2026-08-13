@@ -13,7 +13,7 @@ function Avatar({ username, popoverTarget, style }: Props) {
     <button
       popoverTarget={popoverTarget}
       style={{ ...style, backgroundColor: `hsl(${String(hue)}, 60%, 40%)` }}
-      className="bg-surface border-border text-text aspect-square w-9 rounded-full border text-center font-bold hover:brightness-110">
+      className="bg-surface text-text border-text aspect-square w-9 rounded-full border-2 text-center font-bold hover:brightness-110">
       {initial}
     </button>
   );

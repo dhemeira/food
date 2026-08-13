@@ -7,11 +7,8 @@ function UserMenu() {
     <div
       id="user-menu"
       popover="auto"
-      style={{
-        positionAnchor: '--user-menu',
-        positionArea: 'bottom span-x-start',
-      }}
-      className="bg-surface border-border absolute mt-1 rounded-xl border p-2">
+
+      className="bg-surface border-border absolute mb-4 rounded-xl border p-2 [position-anchor:--user-menu] [position-area:top_span-x-start] sm:mt-1 sm:[position-area:bottom_span-x-start]">
       <div className="flex flex-col gap-2">
         {isAdmin && (
           <Link
@@ -22,7 +19,9 @@ function UserMenu() {
         )}
         <button
           onClick={() => {
-            void logout();
+            const close = () => document.getElementById('user-menu')?.hidePopover();
+            close();
+            void logout().finally(close);
           }}
           className="text-text hover:bg-accent-hover rounded-lg p-2 text-left brightness-80 hover:brightness-100">
           Kijelentkezés

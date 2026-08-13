@@ -1,13 +1,21 @@
+import { useServiceWorkerUpdate } from '~/pwa/useServiceWorkerUpdate';
+
 interface Props {
   isVisible: boolean;
 }
 
 function OfflineBanner({ isVisible }: Props) {
+  const { updateAvailable } = useServiceWorkerUpdate();
   if (!isVisible) return null;
 
   return (
-    <div className="bg-warning-bg text-warning border-warning-border sticky top-0 z-10 border-b px-4 py-2 text-center text-sm">
-      Offline &mdash; a gyorsítótárazott verziót látod
+    <div
+      className={
+        (updateAvailable ? 'bottom-35 sm:bottom-15' : 'bottom-22 sm:bottom-2') +
+        ' transition-all duration-300 ease-in-out ' +
+        'bg-warning-bg text-warning border-warning-border fixed right-2 bottom-16 z-50 rounded-xl border px-3 py-3 text-center text-sm'
+      }>
+      Az offline verziót látod
     </div>
   );
 }

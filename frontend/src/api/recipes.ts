@@ -11,8 +11,10 @@ export {
   CALORIE_UNITS,
 } from '~/types';
 
-export async function listRecipes(): Promise<RecipeSummary[]> {
-  const data = await api<{ recipes: RecipeSummary[] }>('/recipes');
+export async function listRecipes(query?: string): Promise<RecipeSummary[]> {
+  const q = query?.trim();
+  const path = q ? `/recipes?q=${encodeURIComponent(q)}` : '/recipes';
+  const data = await api<{ recipes: RecipeSummary[] }>(path);
   return data.recipes;
 }
 

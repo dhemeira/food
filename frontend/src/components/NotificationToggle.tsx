@@ -1,4 +1,4 @@
-import { BellCheck, BellOff } from 'lucide-react';
+import { BellAlertIcon, BellSlashIcon } from '@heroicons/react/24/solid';
 import { usePushSubscription } from '~/hooks/usePushSubscription';
 
 function NotificationToggle({ className }: { className?: string }) {
@@ -18,9 +18,9 @@ function NotificationToggle({ className }: { className?: string }) {
       aria-pressed={subscribed}
       title={label}>
       {subscribed ? (
-        <BellCheck aria-hidden="true" className="text-success size-5" />
+        <BellAlertIcon aria-hidden="true" className="text-success size-6.5 sm:size-5" />
       ) : (
-        <BellOff aria-hidden="true" className="text-danger size-5" />
+        <BellSlashIcon aria-hidden="true" className="text-danger size-6.5 sm:size-5" />
       )}
     </button>
   );
