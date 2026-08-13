@@ -69,6 +69,9 @@ self.addEventListener('fetch', function (event) {
   if (url.origin !== self.location.origin) return;
   if (url.pathname === '/sw.js') return;
 
+  var isDev = self.location.hostname === 'localhost' || self.location.hostname === '127.0.0.1';
+  if (isDev) return;
+
   var isAuth = url.pathname.indexOf('/api/auth/') === 0;
 
   if (request.mode === 'navigate') {
@@ -85,7 +88,9 @@ self.addEventListener('fetch', function (event) {
         })
         .catch(function () {
           setOnline(false);
-          return caches.match('/index.html');
+          return caches.match('/index.html').then(function (cached) {
+            return cached || new Response('Offline', { status: 504 });
+          });
         })
     );
     return;
@@ -109,7 +114,9 @@ self.addEventListener('fetch', function (event) {
       })
       .catch(function () {
         setOnline(false);
-        return caches.match(request);
+        return caches.match(request).then(function (cached) {
+          return cached || new Response('', { status: 504 });
+        });
       })
   );
 });

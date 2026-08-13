@@ -42,7 +42,8 @@ export function usePushSubscription() {
   }, []);
 
   const toggle = useCallback(async () => {
-    if (busy || (status !== 'subscribed' && status !== 'unsubscribed')) return;
+    if (busy || (status !== 'subscribed' && status !== 'unsubscribed' && status !== 'denied'))
+      return;
 
     const previous = status;
     setBusy(true);
@@ -74,7 +75,7 @@ export function usePushSubscription() {
   }, [busy, status]);
 
   const subscribed = status === 'subscribed';
-  const canToggle = status === 'subscribed' || status === 'unsubscribed';
+  const canToggle = status === 'subscribed' || status === 'unsubscribed' || status === 'denied';
 
   return { status, subscribed, busy, canToggle, toggle };
 }

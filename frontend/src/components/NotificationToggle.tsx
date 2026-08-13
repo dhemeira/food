@@ -4,7 +4,7 @@ import { usePushSubscription } from '~/hooks/usePushSubscription';
 function NotificationToggle({ className }: { className?: string }) {
   const { status, subscribed, busy, canToggle, toggle } = usePushSubscription();
 
-  if (status === 'unsupported' || status === 'denied') return null;
+  if (status === 'unsupported') return null;
 
   const label = subscribed ? 'Értesítések kikapcsolása' : 'Értesítések bekapcsolása';
 
