@@ -5,8 +5,8 @@ interface Props {
 }
 
 function Avatar({ username, popoverTarget, style }: Props) {
-  const initial = username.charAt(0).toUpperCase();
-  const HUES = [0, 15, 210, 225, 240, 250, 260, 275, 290, 330, 350];
+  const initial = username.charAt(0);
+  const HUES = [0, 225, 210, 15, 240, 250, 260, 275, 290, 330, 350];
   const hue = HUES[initial.charCodeAt(0) % HUES.length];
 
   return (
