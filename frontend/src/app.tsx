@@ -25,7 +25,7 @@ function App() {
           <div className="flex min-h-dvh flex-col">
             <UpdateBanner />
             <OfflineBanner isVisible={isOnline === false} />
-            <Header />
+            <Header isOnline={isOnline} />
             <Routes>
               <Route path="/" element={<Home />} />
               <Route path="/login" element={<Login />} />

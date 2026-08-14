@@ -28,7 +28,7 @@ function preventFocusSteal(e: ReactPointerEvent<HTMLElement>): void {
   e.preventDefault();
 }
 
-function Header() {
+function Header({ isOnline }: { isOnline: boolean | null }) {
   const { user } = useAuth();
   const searchActive = useSearchActive();
   const location = useLocation();
@@ -36,6 +36,7 @@ function Header() {
   const mobileNavRef = useRef<HTMLElement | null>(null);
   const chipRef = useRef<HTMLDivElement | null>(null);
   const firstChipRun = useRef(true);
+  const offline = isOnline === false;
 
   useLayoutEffect(() => {
     const nav = mobileNavRef.current;
@@ -81,6 +82,8 @@ function Header() {
                   popoverTarget="user-menu"
                 />
               </>
+            ) : offline ? (
+              <Avatar offline username="Guest" />
             ) : (
               <NavbarLink to="/login" name="Bejelentkezés" />
             )}
@@ -134,6 +137,13 @@ function Header() {
               />
             </div>
           </>
+        ) : offline ? (
+          <div
+            data-active="false"
+            onPointerDown={preventFocusSteal}
+            className="flex h-full w-full items-center justify-center">
+            <Avatar offline username="Guest" />
+          </div>
         ) : (
           <NavbarLinkPill
             to="/login"

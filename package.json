@@ -5,7 +5,9 @@
     "node": ">=22"
   },
   "scripts": {
-    "prepare": "husky"
+    "prepare": "husky",
+    "dev": "npm run dev --prefix frontend",
+    "build:watch": "npm run build:watch --prefix frontend"
   },
   "devDependencies": {
     "husky": "^9.1.7"
