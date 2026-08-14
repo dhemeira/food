@@ -22,39 +22,41 @@ function App() {
         {/* useTransitions={false}: route changes become synchronous so the search
             pill can flush the navigation inside the tap gesture (see Search.tsx). */}
         <BrowserRouter useTransitions={false}>
-          <UpdateBanner />
-          <OfflineBanner isVisible={isOnline === false} />
-          <Header />
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/recipe/:id" element={<RecipeDetail />} />
-            <Route
-              path="/admin"
-              element={
-                <ProtectedRoute adminOnly>
-                  <Admin />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/recipe/new"
-              element={
-                <ProtectedRoute>
-                  <RecipeForm />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/recipe/:id/edit"
-              element={
-                <ProtectedRoute>
-                  <RecipeForm />
-                </ProtectedRoute>
-              }
-            />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
+          <div className="flex min-h-dvh flex-col">
+            <UpdateBanner />
+            <OfflineBanner isVisible={isOnline === false} />
+            <Header />
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/recipe/:id" element={<RecipeDetail />} />
+              <Route
+                path="/admin"
+                element={
+                  <ProtectedRoute adminOnly>
+                    <Admin />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/recipe/new"
+                element={
+                  <ProtectedRoute>
+                    <RecipeForm />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/recipe/:id/edit"
+                element={
+                  <ProtectedRoute>
+                    <RecipeForm />
+                  </ProtectedRoute>
+                }
+              />
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </div>
         </BrowserRouter>
       </AuthProvider>
     </ErrorBoundary>
