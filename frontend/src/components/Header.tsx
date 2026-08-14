@@ -51,9 +51,7 @@ function Header() {
     const navRect = nav.getBoundingClientRect();
     const elRect = activeEl.getBoundingClientRect();
 
-    chip.style.transition = firstChipRun.current
-      ? 'none'
-      : 'left 300ms ease, width 300ms ease, top 300ms ease, height 300ms ease';
+    chip.style.transition = firstChipRun.current ? 'none' : 'opacity 250ms ease, left 250ms ease';
     firstChipRun.current = false;
 
     chip.style.opacity = '1';
