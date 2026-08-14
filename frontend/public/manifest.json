@@ -3,8 +3,8 @@
   "short_name": "Receptek",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#faf4e8",
-  "theme_color": "#c8442c",
+  "background_color": "#11111e",
+  "theme_color": "#11111e",
   "icons": [
     {
       "src": "/icon-192.png",
