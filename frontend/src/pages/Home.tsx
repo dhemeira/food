@@ -1,27 +1,13 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import Layout from '~/components/Layout';
+import SearchField from '~/components/SearchField';
 import { listRecipes, type RecipeSummary } from '~/api/recipes';
-import {
-  registerSearchInput,
-  setSearchActive,
-  setSearchQuery,
-  useSearchQuery,
-} from '~/utils/search';
+import { useSearchQuery } from '~/utils/search';
 
 function Home() {
   const query = useSearchQuery();
   const [results, setResults] = useState<RecipeSummary[] | null>(null);
-  const inputRef = useRef<HTMLInputElement>(null);
-
-  useEffect(() => {
-    registerSearchInput(inputRef.current);
-
-    return () => {
-      registerSearchInput(null);
-      setSearchActive(false);
-    };
-  }, []);
 
   useEffect(() => {
     let cancelled = false;
@@ -40,23 +26,7 @@ function Home() {
 
   return (
     <Layout>
-      <input
-        ref={inputRef}
-        type="search"
-        value={query}
-        onChange={(e) => {
-          setSearchQuery(e.target.value);
-        }}
-        onFocus={() => {
-          setSearchActive(true);
-        }}
-        onBlur={() => {
-          setSearchActive(false);
-        }}
-        placeholder="Keresés…"
-        autoComplete="off"
-        className="sm:hidden"
-      />
+      <SearchField className="sm:hidden" placeholder="Keresés…" registerInput />
       {results === null ? (
         <p>Betöltés…</p>
       ) : results.length === 0 ? (

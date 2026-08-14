@@ -1,5 +1,6 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { AuthProvider } from '~/context/AuthProvider';
+import Header from '~/components/Header';
 import ProtectedRoute from '~/components/ProtectedRoute';
 import OfflineBanner from '~/components/OfflineBanner';
 import UpdateBanner from '~/components/UpdateBanner';
@@ -18,9 +19,12 @@ function App() {
   return (
     <ErrorBoundary>
       <AuthProvider>
-        <BrowserRouter>
+        {/* useTransitions={false}: route changes become synchronous so the search
+            pill can flush the navigation inside the tap gesture (see Search.tsx). */}
+        <BrowserRouter useTransitions={false}>
           <UpdateBanner />
           <OfflineBanner isVisible={isOnline === false} />
+          <Header />
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/login" element={<Login />} />

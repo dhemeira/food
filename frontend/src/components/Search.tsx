@@ -1,80 +1,59 @@
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { useEffect, useRef, type MouseEvent } from 'react';
+import type { MouseEvent, PointerEvent } from 'react';
+import { flushSync } from 'react-dom';
 import { MagnifyingGlassIcon as SearchIcon } from '@heroicons/react/24/solid';
-import {
-  consumeSearchFocus,
-  focusSearchInput,
-  requestSearchFocus,
-  setSearchActive,
-  setSearchQuery,
-  useSearchActive,
-  useSearchQuery,
-} from '~/utils/search';
+import SearchField from './SearchField';
+import { focusSearchInput, useSearchActive } from '~/utils/search';
 
 interface Props {
   to: string;
+  forceInactive?: boolean;
 }
 
-function Search({ to }: Props) {
+function Search({ to, forceInactive = false }: Props) {
   const isActive = useSearchActive();
-  const query = useSearchQuery();
   const location = useLocation();
   const navigate = useNavigate();
-  const inputRef = useRef<HTMLInputElement>(null);
 
-  useEffect(() => {
-    if (consumeSearchFocus()) {
-      inputRef.current?.focus();
-    }
-  }, []);
-
-  const handleClick = (e: MouseEvent<HTMLAnchorElement>) => {
+  const focusAndNavigate = () => {
     if (location.pathname === to) {
       focusSearchInput();
-      e.preventDefault();
+      return;
     }
-  };
-
-  const handleFocus = () => {
-    setSearchActive(true);
-    if (location.pathname !== to) {
-      requestSearchFocus();
+    // iOS only renders the keyboard for a focus() that happens during user
+    // activation, so the navigation must commit synchronously before focusing
+    // the freshly mounted input.
+    // eslint-disable-next-line react-dom/no-flush-sync
+    flushSync(() => {
       void navigate(to);
-    }
+    });
+    focusSearchInput();
   };
 
   return (
     <>
       <Link
         to={to}
-        onClick={handleClick}
-        className="relative flex h-full w-full items-center justify-center sm:hidden">
-        <div
-          className={
-            (isActive ? 'bg-text/20 absolute -inset-x-1.5 inset-y-0 ' : '') +
-            'flex items-center justify-center rounded-full'
-          }>
-          <SearchIcon className="size-6.5" />
-        </div>
+        onClick={(e: MouseEvent<HTMLAnchorElement>) => {
+          e.preventDefault();
+          focusAndNavigate();
+        }}
+        data-active={isActive && !forceInactive ? 'true' : 'false'}
+        onPointerDown={(e: PointerEvent<HTMLAnchorElement>) => {
+          e.preventDefault();
+        }}
+        className="flex h-full w-full items-center justify-center sm:hidden">
+        <SearchIcon className="size-6.5" />
       </Link>
 
-      <div className="bg-surface has-focus:bg-text/20 relative hidden items-center gap-1.5 rounded-full px-4 py-1.5 brightness-80 has-focus:brightness-100 sm:flex">
-        <input
-          ref={inputRef}
-          type="search"
-          value={query}
-          onChange={(e) => {
-            setSearchQuery(e.target.value);
-          }}
-          onFocus={handleFocus}
-          onBlur={() => {
-            setSearchActive(false);
-          }}
-          placeholder="Keresés"
-          className="text-text placeholder:text-text/50 w-40 bg-transparent outline-none"
-        />
-        <SearchIcon className="text-text/50 size-4" />
-      </div>
+      <SearchField
+        className="hidden sm:flex"
+        onFocus={() => {
+          if (location.pathname !== to) {
+            void navigate(to);
+          }
+        }}
+      />
     </>
   );
 }
