@@ -5,8 +5,9 @@ rules_version = '2';
 // Access is controlled by ONE doc the owner edits in the console:
 //   settings/config -> { allowedEmails: ["owner@gmail.com", "mom@gmail.com", ...] }
 //
+// Reads (recipes + images) are PUBLIC so guests can browse without signing in.
 // Only allowlisted emails may create/update recipes (and thus upload images).
-// Reads still work for any signed-in user. Deletes require an admin role doc:
+// Deletes require an admin role doc:
 //   users/<uid> -> { role: "admin" }
 //
 // Bootstrap (via console, after signing in once):
@@ -21,21 +22,13 @@ service cloud.firestore {
     }
 
     function isAllowedUser() {
-      if (!isSignedIn()) {
-        return false;
-      }
-      let config = get(/databases/$(database)/documents/settings/config).data;
-      return config != null
-        && request.auth.token.email in config.allowedEmails;
+      return isSignedIn()
+        && request.auth.token.email in get(/databases/$(database)/documents/settings/config).data.allowedEmails;
     }
 
     function isAdmin() {
-      if (!isAllowedUser()) {
-        return false;
-      }
-      let profile = get(/databases/$(database)/documents/users/$(request.auth.uid)).data;
-      return profile != null
-        && profile.role == 'admin';
+      return isAllowedUser()
+        && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
     }
 
     match /settings/config {
@@ -44,11 +37,16 @@ service cloud.firestore {
     }
 
     match /recipes/{recipeId} {
-      allow read: if isSignedIn();
+      allow read: if true;
       allow create: if isAllowedUser()
         && request.resource.data.createdBy == request.auth.uid;
       allow update: if isAllowedUser();
       allow delete: if isAdmin();
+    }
+
+    match /recipeImages/{imageId} {
+      allow read: if true;
+      allow create, update, delete: if isAllowedUser();
     }
 
     match /users/{uid} {
