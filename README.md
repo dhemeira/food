@@ -38,16 +38,23 @@ change the factory in `frontend/src/backend/index.ts`.
 2. **Authentication → Sign-in method → Google** → enable.
 3. **Firestore** → create database (production mode, `europe-west3`).
 4. **Project settings → Your apps → Web app** → register, copy the config.
-5. **Authentication → Settings → Authorized domains** → add `img.dhemeira.hu` (or your pages domain).
-6. Deploy `firestore.rules` (Rules tab) and `firestore.indexes.json` (Indexes tab).
+5. **Authentication → Settings → Authorized domains** → add `food.dhemeira.hu` and `<your-project>.pages.dev`.
+6. Deploy `firestore.rules` (Rules tab → paste the whole file → Publish). `firestore.indexes.json` is empty — no composite indexes are needed yet.
 
-### 2. Bootstrap the admin
+### 2. Bootstrap access
 
-Sign in once with your Google account, then in the Firestore console create:
+Access is driven by one doc. After signing in once with your Google account, in the
+Firestore console create:
 
 ```
-users/<your-uid>  →  { "role": "admin" }
+settings/config        →  { "allowedEmails": ["your@email.com"] }
+users/<your-uid>       →  { "role": "admin" }
 ```
+
+- **Who can add/edit recipes & upload images:** emails in `settings/config.allowedEmails`.
+- **Who can delete:** admins (`users/<uid>` with `role: "admin"`).
+- To add a family member, just add their email to `settings/config.allowedEmails`.
+  Everyone else can sign in but is read-only (and image uploads are refused by the Worker too).
 
 ### 3. Frontend
 
@@ -65,4 +72,5 @@ npm run dev
 4. `cd worker && npm install && npm run deploy`.
 
 The Worker verifies the Firebase ID token, center-crops the image to 1000×400 (5:2), and stores
-it under `recipes/<recipeId>.jpg`. Deletes remove that object.
+it under `recipes/<recipeId>.jpg`. Deletes remove that object. Uploads and deletes are refused
+unless the caller's email is in `settings/config.allowedEmails` (same list the rules use).

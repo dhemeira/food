@@ -100,6 +100,8 @@ function RecipeEditor({ editing, initial }: RecipeEditorProps) {
 
         void navigate(`/recipe/${created.id}`);
       }
+    } catch (error) {
+      window.alert(error instanceof Error ? error.message : 'Mentés közben hiba történt.');
     } finally {
       setSaving(false);
     }

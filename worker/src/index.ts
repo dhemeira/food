@@ -25,6 +25,16 @@ class HttpError extends Error {
   }
 }
 
+interface Claims {
+  uid: string;
+  email: string;
+}
+
+interface FirestoreValue {
+  stringValue?: string;
+  arrayValue?: { values?: FirestoreValue[] };
+}
+
 function objectKey(recipeId: string): string {
   return `recipes/${recipeId}.jpg`;
 }
@@ -44,24 +54,67 @@ function cors(response: Response): Response {
   return new Response(response.body, { status: response.status, headers });
 }
 
-async function verifyIdToken(env: Env, authorization: string | null): Promise<string> {
+async function verifyIdToken(env: Env, authorization: string | null): Promise<Claims> {
   if (!authorization || !authorization.startsWith('Bearer ')) {
     throw new HttpError(401, 'Missing bearer token');
   }
 
   const token = authorization.slice('Bearer '.length);
 
+  let payload: { sub?: string; email?: unknown };
+
   try {
-    const { payload } = await jwtVerify(token, jwks, {
+    const result = await jwtVerify(token, jwks, {
       issuer: `https://securetoken.google.com/${env.FIREBASE_PROJECT_ID}`,
       audience: env.FIREBASE_PROJECT_ID,
     });
-    if (!payload.sub) {
-      throw new Error('Token missing subject');
-    }
-    return payload.sub;
+    payload = result.payload;
   } catch {
     throw new HttpError(401, 'Invalid token');
+  }
+
+  if (typeof payload.sub !== 'string' || typeof payload.email !== 'string' || payload.email === '') {
+    throw new HttpError(401, 'Invalid token');
+  }
+
+  return { uid: payload.sub, email: payload.email.toLowerCase() };
+}
+
+function extractStringArray(field: FirestoreValue | undefined): string[] {
+  const values = field?.arrayValue?.values ?? [];
+  const result: string[] = [];
+
+  for (const item of values) {
+    if (typeof item?.stringValue === 'string') {
+      result.push(item.stringValue.toLowerCase());
+    }
+  }
+
+  return result;
+}
+
+async function assertFamilyMember(env: Env, token: string, email: string): Promise<void> {
+  const configUrl =
+    `https://firestore.googleapis.com/v1/projects/${env.FIREBASE_PROJECT_ID}` +
+    '/databases/(default)/documents/settings/config';
+
+  const response = await fetch(configUrl, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+
+  if (response.status === 404) {
+    throw new HttpError(403, 'Not a family member');
+  }
+
+  if (!response.ok) {
+    throw new HttpError(503, 'Membership check unavailable');
+  }
+
+  const doc = (await response.json()) as { fields?: Record<string, FirestoreValue> };
+  const allowedEmails = extractStringArray(doc.fields?.allowedEmails);
+
+  if (!allowedEmails.includes(email)) {
+    throw new HttpError(403, 'Not a family member');
   }
 }
 
@@ -111,30 +164,26 @@ export default {
       return cors(json({ error: 'Invalid recipe id' }, 400));
     }
 
+    const authorization = request.headers.get('Authorization');
+
     try {
-      await verifyIdToken(env, request.headers.get('Authorization'));
+      const claims = await verifyIdToken(env, authorization);
+      await assertFamilyMember(env, authorization!.slice('Bearer '.length), claims.email);
+
+      if (request.method === 'POST') {
+        const result = await handleUpload(request, env, recipeId);
+        return cors(json(result, 201));
+      }
+
+      if (request.method === 'DELETE') {
+        await env.IMAGES.delete(objectKey(recipeId));
+        return cors(json({ status: 'deleted' }));
+      }
     } catch (error) {
       if (error instanceof HttpError) {
         return cors(json({ error: error.message }, error.status));
       }
-      return cors(json({ error: 'Unauthorized' }, 401));
-    }
-
-    if (request.method === 'POST') {
-      try {
-        const result = await handleUpload(request, env, recipeId);
-        return cors(json(result, 201));
-      } catch (error) {
-        if (error instanceof HttpError) {
-          return cors(json({ error: error.message }, error.status));
-        }
-        return cors(json({ error: 'Upload failed' }, 500));
-      }
-    }
-
-    if (request.method === 'DELETE') {
-      await env.IMAGES.delete(objectKey(recipeId));
-      return cors(json({ status: 'deleted' }));
+      return cors(json({ error: 'Request failed' }, 500));
     }
 
     return cors(json({ error: 'Method not allowed' }, 405));
