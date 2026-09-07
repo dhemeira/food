@@ -15,14 +15,8 @@ function RecipeList({ recipes }: RecipeListProps) {
       {recipes.map((recipe) => (
         <li key={recipe.id}>
           <Link to={`/recipe/${recipe.id}`}>
-            {recipe.imageUrl ? (
-              <img
-                src={recipe.imageUrl}
-                alt={recipe.title}
-                loading="lazy"
-                width={400}
-                height={160}
-              />
+            {recipe.thumb ? (
+              <img src={recipe.thumb} alt="" width={400} height={160} loading="lazy" />
             ) : null}
             <span>{recipe.title}</span>
             {recipe.description ? <span>{recipe.description}</span> : null}

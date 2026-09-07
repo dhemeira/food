@@ -2,10 +2,12 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 import { backend } from '~/backend';
 import { useAuth } from '~/context/auth';
 import { useRecipe } from '~/hooks/useRecipe';
+import { useRecipeImage } from '~/hooks/useRecipeImage';
 
 function RecipeDetail() {
   const { id } = useParams();
   const { recipe, loading } = useRecipe(id);
+  const { image } = useRecipeImage(id, recipe?.hasImage ?? false);
   const { user, isAdmin } = useAuth();
   const navigate = useNavigate();
 
@@ -24,9 +26,6 @@ function RecipeDetail() {
     if (recipeId === '' || !window.confirm('Biztosan törlöd ezt a receptet?')) return;
 
     await backend.recipes.remove(recipeId);
-    if (current.imageUrl) {
-      await backend.images.remove(recipeId).catch(() => undefined);
-    }
     void navigate('/');
   }
 
@@ -34,8 +33,8 @@ function RecipeDetail() {
     <div>
       <h1>{current.title}</h1>
       {current.description ? <p>{current.description}</p> : null}
-      {current.imageUrl ? (
-        <img src={current.imageUrl} alt={current.title} width={1000} height={400} />
+      {current.hasImage && image ? (
+        <img src={image} alt={current.title} width={1000} height={400} />
       ) : null}
       {current.calorieValue !== null ? (
         <p>

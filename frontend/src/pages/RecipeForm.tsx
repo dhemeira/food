@@ -6,10 +6,12 @@ import {
   type CalorieUnit,
   type Ingredient,
   type Recipe,
+  type RecipeImage,
   type RecipeInput,
   type Step,
 } from '~/backend';
 import { useRecipe } from '~/hooks/useRecipe';
+import { processRecipeImage } from '~/lib/image';
 
 function parseIngredients(text: string): Ingredient[] {
   return text
@@ -55,9 +57,28 @@ function RecipeEditor({ editing, initial }: RecipeEditorProps) {
   const [stepsText, setStepsText] = useState(
     initial ? initial.steps.map((s) => s.instruction).join('\n') : ''
   );
-  const [image, setImage] = useState<File | null>(null);
+  const [processed, setProcessed] = useState<RecipeImage | null>(null);
+  const [processing, setProcessing] = useState(false);
   const [removeImage, setRemoveImage] = useState(false);
   const [saving, setSaving] = useState(false);
+
+  function handleFileChange(file: File | null): void {
+    setProcessed(null);
+
+    if (!file) return;
+
+    setProcessing(true);
+    processRecipeImage(file)
+      .then((result) => {
+        setProcessed(result);
+      })
+      .catch((error: unknown) => {
+        window.alert(error instanceof Error ? error.message : 'A kép feldolgozása nem sikerült.');
+      })
+      .finally(() => {
+        setProcessing(false);
+      });
+  }
 
   async function handleSubmit(): Promise<void> {
     const input: RecipeInput = {
@@ -77,25 +98,20 @@ function RecipeEditor({ editing, initial }: RecipeEditorProps) {
     setSaving(true);
     try {
       if (editing && initial) {
-        let imageUrl = initial.imageUrl;
+        await backend.recipes.update(initial.id, input);
 
-        if (image) {
-          imageUrl = await backend.images.upload(initial.id, image);
+        if (processed) {
+          await backend.images.set(initial.id, processed);
         } else if (removeImage) {
-          if (initial.imageUrl) {
-            await backend.images.remove(initial.id);
-          }
-          imageUrl = null;
+          await backend.images.remove(initial.id);
         }
 
-        await backend.recipes.update(initial.id, { ...input, imageUrl });
         void navigate(`/recipe/${initial.id}`);
       } else {
         const created = await backend.recipes.create(input);
 
-        if (image) {
-          const imageUrl = await backend.images.upload(created.id, image);
-          await backend.recipes.update(created.id, { ...input, imageUrl });
+        if (processed) {
+          await backend.images.set(created.id, processed);
         }
 
         void navigate(`/recipe/${created.id}`);
@@ -181,12 +197,14 @@ function RecipeEditor({ editing, initial }: RecipeEditorProps) {
           type="file"
           accept="image/*"
           onChange={(event) => {
-            setImage(event.target.files?.[0] ?? null);
+            handleFileChange(event.target.files?.[0] ?? null);
           }}
         />
       </label>
 
-      {editing && initial?.imageUrl ? (
+      {processed ? <img src={processed.full} alt="Előnézet" width={400} height={160} /> : null}
+
+      {editing && initial?.hasImage ? (
         <label>
           <input
             type="checkbox"
@@ -199,7 +217,7 @@ function RecipeEditor({ editing, initial }: RecipeEditorProps) {
         </label>
       ) : null}
 
-      <button type="submit" disabled={saving}>
+      <button type="submit" disabled={saving || processing}>
         {saving ? 'Mentés…' : 'Mentés'}
       </button>
     </form>
