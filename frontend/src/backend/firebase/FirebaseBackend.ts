@@ -8,7 +8,6 @@ import {
 } from 'firebase/auth';
 import {
   collection,
-  deleteDoc,
   doc,
   getDoc,
   getDocs,
@@ -18,6 +17,7 @@ import {
   serverTimestamp,
   setDoc,
   updateDoc,
+  writeBatch,
   type Firestore,
 } from 'firebase/firestore';
 import type { AuthApi, Backend, ImagesApi, RecipesApi, Unsubscribe, UsersApi } from '../Backend';
@@ -25,6 +25,7 @@ import type { User } from '../types';
 import { recipeFromFirestore, recipeToFields } from './converters';
 
 const RECIPES = 'recipes';
+const RECIPE_IMAGES = 'recipeImages';
 const USERS = 'users';
 
 export class FirebaseBackend implements Backend {
@@ -33,11 +34,11 @@ export class FirebaseBackend implements Backend {
   readonly users: UsersApi;
   readonly images: ImagesApi;
 
-  constructor(firebaseAuth: Auth, firestore: Firestore, imageApiUrl: string) {
+  constructor(firebaseAuth: Auth, firestore: Firestore) {
     this.auth = createAuthApi(firebaseAuth);
     this.recipes = createRecipesApi(firebaseAuth, firestore);
     this.users = createUsersApi(firestore);
-    this.images = createImagesApi(firebaseAuth, imageApiUrl);
+    this.images = createImagesApi(firestore);
   }
 }
 
@@ -76,6 +77,7 @@ function createAuthApi(auth: Auth): AuthApi {
 
 function createRecipesApi(auth: Auth, firestore: Firestore): RecipesApi {
   const recipes = collection(firestore, RECIPES);
+  const images = collection(firestore, RECIPE_IMAGES);
   const ordered = query(recipes, orderBy('updatedAt', 'desc'));
 
   return {
@@ -101,6 +103,7 @@ function createRecipesApi(auth: Auth, firestore: Firestore): RecipesApi {
 
       await setDoc(ref, {
         ...recipeToFields(input),
+        hasImage: false,
         createdBy: uid,
         createdAt: serverTimestamp(),
         updatedAt: serverTimestamp(),
@@ -120,7 +123,10 @@ function createRecipesApi(auth: Auth, firestore: Firestore): RecipesApi {
     },
 
     async remove(id) {
-      await deleteDoc(doc(recipes, id));
+      const batch = writeBatch(firestore);
+      batch.delete(doc(recipes, id));
+      batch.delete(doc(images, id));
+      await batch.commit();
     },
   };
 }
@@ -142,54 +148,35 @@ function createUsersApi(firestore: Firestore): UsersApi {
   };
 }
 
-function createImagesApi(auth: Auth, baseUrl: string): ImagesApi {
-  async function getToken(): Promise<string> {
-    const user = auth.currentUser;
-    if (!user) throw new Error('Not authenticated');
-    return user.getIdToken();
-  }
-
-  function assertConfigured(): void {
-    if (baseUrl === '') {
-      throw new Error('Image API is not configured (VITE_IMAGE_API_URL)');
-    }
-  }
+function createImagesApi(firestore: Firestore): ImagesApi {
+  const images = collection(firestore, RECIPE_IMAGES);
+  const recipes = collection(firestore, RECIPES);
 
   return {
-    async upload(recipeId, file) {
-      assertConfigured();
-      const token = await getToken();
-      const body = new FormData();
-      body.append('file', file);
-
-      const response = await fetch(`${baseUrl}/upload/${encodeURIComponent(recipeId)}`, {
-        method: 'POST',
-        headers: { Authorization: `Bearer ${token}` },
-        body,
+    async set(recipeId, image) {
+      const batch = writeBatch(firestore);
+      batch.set(doc(images, recipeId), {
+        full: image.full,
+        updatedAt: serverTimestamp(),
       });
+      batch.update(doc(recipes, recipeId), { thumb: image.thumb, hasImage: true });
+      await batch.commit();
+    },
 
-      if (!response.ok) {
-        throw new Error(`Image upload failed (${String(response.status)})`);
+    async get(recipeId) {
+      const snapshot = await getDoc(doc(images, recipeId));
+      if (!snapshot.exists()) {
+        return null;
       }
-
-      const data = (await response.json()) as { url?: unknown };
-      if (typeof data.url !== 'string') {
-        throw new Error('Image upload response missing URL');
-      }
-      return data.url;
+      const full = snapshot.data().full as unknown;
+      return typeof full === 'string' ? full : null;
     },
 
     async remove(recipeId) {
-      assertConfigured();
-      const token = await getToken();
-      const response = await fetch(`${baseUrl}/upload/${encodeURIComponent(recipeId)}`, {
-        method: 'DELETE',
-        headers: { Authorization: `Bearer ${token}` },
-      });
-
-      if (!response.ok) {
-        throw new Error(`Image delete failed (${String(response.status)})`);
-      }
+      const batch = writeBatch(firestore);
+      batch.delete(doc(images, recipeId));
+      batch.update(doc(recipes, recipeId), { thumb: null, hasImage: false });
+      await batch.commit();
     },
   };
 }

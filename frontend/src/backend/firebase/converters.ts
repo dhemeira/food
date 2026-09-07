@@ -38,7 +38,8 @@ export function recipeFromFirestore(id: string, data: DocumentData): Recipe {
     description: typeof data.description === 'string' ? data.description : null,
     calorieValue: typeof data.calorieValue === 'number' ? data.calorieValue : null,
     calorieUnit: isCalorieUnit(data.calorieUnit) ? data.calorieUnit : null,
-    imageUrl: typeof data.imageUrl === 'string' ? data.imageUrl : null,
+    hasImage: data.hasImage === true,
+    thumb: typeof data.thumb === 'string' ? data.thumb : null,
     ingredients,
     steps,
     createdBy: typeof data.createdBy === 'string' ? data.createdBy : null,
@@ -53,7 +54,6 @@ export function recipeToFields(input: RecipeInput): DocumentData {
     description: input.description,
     calorieValue: input.calorieValue,
     calorieUnit: input.calorieUnit,
-    imageUrl: input.imageUrl ?? null,
     ingredients: input.ingredients.map((i) => ({ quantity: i.quantity, name: i.name })),
     steps: input.steps.map((s) => ({ instruction: s.instruction })),
   };

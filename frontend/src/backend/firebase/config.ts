@@ -31,5 +31,3 @@ export const firebaseConfig: FirebaseConfig = {
   messagingSenderId: requiredEnv('VITE_FIREBASE_MESSAGING_SENDER_ID'),
   appId: requiredEnv('VITE_FIREBASE_APP_ID'),
 };
-
-export const imageApiUrl = envValue('VITE_IMAGE_API_URL');

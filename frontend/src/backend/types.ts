@@ -26,7 +26,8 @@ export interface Recipe {
   description: string | null;
   calorieValue: number | null;
   calorieUnit: CalorieUnit | null;
-  imageUrl: string | null;
+  hasImage: boolean;
+  thumb: string | null;
   ingredients: Ingredient[];
   steps: Step[];
   createdBy: string | null;
@@ -41,5 +42,9 @@ export interface RecipeInput {
   calorieUnit: CalorieUnit | null;
   ingredients: Ingredient[];
   steps: Step[];
-  imageUrl?: string | null;
+}
+
+export interface RecipeImage {
+  full: string;
+  thumb: string;
 }

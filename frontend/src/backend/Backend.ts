@@ -1,4 +1,4 @@
-import type { Recipe, RecipeInput, Role, User } from './types';
+import type { Recipe, RecipeImage, RecipeInput, Role, User } from './types';
 
 export type Unsubscribe = () => void;
 
@@ -23,7 +23,8 @@ export interface UsersApi {
 }
 
 export interface ImagesApi {
-  upload(recipeId: string, file: File): Promise<string>;
+  set(recipeId: string, image: RecipeImage): Promise<void>;
+  get(recipeId: string): Promise<string | null>;
   remove(recipeId: string): Promise<void>;
 }
 
