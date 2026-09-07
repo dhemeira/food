@@ -1,0 +1,43 @@
+rules_version = '2';
+
+// Family recipe app — Firestore security rules.
+//
+// Roles live in a `users/{uid}` document with a `role` field ('admin' | 'family').
+// Bootstrap: after your first Google sign-in, create `users/<your-uid>` with
+// `{ "role": "admin" }` in the Firebase console. Everyone else needs no document.
+//
+// Permissions (mirrors the old PHP app):
+//   - any signed-in user can read everything and create/edit recipes
+//   - only admins can delete recipes or manage roles
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function roleOf(uid) {
+      return get(/databases/$(database)/documents/users/$(uid)).data.role;
+    }
+
+    function isAdmin() {
+      return signedIn() && roleOf(request.auth.uid) == 'admin';
+    }
+
+    match /recipes/{recipeId} {
+      allow read: if signedIn();
+      allow create: if signedIn()
+        && request.resource.data.createdBy == request.auth.uid;
+      allow update: if signedIn();
+      allow delete: if isAdmin();
+    }
+
+    match /users/{uid} {
+      allow read: if signedIn();
+      // A user may only self-register as 'family' (never self-promote to admin).
+      allow create: if request.auth.uid == uid
+        && request.resource.data.role == 'family';
+      allow update, delete: if isAdmin();
+    }
+  }
+}

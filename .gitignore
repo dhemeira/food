@@ -1,0 +1,27 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+build/
+
+# Environment
+.env
+.env.local
+.env.*.local
+!.env.example
+
+# Firebase service account (migration scripts)
+*-service-account.json
+service-account*.json
+
+# Cloudflare
+.wrangler/
+
+# Editor / OS
+.DS_Store
+Thumbs.db
+*.log
+
+# TS build info
+*.tsbuildinfo
