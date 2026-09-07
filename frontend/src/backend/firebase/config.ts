@@ -7,10 +7,16 @@ export interface FirebaseConfig {
   appId: string;
 }
 
-function requiredEnv(key: string): string {
+function envValue(key: string): string {
   const value: unknown = import.meta.env[key];
 
-  if (typeof value !== 'string' || value === '') {
+  return typeof value === 'string' ? value : '';
+}
+
+function requiredEnv(key: string): string {
+  const value = envValue(key);
+
+  if (value === '') {
     throw new Error(`Missing required environment variable: ${key}`);
   }
 
@@ -26,4 +32,4 @@ export const firebaseConfig: FirebaseConfig = {
   appId: requiredEnv('VITE_FIREBASE_APP_ID'),
 };
 
-export const imageApiUrl = requiredEnv('VITE_IMAGE_API_URL');
+export const imageApiUrl = envValue('VITE_IMAGE_API_URL');

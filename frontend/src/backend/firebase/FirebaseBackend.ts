@@ -149,8 +149,15 @@ function createImagesApi(auth: Auth, baseUrl: string): ImagesApi {
     return user.getIdToken();
   }
 
+  function assertConfigured(): void {
+    if (baseUrl === '') {
+      throw new Error('Image API is not configured (VITE_IMAGE_API_URL)');
+    }
+  }
+
   return {
     async upload(recipeId, file) {
+      assertConfigured();
       const token = await getToken();
       const body = new FormData();
       body.append('file', file);
@@ -173,6 +180,7 @@ function createImagesApi(auth: Auth, baseUrl: string): ImagesApi {
     },
 
     async remove(recipeId) {
+      assertConfigured();
       const token = await getToken();
       const response = await fetch(`${baseUrl}/upload/${encodeURIComponent(recipeId)}`, {
         method: 'DELETE',
