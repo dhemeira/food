@@ -8,12 +8,12 @@
 - [x] Investigate intermittent console error: `TypeError: Cannot read properties of undefined (reading 'startTime')` at `reportAllChanges`. Happens when pressing edit button. **Finding:** known upstream `web-vitals` bug (GoogleChrome/web-vitals#792), thrown during soft navigations when something initializes web-vitals with `reportAllChanges`. The app never imports `web-vitals`/`@firebase/performance` (only `firebase/auth` + `firebase/firestore`), so it is not thrown by app code - it comes from an external tool/extension. Not fixable in the app.
 - [ ] Migrate navbar from legacy version
 - [ ] Split big components where it makes sense
-- [ ] Enable TypeScript `strict` mode in `tsconfig.app.json` / `tsconfig.node.json` (compiles clean today).
-- [ ] Fix `getApps()[0]` possibly-undefined in `backend/firebase/app.ts`.
-- [ ] Add a root `ErrorBoundary` so one component crash doesn't blank the whole app.
-- [ ] Replace `window.alert`/`window.confirm` with inline form errors and a proper confirm dialog.
-- [ ] Extract pure helpers (`parseIngredients`, `parseSteps`, search `matches`, image `coverRect`) into `lib/`.
-- [ ] Deduplicate `CALORIE_UNITS` (import from `types.ts` in `converters.ts`).
-- [ ] Reset `useRecipe` / `useRecipeImage` state when `id` changes (avoids stale recipe/image flash).
-- [ ] Add proper error/empty states to `useRecipeImage` (currently swallows errors silently).
-- [ ] Build shared UI primitives (Button / Input / Textarea / Select / Label / Spinner) — forms are unstyled today.
+- [x] Enable TypeScript `strict` mode in `tsconfig.app.json` / `tsconfig.node.json` (compiles clean today).
+- [x] Fix `getApps()[0]` possibly-undefined in `backend/firebase/app.ts`.
+- [x] Add a root `ErrorBoundary` so one component crash doesn't blank the whole app.
+- [x] Replace `window.alert`/`window.confirm` with inline form errors and a proper confirm dialog.
+- [x] Extract pure helpers (`parseIngredients`, `parseSteps`, search `matches`, image `coverRect`) into `lib/`.
+- [x] Deduplicate `CALORIE_UNITS` (import from `types.ts` in `converters.ts`).
+- [x] Reset `useRecipe` / `useRecipeImage` state when `id` changes (avoids stale recipe/image flash).
+- [x] Add proper error/empty states to `useRecipeImage` (currently swallows errors silently).
+- [x] Build shared UI primitives (Button / Input / Textarea / Select / Label / Spinner) — forms are unstyled today.
