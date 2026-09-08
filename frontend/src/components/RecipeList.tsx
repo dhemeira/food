@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import type { Recipe } from '~/backend';
+import { requestWakeLock } from '~/lib/wakeLock';
 
 interface RecipeListProps {
   recipes: Recipe[];
@@ -14,7 +15,11 @@ function RecipeList({ recipes }: RecipeListProps) {
     <ul>
       {recipes.map((recipe) => (
         <li key={recipe.id}>
-          <Link to={`/recipe/${recipe.id}`}>
+          <Link
+            to={`/recipe/${recipe.id}`}
+            onClick={() => {
+              void requestWakeLock();
+            }}>
             {recipe.thumb ? (
               <img src={recipe.thumb} alt="" width={400} height={160} loading="lazy" />
             ) : null}

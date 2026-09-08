@@ -1,6 +1,7 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import Navbar from '~/components/Navbar';
 import ProtectedRoute from '~/components/ProtectedRoute';
+import WakeLockLifecycle from '~/components/WakeLockLifecycle';
 import { AuthProvider } from '~/context/AuthProvider';
 import Home from '~/pages/Home';
 import Login from '~/pages/Login';
@@ -13,6 +14,7 @@ function App() {
     <AuthProvider>
       <BrowserRouter>
         <Navbar />
+        <WakeLockLifecycle />
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />

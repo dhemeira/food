@@ -21,6 +21,25 @@
   --default-font-family: 'Plus Jakarta Sans Variable', sans-serif;
 }
 
+@keyframes hint-pop {
+  0% {
+    opacity: 0;
+    transform: translateY(-4px) scale(0.96);
+  }
+  5% {
+    opacity: 1;
+    transform: none;
+  }
+  92% {
+    opacity: 1;
+    transform: none;
+  }
+  100% {
+    opacity: 0;
+    transform: none;
+  }
+}
+
 @layer base {
   body {
     @apply bg-background text-text;
