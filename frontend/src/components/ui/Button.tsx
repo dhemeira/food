@@ -18,7 +18,7 @@ function Button({
 
   return (
     <button data-variant={variant} disabled={isDisabled} {...rest}>
-      {loading ? 'Folyamatban...' : children}
+      {children}
     </button>
   );
 }

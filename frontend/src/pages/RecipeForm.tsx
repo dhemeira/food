@@ -8,6 +8,15 @@ import {
   type RecipeImage,
   type RecipeInput,
 } from '~/backend';
+import {
+  Button,
+  EmptyState,
+  ErrorState,
+  Input,
+  LoadingState,
+  Select,
+  Textarea,
+} from '~/components/ui';
 import { useRecipe } from '~/hooks/useRecipe';
 import { useRecipeImage } from '~/hooks/useRecipeImage';
 import { processRecipeImage } from '~/lib/image';
@@ -36,6 +45,9 @@ function RecipeEditor({ editing, initial }: RecipeEditorProps) {
   const [processing, setProcessing] = useState(false);
   const [removeImage, setRemoveImage] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [titleError, setTitleError] = useState<string | null>(null);
+  const [imageError, setImageError] = useState<string | null>(null);
+  const [saveError, setSaveError] = useState<string | null>(null);
 
   const { image: existingImage, loading: loadingImage } = useRecipeImage(
     editing ? initial?.id : undefined,
@@ -44,6 +56,7 @@ function RecipeEditor({ editing, initial }: RecipeEditorProps) {
 
   function handleFileChange(file: File | null): void {
     setProcessed(null);
+    setImageError(null);
 
     if (!file) return;
 
@@ -54,7 +67,7 @@ function RecipeEditor({ editing, initial }: RecipeEditorProps) {
         setProcessed(result);
       })
       .catch((error: unknown) => {
-        window.alert(error instanceof Error ? error.message : 'A kép feldolgozása nem sikerült.');
+        setImageError(error instanceof Error ? error.message : 'A kép feldolgozása nem sikerült.');
       })
       .finally(() => {
         setProcessing(false);
@@ -62,8 +75,14 @@ function RecipeEditor({ editing, initial }: RecipeEditorProps) {
   }
 
   async function handleSubmit(): Promise<void> {
+    const trimmedTitle = title.trim();
+    if (trimmedTitle === '') {
+      setTitleError('A recept címe kötelező.');
+      return;
+    }
+
     const input: RecipeInput = {
-      title: title.trim(),
+      title: trimmedTitle,
       description: description.trim() || null,
       calorieValue: calorieValue === '' ? null : Number(calorieValue),
       calorieUnit: calorieUnit === '' ? null : calorieUnit,
@@ -71,12 +90,8 @@ function RecipeEditor({ editing, initial }: RecipeEditorProps) {
       steps: parseSteps(stepsText),
     };
 
-    if (input.title === '') {
-      window.alert('A recept címe kötelező.');
-      return;
-    }
-
     setSaving(true);
+    setSaveError(null);
     try {
       if (editing && initial) {
         await backend.recipes.update(initial.id, input);
@@ -98,7 +113,7 @@ function RecipeEditor({ editing, initial }: RecipeEditorProps) {
         void navigate(`/recipe/${created.id}`);
       }
     } catch (error) {
-      window.alert(error instanceof Error ? error.message : 'Mentés közben hiba történt.');
+      setSaveError(error instanceof Error ? error.message : 'Mentés közben hiba történt.');
     } finally {
       setSaving(false);
     }
@@ -110,97 +125,90 @@ function RecipeEditor({ editing, initial }: RecipeEditorProps) {
         event.preventDefault();
         void handleSubmit();
       }}>
-      <label>
-        Cím
-        <input
-          value={title}
-          onChange={(event) => {
-            setTitle(event.target.value);
-          }}
-        />
-      </label>
+      <Input
+        label="Cím"
+        value={title}
+        error={titleError ?? undefined}
+        onChange={(event) => {
+          setTitle(event.target.value);
+          setTitleError(null);
+        }}
+      />
 
-      <label>
-        Leírás
-        <textarea
-          value={description}
-          onChange={(event) => {
-            setDescription(event.target.value);
-          }}
-        />
-      </label>
+      <Textarea
+        label="Leírás"
+        value={description}
+        onChange={(event) => {
+          setDescription(event.target.value);
+        }}
+      />
 
-      <label>
-        Kalória
-        <input
-          value={calorieValue}
-          onChange={(event) => {
-            setCalorieValue(event.target.value);
-          }}
-        />
-        <select
-          value={calorieUnit}
-          onChange={(event) => {
-            setCalorieUnit(event.target.value as CalorieUnit | '');
-          }}>
-          <option value="">—</option>
-          {CALORIE_UNITS.map((unit) => (
-            <option key={unit} value={unit}>
-              {unit}
-            </option>
-          ))}
-        </select>
-      </label>
+      <Input
+        label="Kalória"
+        value={calorieValue}
+        onChange={(event) => {
+          setCalorieValue(event.target.value);
+        }}
+      />
+      <Select
+        label="Mértékegység"
+        value={calorieUnit}
+        onChange={(event) => {
+          setCalorieUnit(event.target.value as CalorieUnit | '');
+        }}>
+        <option value="">—</option>
+        {CALORIE_UNITS.map((unit) => (
+          <option key={unit} value={unit}>
+            {unit}
+          </option>
+        ))}
+      </Select>
 
-      <label>
-        Hozzávalók (soronként: mennyiség|név)
-        <textarea
-          value={ingredientsText}
-          onChange={(event) => {
-            setIngredientsText(event.target.value);
-          }}
-        />
-      </label>
+      <Textarea
+        label="Hozzávalók (soronként: mennyiség|név)"
+        value={ingredientsText}
+        onChange={(event) => {
+          setIngredientsText(event.target.value);
+        }}
+      />
 
-      <label>
-        Elkészítés (soronként egy lépés)
-        <textarea
-          value={stepsText}
-          onChange={(event) => {
-            setStepsText(event.target.value);
-          }}
-        />
-      </label>
+      <Textarea
+        label="Elkészítés (soronként egy lépés)"
+        value={stepsText}
+        onChange={(event) => {
+          setStepsText(event.target.value);
+        }}
+      />
 
-      <label>
-        Kép
-        <input
-          type="file"
-          accept="image/*"
-          onChange={(event) => {
-            const file = event.target.files?.[0] ?? null;
-            event.target.value = '';
-            handleFileChange(file);
-          }}
-        />
-      </label>
+      <Input
+        label="Kép"
+        type="file"
+        accept="image/*"
+        onChange={(event) => {
+          const file = event.target.files?.[0] ?? null;
+          event.target.value = '';
+          handleFileChange(file);
+        }}
+      />
+      {imageError ? <p>{imageError}</p> : null}
 
-      {processing ? <p>Feldolgozás…</p> : null}
+      {processing ? <LoadingState label="Feldolgozás…" /> : null}
 
       {processed ? (
         <div>
           <img src={processed.full} alt="Új kép előnézete" width={400} height={160} />
-          <button
+          <Button
             type="button"
+            variant="secondary"
             onClick={() => {
               setProcessed(null);
             }}>
             × Kiválasztott kép törlése
-          </button>
+          </Button>
         </div>
       ) : editing && initial?.hasImage && !removeImage ? (
         loadingImage ? (
-          <p>Kép betöltése…</p>
+          <LoadingState label="Kép betöltése…" />
         ) : existingImage ? (
           <div>
             <img src={existingImage} alt="" width={400} height={160} />
@@ -223,9 +231,11 @@ function RecipeEditor({ editing, initial }: RecipeEditorProps) {
         </label>
       ) : null}
 
-      <button type="submit" disabled={saving || processing}>
+      {saveError ? <p>{saveError}</p> : null}
+
+      <Button type="submit" loading={saving} disabled={processing}>
         {saving ? 'Mentés…' : 'Mentés'}
-      </button>
+      </Button>
     </form>
   );
 }
@@ -233,14 +243,18 @@ function RecipeEditor({ editing, initial }: RecipeEditorProps) {
 function RecipeForm() {
   const { id } = useParams();
   const editing = Boolean(id);
-  const { recipe, loading } = useRecipe(editing ? id : undefined);
+  const { recipe, loading, error, reload } = useRecipe(editing ? id : undefined);
 
   if (editing && loading) {
-    return <p>Betöltés…</p>;
+    return <LoadingState />;
+  }
+
+  if (editing && error) {
+    return <ErrorState message={error} onRetry={reload} />;
   }
 
   if (editing && !recipe) {
-    return <p>A recept nem található.</p>;
+    return <EmptyState message="A recept nem található." />;
   }
 
   return <RecipeEditor key={recipe?.id ?? 'new'} editing={editing} initial={recipe} />;

@@ -1,5 +1,6 @@
 import { Navigate, useLocation } from 'react-router-dom';
 import type { ReactNode } from 'react';
+import { LoadingState } from '~/components/ui';
 import { useAuth } from '~/context/auth';
 
 interface ProtectedRouteProps {
@@ -12,7 +13,7 @@ function ProtectedRoute({ children, adminOnly = false }: ProtectedRouteProps) {
   const location = useLocation();
 
   if (isLoading) {
-    return <p>Betöltés…</p>;
+    return <LoadingState />;
   }
 
   if (!user) {

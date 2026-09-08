@@ -1,11 +1,12 @@
 import { Navigate } from 'react-router-dom';
+import { Button, LoadingState } from '~/components/ui';
 import { useAuth } from '~/context/auth';
 
 function Login() {
   const { user, isLoading, signIn } = useAuth();
 
   if (isLoading) {
-    return <p>Betöltés…</p>;
+    return <LoadingState />;
   }
 
   if (user) {
@@ -15,9 +16,13 @@ function Login() {
   return (
     <div>
       <h1>Bejelentkezés</h1>
-      <button type="button" onClick={() => void signIn()}>
+      <Button
+        type="button"
+        onClick={() => {
+          void signIn();
+        }}>
         Bejelentkezés Google fiókkal
-      </button>
+      </Button>
     </div>
   );
 }

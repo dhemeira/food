@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import type { Recipe } from '~/backend';
+import { EmptyState } from '~/components/ui';
 import { requestWakeLock } from '~/lib/wakeLock';
 
 interface RecipeListProps {
@@ -8,7 +9,7 @@ interface RecipeListProps {
 
 function RecipeList({ recipes }: RecipeListProps) {
   if (recipes.length === 0) {
-    return <p>Nincs találat.</p>;
+    return <EmptyState message="Nincs találat." />;
   }
 
   return (

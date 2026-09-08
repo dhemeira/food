@@ -1,30 +1,37 @@
+import { useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { backend } from '~/backend';
 import WakeLock from '~/components/WakeLock';
+import { Button, EmptyState, ErrorState, LoadingState } from '~/components/ui';
 import { useAuth } from '~/context/auth';
 import { useRecipe } from '~/hooks/useRecipe';
 import { useRecipeImage } from '~/hooks/useRecipeImage';
 
 function RecipeDetail() {
   const { id } = useParams();
-  const { recipe, loading } = useRecipe(id);
+  const { recipe, loading, error, reload } = useRecipe(id);
   const { image } = useRecipeImage(id, recipe?.hasImage ?? false);
   const { user, isAdmin } = useAuth();
   const navigate = useNavigate();
+  const [confirmingDelete, setConfirmingDelete] = useState(false);
 
   if (loading) {
-    return <p>Betöltés…</p>;
+    return <LoadingState />;
+  }
+
+  if (error) {
+    return <ErrorState message={error} onRetry={reload} />;
   }
 
   if (!recipe) {
-    return <p>A recept nem található.</p>;
+    return <EmptyState message="A recept nem található." />;
   }
 
   const current = recipe;
   const recipeId = id ?? '';
 
   async function handleDelete(): Promise<void> {
-    if (recipeId === '' || !window.confirm('Biztosan törlöd ezt a receptet?')) return;
+    if (recipeId === '') return;
 
     await backend.recipes.remove(recipeId);
     void navigate('/');
@@ -64,9 +71,36 @@ function RecipeDetail() {
 
       {user ? <Link to={`/recipe/${current.id}/edit`}>Szerkesztés</Link> : null}
       {isAdmin ? (
-        <button type="button" onClick={() => void handleDelete()}>
-          Törlés
-        </button>
+        confirmingDelete ? (
+          <div>
+            <span>Biztosan törlöd ezt a receptet?</span>
+            <Button
+              type="button"
+              variant="danger"
+              onClick={() => {
+                void handleDelete();
+              }}>
+              Törlés
+            </Button>
+            <Button
+              type="button"
+              variant="secondary"
+              onClick={() => {
+                setConfirmingDelete(false);
+              }}>
+              Mégse
+            </Button>
+          </div>
+        ) : (
+          <Button
+            type="button"
+            variant="danger"
+            onClick={() => {
+              setConfirmingDelete(true);
+            }}>
+            Törlés
+          </Button>
+        )
       ) : null}
     </div>
   );
