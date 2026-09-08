@@ -17,3 +17,8 @@
 - [x] Reset `useRecipe` / `useRecipeImage` state when `id` changes (avoids stale recipe/image flash).
 - [x] Add proper error/empty states to `useRecipeImage` (currently swallows errors silently).
 - [x] Build shared UI primitives (Button / Input / Textarea / Select / Label / Spinner) — forms are unstyled today.
+- [ ] Validate the calorie input as a number (`Number('abc')` yields `NaN`, which Firestore rejects on save).
+- [ ] Add error handling to `useRecipes` (surface Firestore snapshot errors, not just loading).
+- [ ] Code-split / lazy-load routes to shrink the initial bundle (build warns ~865 KB chunk).
+- [ ] Show the recipe author on the list view (currently only on the detail page).
+- [ ] Show a hint on the detail page when ingredients/steps are empty (currently renders empty lists).
