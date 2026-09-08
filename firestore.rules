@@ -52,8 +52,12 @@ service cloud.firestore {
     match /users/{uid} {
       allow read: if isSignedIn();
       allow create: if request.auth.uid == uid
-        && request.resource.data.role == 'family';
-      allow update, delete: if isAdmin();
+        && request.resource.data.keys().hasOnly(['displayName', 'role'])
+        && request.resource.data.get('role', null) == null;
+      allow update: if isAdmin()
+        || (request.auth.uid == uid
+            && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['displayName']));
+      allow delete: if isAdmin();
     }
   }
 }

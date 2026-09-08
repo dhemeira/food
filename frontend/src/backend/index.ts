@@ -3,7 +3,15 @@ import { initFirebase } from './firebase/app';
 import { firebaseConfig } from './firebase/config';
 import { FirebaseBackend } from './firebase/FirebaseBackend';
 
-export type { AuthApi, Backend, ImagesApi, RecipesApi, Unsubscribe, UsersApi } from './Backend';
+export type {
+  AuthApi,
+  Backend,
+  ImagesApi,
+  RecipesApi,
+  Unsubscribe,
+  UserProfile,
+  UsersApi,
+} from './Backend';
 export type {
   CalorieUnit,
   Ingredient,

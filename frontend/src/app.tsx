@@ -9,6 +9,7 @@ import { AuthProvider } from '~/context/AuthProvider';
 import Home from '~/pages/Home';
 import Login from '~/pages/Login';
 import NotFound from '~/pages/NotFound';
+import Profile from '~/pages/Profile';
 import RecipeDetail from '~/pages/RecipeDetail';
 import RecipeForm from '~/pages/RecipeForm';
 
@@ -26,6 +27,14 @@ function App() {
                 <Route path="/" element={<Home />} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/recipe/:id" element={<RecipeDetail />} />
+                <Route
+                  path="/profile"
+                  element={
+                    <ProtectedRoute>
+                      <Profile />
+                    </ProtectedRoute>
+                  }
+                />
                 <Route
                   path="/recipe/new"
                   element={

@@ -9,7 +9,7 @@ function Navbar() {
       <Link to="/">Receptek</Link>
       {user ? (
         <>
-          <span>{user.displayName ?? user.email ?? user.id}</span>
+          <Link to="/profile">{user.displayName ?? user.email ?? user.id}</Link>
           <Link to="/recipe/new">Új recept</Link>
           <button type="button" onClick={() => void signOut()}>
             Kijelentkezés

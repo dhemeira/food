@@ -6,12 +6,14 @@ import { Button, EmptyState, ErrorState, LoadingState } from '~/components/ui';
 import { useAuth } from '~/context/auth';
 import { useRecipe } from '~/hooks/useRecipe';
 import { useRecipeImage } from '~/hooks/useRecipeImage';
+import { useUserDisplayName } from '~/hooks/useUserDisplayName';
 
 function RecipeDetail() {
   const { id } = useParams();
   const { recipe, loading, error, reload } = useRecipe(id);
   const { image } = useRecipeImage(id, recipe?.hasImage ?? false);
   const { user, isAdmin } = useAuth();
+  const authorName = useUserDisplayName(recipe?.createdBy);
   const navigate = useNavigate();
   const [confirmingDelete, setConfirmingDelete] = useState(false);
 
@@ -42,6 +44,7 @@ function RecipeDetail() {
       <WakeLock />
       <h1>{current.title}</h1>
       {current.description ? <p>{current.description}</p> : null}
+      {authorName ? <p>Készítette: {authorName}</p> : null}
       {current.hasImage && image ? (
         <img src={image} alt={current.title} width={1000} height={400} />
       ) : null}

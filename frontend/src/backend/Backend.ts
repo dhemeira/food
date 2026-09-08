@@ -19,7 +19,13 @@ export interface RecipesApi {
 }
 
 export interface UsersApi {
-  watchRole(uid: string, callback: (role: Role | null) => void): Unsubscribe;
+  watchProfile(uid: string, callback: (profile: UserProfile | null) => void): Unsubscribe;
+  setDisplayName(uid: string, displayName: string | null): Promise<void>;
+}
+
+export interface UserProfile {
+  role: Role | null;
+  displayName: string | null;
 }
 
 export interface ImagesApi {

@@ -18,9 +18,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         return;
       }
 
-      const base = { id: authUser.id, email: authUser.email, displayName: authUser.displayName };
-      roleUnsubscribeRef.current = backend.users.watchRole(authUser.id, (role) => {
-        setUser({ ...base, role });
+      roleUnsubscribeRef.current = backend.users.watchProfile(authUser.id, (profile) => {
+        setUser({
+          id: authUser.id,
+          email: authUser.email,
+          displayName: profile?.displayName ?? authUser.displayName,
+          role: profile?.role ?? null,
+        });
         setIsLoading(false);
       });
     });

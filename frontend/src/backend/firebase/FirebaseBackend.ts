@@ -135,15 +135,24 @@ function createUsersApi(firestore: Firestore): UsersApi {
   const users = collection(firestore, USERS);
 
   return {
-    watchRole(uid, callback): Unsubscribe {
+    watchProfile(uid, callback): Unsubscribe {
       return onSnapshot(doc(users, uid), (snapshot) => {
         if (!snapshot.exists()) {
           callback(null);
           return;
         }
-        const role = snapshot.data().role as unknown;
-        callback(role === 'admin' || role === 'family' ? role : null);
+        const data = snapshot.data();
+        const role = data.role as unknown;
+        const displayName = data.displayName as unknown;
+        callback({
+          role: role === 'admin' || role === 'family' ? role : null,
+          displayName: typeof displayName === 'string' ? displayName : null,
+        });
       });
+    },
+
+    async setDisplayName(uid, displayName) {
+      await setDoc(doc(users, uid), { displayName }, { merge: true });
     },
   };
 }
