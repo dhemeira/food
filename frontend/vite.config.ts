@@ -4,6 +4,10 @@ import tailwindcss from '@tailwindcss/vite';
 
 export default defineConfig({
   plugins: [react(), tailwindcss()],
+  server: {
+    port: 5050,
+    allowedHosts: ['test.dhemeira.hu'],
+  },
   resolve: {
     alias: {
       '~': import.meta.dirname + '/src',
