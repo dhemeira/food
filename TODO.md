@@ -22,3 +22,5 @@
 - [ ] Code-split / lazy-load routes to shrink the initial bundle (build warns ~865 KB chunk).
 - [ ] Show the recipe author on the list view (currently only on the detail page).
 - [ ] Show a hint on the detail page when ingredients/steps are empty (currently renders empty lists).
+- [ ] Make layout max width bigger.
+- [ ] If possible make WakeLock a one file component so it is easy to drag and drop into a project.
