@@ -1,6 +1,7 @@
 import { useCallback, useSyncExternalStore } from 'react';
 import {
   isWakeLockActive,
+  isWakeLockEverActive,
   isWakeLockSupported,
   releaseWakeLock,
   requestWakeLock,
@@ -10,6 +11,7 @@ import {
 interface UseWakeLockResult {
   isSupported: boolean;
   isActive: boolean;
+  everActive: boolean;
   request: () => Promise<boolean>;
   release: () => Promise<void>;
 }
@@ -17,9 +19,10 @@ interface UseWakeLockResult {
 export function useWakeLock(): UseWakeLockResult {
   const isSupported = isWakeLockSupported();
   const isActive = useSyncExternalStore(subscribeWakeLock, isWakeLockActive);
+  const everActive = useSyncExternalStore(subscribeWakeLock, isWakeLockEverActive);
 
   const request = useCallback(() => requestWakeLock(), []);
   const release = useCallback(() => releaseWakeLock(), []);
 
-  return { isSupported, isActive, request, release };
+  return { isSupported, isActive, everActive, request, release };
 }

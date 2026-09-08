@@ -1,5 +1,6 @@
 let sentinel: WakeLockSentinel | null = null;
 let active = false;
+let everActive = false;
 let pendingRequest: Promise<boolean> | null = null;
 let epoch = 0;
 
@@ -15,12 +16,27 @@ function setActive(next: boolean): void {
   }
 }
 
+function setEverActive(): void {
+  if (everActive) return;
+  everActive = true;
+  for (const listener of [...listeners]) {
+    listener();
+  }
+}
+
 export function isWakeLockSupported(): boolean {
   return supported;
 }
 
 export function isWakeLockActive(): boolean {
   return active;
+}
+
+// True if the lock was ever successfully held in this page session. Used to
+// keep the UI calm: the enhanced "tap to enable" hint should only appear before
+// the user has ever engaged, not on every transient browser-forced release.
+export function isWakeLockEverActive(): boolean {
+  return everActive;
 }
 
 export function subscribeWakeLock(listener: () => void): () => void {
@@ -30,35 +46,52 @@ export function subscribeWakeLock(listener: () => void): () => void {
   };
 }
 
+function delay(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
 async function doRequest(): Promise<boolean> {
   const requestEpoch = epoch;
+  let lastError: unknown;
 
-  try {
-    const s = await navigator.wakeLock.request('screen');
+  // Re-requesting right after a tab regains visibility can race with the
+  // browser's "is the page visible yet?" check and throw a transient
+  // NotAllowedError even though visibilityState is already 'visible'. Retry a
+  // couple of times with a small delay; the page is fully active by then.
+  for (let attempt = 0; attempt < 3; attempt++) {
+    if (requestEpoch !== epoch) return false;
 
-    // A release() happened while we were waiting - don't re-activate.
-    if (requestEpoch !== epoch) {
-      await s.release().catch(() => undefined);
-      return false;
-    }
+    try {
+      const s = await navigator.wakeLock.request('screen');
 
-    sentinel = s;
-    setActive(true);
-
-    s.addEventListener('release', () => {
-      if (sentinel === s) {
-        sentinel = null;
-        setActive(false);
+      // A release() happened while we were waiting - don't re-activate.
+      if (requestEpoch !== epoch) {
+        await s.release().catch(() => undefined);
+        return false;
       }
-    });
-    return true;
-  } catch (error) {
-    console.error('[wakeLock] request failed:', error);
-    setActive(false);
-    return false;
-  } finally {
-    pendingRequest = null;
+
+      sentinel = s;
+      setActive(true);
+      setEverActive();
+
+      s.addEventListener('release', () => {
+        if (sentinel === s) {
+          sentinel = null;
+          setActive(false);
+        }
+      });
+      return true;
+    } catch (error) {
+      lastError = error;
+      // The page is genuinely hidden, so retrying now is pointless.
+      if (document.visibilityState !== 'visible') break;
+      await delay(300);
+    }
   }
+
+  console.error('[wakeLock] request failed:', lastError);
+  setActive(false);
+  return false;
 }
 
 // iOS/WebKit only grants a screen wake lock while the caller holds transient
@@ -69,7 +102,9 @@ export function requestWakeLock(): Promise<boolean> {
   if (sentinel) return Promise.resolve(true);
   if (pendingRequest) return pendingRequest;
 
-  pendingRequest = doRequest();
+  pendingRequest = doRequest().finally(() => {
+    pendingRequest = null;
+  });
   return pendingRequest;
 }
 

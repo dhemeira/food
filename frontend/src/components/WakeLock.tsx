@@ -2,26 +2,37 @@ import { useEffect } from 'react';
 import { useWakeLock } from '~/hooks/useWakeLock';
 
 function WakeLock() {
-  const { isSupported, isActive, request } = useWakeLock();
-  const enlarge = isSupported && !isActive;
+  const { isSupported, isActive, everActive, request } = useWakeLock();
+  // The enlarged hint only appears before the lock has ever been held. After a
+  // browser-forced release (e.g. tabbing away) the UI stays calm and silently
+  // re-acquires, avoiding a grow/shrink jump on every tab switch.
+  const enlarge = isSupported && !isActive && !everActive;
 
   // Fallback: normally the lock was acquired by the recipe-card tap. This only
-  // runs when it wasn't (e.g. the page was opened directly). It has no cleanup,
-  // so React StrictMode's double-mount can't drop an already-acquired lock.
+  // runs when it wasn't (e.g. the page was opened directly), and only while the
+  // page is actually visible. It has no cleanup, so React StrictMode's
+  // double-mount can't drop an already-acquired lock. Calling request() from a
+  // hidden page throws a NotAllowedError, so it's skipped here.
   useEffect(() => {
-    if (isSupported && !isActive) {
-      void request();
+    if (!isSupported) {
+      return;
     }
-  }, [isSupported, isActive, request]);
+    if (document.visibilityState !== 'visible') {
+      return;
+    }
+    void request();
+  }, [isSupported, request]);
 
   // Re-acquire after the tab regains visibility if the system dropped the lock.
+  // request() is a no-op when the lock is already held, so the extra call is
+  // harmless and covers the case where the browser fired release implicitly.
   useEffect(() => {
     if (!isSupported) {
       return;
     }
 
     function handleVisibilityChange(): void {
-      if (document.visibilityState === 'visible' && !isActive) {
+      if (document.visibilityState === 'visible') {
         void request();
       }
     }
@@ -30,7 +41,7 @@ function WakeLock() {
     return () => {
       document.removeEventListener('visibilitychange', handleVisibilityChange);
     };
-  }, [isSupported, isActive, request]);
+  }, [isSupported, request]);
 
   return (
     <div className="fixed top-2 right-2 z-50">
