@@ -4,6 +4,7 @@ const FULL_WIDTH = 1000;
 const FULL_HEIGHT = 400;
 const THUMB_WIDTH = 400;
 const THUMB_HEIGHT = 160;
+// Firestore caps a document at 1 MiB; keep the two data URIs comfortably under it.
 const MAX_COMBINED_LENGTH = 900_000;
 
 interface SourceRect {

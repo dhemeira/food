@@ -5,12 +5,12 @@ import { AuthContext, type AuthContextValue } from '~/context/auth';
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const roleUnsubscribeRef = useRef<Unsubscribe | null>(null);
+  const profileUnsubscribeRef = useRef<Unsubscribe | null>(null);
 
   useEffect(() => {
     const unsubscribeAuth = backend.auth.onAuthChange((authUser) => {
-      roleUnsubscribeRef.current?.();
-      roleUnsubscribeRef.current = null;
+      profileUnsubscribeRef.current?.();
+      profileUnsubscribeRef.current = null;
 
       if (authUser === null) {
         setUser(null);
@@ -18,7 +18,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         return;
       }
 
-      roleUnsubscribeRef.current = backend.users.watchProfile(authUser.id, (profile) => {
+      profileUnsubscribeRef.current = backend.users.watchProfile(authUser.id, (profile) => {
         setUser({
           id: authUser.id,
           email: authUser.email,
@@ -31,7 +31,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     return () => {
       unsubscribeAuth();
-      roleUnsubscribeRef.current?.();
+      profileUnsubscribeRef.current?.();
     };
   }, []);
 

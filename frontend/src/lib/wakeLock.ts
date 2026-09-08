@@ -2,6 +2,7 @@ let sentinel: WakeLockSentinel | null = null;
 let active = false;
 let everActive = false;
 let pendingRequest: Promise<boolean> | null = null;
+// Bumped on release so an in-flight request can detect it and not re-activate.
 let epoch = 0;
 
 const supported = typeof navigator !== 'undefined' && 'wakeLock' in navigator;
@@ -32,9 +33,8 @@ export function isWakeLockActive(): boolean {
   return active;
 }
 
-// True if the lock was ever successfully held in this page session. Used to
-// keep the UI calm: the enhanced "tap to enable" hint should only appear before
-// the user has ever engaged, not on every transient browser-forced release.
+// Whether the lock was ever held in this page session. The "tap to enable" hint
+// should only show before first engagement, not on every browser-forced release.
 export function isWakeLockEverActive(): boolean {
   return everActive;
 }
@@ -54,17 +54,14 @@ async function doRequest(): Promise<boolean> {
   const requestEpoch = epoch;
   let lastError: unknown;
 
-  // Re-requesting right after a tab regains visibility can race with the
-  // browser's "is the page visible yet?" check and throw a transient
-  // NotAllowedError even though visibilityState is already 'visible'. Retry a
-  // couple of times with a small delay; the page is fully active by then.
+  // Right after a tab regains visibility the browser may still report the page
+  // as hidden, throwing a transient NotAllowedError. Retry briefly until it settles.
   for (let attempt = 0; attempt < 3; attempt++) {
     if (requestEpoch !== epoch) return false;
 
     try {
       const s = await navigator.wakeLock.request('screen');
 
-      // A release() happened while we were waiting - don't re-activate.
       if (requestEpoch !== epoch) {
         await s.release().catch(() => undefined);
         return false;
@@ -95,8 +92,7 @@ async function doRequest(): Promise<boolean> {
 }
 
 // iOS/WebKit only grants a screen wake lock while the caller holds transient
-// user activation, so this must be called from a click/tap handler, not from an
-// effect or timer.
+// user activation, so this must be called from a click/tap handler, not an effect.
 export function requestWakeLock(): Promise<boolean> {
   if (!supported) return Promise.resolve(false);
   if (sentinel) return Promise.resolve(true);

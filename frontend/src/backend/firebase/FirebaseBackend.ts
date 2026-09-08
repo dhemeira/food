@@ -109,6 +109,7 @@ function createRecipesApi(auth: Auth, firestore: Firestore): RecipesApi {
         updatedAt: serverTimestamp(),
       });
 
+      // Read back to get the server-resolved timestamps for the returned Recipe.
       const created = await getDoc(ref);
       const data = created.data();
       if (!data) throw new Error('Failed to read created recipe');

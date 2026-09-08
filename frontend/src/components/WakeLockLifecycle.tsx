@@ -2,6 +2,7 @@ import { useEffect, useRef } from 'react';
 import { useLocation } from 'react-router-dom';
 import { releaseWakeLock } from '~/lib/wakeLock';
 
+// Matches /recipe/:id but not /recipe/new or /recipe/:id/edit.
 const DETAIL_PATH = /^\/recipe\/(?!new$)[^/]+$/;
 
 function WakeLockLifecycle() {

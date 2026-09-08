@@ -3,16 +3,14 @@ import { useWakeLock } from '~/hooks/useWakeLock';
 
 function WakeLock() {
   const { isSupported, isActive, everActive, request } = useWakeLock();
-  // The enlarged hint only appears before the lock has ever been held. After a
-  // browser-forced release (e.g. tabbing away) the UI stays calm and silently
-  // re-acquires, avoiding a grow/shrink jump on every tab switch.
+  // Only prompt before the lock has ever been held; after a browser-forced
+  // release (e.g. tabbing away) it re-acquires silently without growing again.
   const enlarge = isSupported && !isActive && !everActive;
 
-  // Fallback: normally the lock was acquired by the recipe-card tap. This only
-  // runs when it wasn't (e.g. the page was opened directly), and only while the
-  // page is actually visible. It has no cleanup, so React StrictMode's
-  // double-mount can't drop an already-acquired lock. Calling request() from a
-  // hidden page throws a NotAllowedError, so it's skipped here.
+  // Fallback when the lock wasn't acquired by the recipe-card tap (e.g. the
+  // detail page was opened directly). No cleanup, so StrictMode's double-mount
+  // can't drop an already-acquired lock. Only requests while visible, since a
+  // hidden page throws NotAllowedError.
   useEffect(() => {
     if (!isSupported) {
       return;
@@ -23,9 +21,7 @@ function WakeLock() {
     void request();
   }, [isSupported, request]);
 
-  // Re-acquire after the tab regains visibility if the system dropped the lock.
-  // request() is a no-op when the lock is already held, so the extra call is
-  // harmless and covers the case where the browser fired release implicitly.
+  // Re-acquire when the tab regains visibility after the system dropped the lock.
   useEffect(() => {
     if (!isSupported) {
       return;
