@@ -11,6 +11,7 @@ import {
   type Step,
 } from '~/backend';
 import { useRecipe } from '~/hooks/useRecipe';
+import { useRecipeImage } from '~/hooks/useRecipeImage';
 import { processRecipeImage } from '~/lib/image';
 
 function parseIngredients(text: string): Ingredient[] {
@@ -62,11 +63,17 @@ function RecipeEditor({ editing, initial }: RecipeEditorProps) {
   const [removeImage, setRemoveImage] = useState(false);
   const [saving, setSaving] = useState(false);
 
+  const { image: existingImage, loading: loadingImage } = useRecipeImage(
+    editing ? initial?.id : undefined,
+    editing && Boolean(initial?.hasImage)
+  );
+
   function handleFileChange(file: File | null): void {
     setProcessed(null);
 
     if (!file) return;
 
+    setRemoveImage(false);
     setProcessing(true);
     processRecipeImage(file)
       .then((result) => {
@@ -197,18 +204,43 @@ function RecipeEditor({ editing, initial }: RecipeEditorProps) {
           type="file"
           accept="image/*"
           onChange={(event) => {
-            handleFileChange(event.target.files?.[0] ?? null);
+            const file = event.target.files?.[0] ?? null;
+            event.target.value = '';
+            handleFileChange(file);
           }}
         />
       </label>
 
-      {processed ? <img src={processed.full} alt="Előnézet" width={400} height={160} /> : null}
+      {processing ? <p>Feldolgozás…</p> : null}
+
+      {processed ? (
+        <div>
+          <img src={processed.full} alt="Új kép előnézete" width={400} height={160} />
+          <button
+            type="button"
+            onClick={() => {
+              setProcessed(null);
+            }}>
+            × Kiválasztott kép törlése
+          </button>
+        </div>
+      ) : editing && initial?.hasImage && !removeImage ? (
+        loadingImage ? (
+          <p>Kép betöltése…</p>
+        ) : existingImage ? (
+          <div>
+            <img src={existingImage} alt="" width={400} height={160} />
+            <span>Jelenlegi kép</span>
+          </div>
+        ) : null
+      ) : null}
 
       {editing && initial?.hasImage ? (
         <label>
           <input
             type="checkbox"
             checked={removeImage}
+            disabled={processing || processed !== null}
             onChange={(event) => {
               setRemoveImage(event.target.checked);
             }}
