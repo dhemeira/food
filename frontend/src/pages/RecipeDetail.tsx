@@ -1,5 +1,6 @@
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { backend } from '~/backend';
+import WakeLock from '~/components/WakeLock';
 import { useAuth } from '~/context/auth';
 import { useRecipe } from '~/hooks/useRecipe';
 import { useRecipeImage } from '~/hooks/useRecipeImage';
@@ -31,6 +32,7 @@ function RecipeDetail() {
 
   return (
     <div>
+      <WakeLock />
       <h1>{current.title}</h1>
       {current.description ? <p>{current.description}</p> : null}
       {current.hasImage && image ? (
