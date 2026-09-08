@@ -4,40 +4,14 @@ import {
   backend,
   CALORIE_UNITS,
   type CalorieUnit,
-  type Ingredient,
   type Recipe,
   type RecipeImage,
   type RecipeInput,
-  type Step,
 } from '~/backend';
 import { useRecipe } from '~/hooks/useRecipe';
 import { useRecipeImage } from '~/hooks/useRecipeImage';
 import { processRecipeImage } from '~/lib/image';
-
-function parseIngredients(text: string): Ingredient[] {
-  return text
-    .split('\n')
-    .map((line) => line.trim())
-    .filter(Boolean)
-    .map((line) => {
-      const separator = line.indexOf('|');
-      if (separator === -1) {
-        return { quantity: '', name: line };
-      }
-      return {
-        quantity: line.slice(0, separator).trim(),
-        name: line.slice(separator + 1).trim(),
-      };
-    });
-}
-
-function parseSteps(text: string): Step[] {
-  return text
-    .split('\n')
-    .map((line) => line.trim())
-    .filter(Boolean)
-    .map((instruction) => ({ instruction }));
-}
+import { parseIngredients, parseSteps } from '~/lib/recipeParsing';
 
 interface RecipeEditorProps {
   editing: boolean;

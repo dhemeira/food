@@ -14,6 +14,14 @@ export function useRecipe(id: string | undefined): UseRecipeResult {
   const [error, setError] = useState<string | null>(null);
   const [version, setVersion] = useState(0);
 
+  const [previousId, setPreviousId] = useState(id);
+  if (previousId !== id) {
+    setPreviousId(id);
+    setRecipe(null);
+    setError(null);
+    setLoading(id !== undefined);
+  }
+
   useEffect(() => {
     if (!id) return;
 

@@ -1,7 +1,6 @@
 import type { DocumentData } from 'firebase/firestore';
+import { CALORIE_UNITS } from '../types';
 import type { CalorieUnit, Ingredient, Recipe, RecipeInput, Step } from '../types';
-
-const CALORIE_UNITS: CalorieUnit[] = ['kcal/100g', 'kcal/adag', 'kcal/db'];
 
 function isCalorieUnit(value: unknown): value is CalorieUnit {
   return CALORIE_UNITS.includes(value as CalorieUnit);

@@ -14,7 +14,8 @@ export interface FirebaseServices {
 }
 
 export function initFirebase(config: FirebaseConfig): FirebaseServices {
-  const app = getApps().length > 0 ? getApps()[0] : initializeApp(config);
+  const existingApp = getApps()[0];
+  const app = existingApp ?? initializeApp(config);
 
   const auth = getAuth(app);
   const firestore = initializeFirestore(app, {
