@@ -1,25 +1,19 @@
 # TODO
 
-- [x] Edit page (`/recipe/:id/edit`) should show the current image when opened (not only the preview after picking a new file).
-- [x] On the edit page, add an X to the newly selected image preview so it can be cleared again (so it isn't added on save).
-- [x] When a new image is selected on the edit page, disable the "remove image" checkbox (a new image and removal are mutually exclusive).
-- [x] Replace deprecated `<meta name="apple-mobile-web-app-capable" content="yes">` in `frontend/index.html` with `<meta name="mobile-web-app-capable" content="yes">` (console deprecation warning).
-- [x] Use `localhost:5050` for the dev server (set the port in `frontend/vite.config.ts`).
-- [x] Investigate intermittent console error: `TypeError: Cannot read properties of undefined (reading 'startTime')` at `reportAllChanges`. Happens when pressing edit button. **Finding:** known upstream `web-vitals` bug (GoogleChrome/web-vitals#792), thrown during soft navigations when something initializes web-vitals with `reportAllChanges`. The app never imports `web-vitals`/`@firebase/performance` (only `firebase/auth` + `firebase/firestore`), so it is not thrown by app code - it comes from an external tool/extension. Not fixable in the app.
-- [ ] Migrate navbar from legacy version
+- [x] Migrate navbar from legacy version
 - [ ] Split big components where it makes sense
-- [x] Enable TypeScript `strict` mode in `tsconfig.app.json` / `tsconfig.node.json` (compiles clean today).
-- [x] Fix `getApps()[0]` possibly-undefined in `backend/firebase/app.ts`.
-- [x] Add a root `ErrorBoundary` so one component crash doesn't blank the whole app.
-- [x] Replace `window.alert`/`window.confirm` with inline form errors and a proper confirm dialog.
-- [x] Extract pure helpers (`parseIngredients`, `parseSteps`, search `matches`, image `coverRect`) into `lib/`.
-- [x] Deduplicate `CALORIE_UNITS` (import from `types.ts` in `converters.ts`).
-- [x] Reset `useRecipe` / `useRecipeImage` state when `id` changes (avoids stale recipe/image flash).
-- [x] Add proper error/empty states to `useRecipeImage` (currently swallows errors silently).
-- [x] Build shared UI primitives (Button / Input / Textarea / Select / Label / Spinner) — forms are unstyled today.
 - [ ] Validate the calorie input as a number (`Number('abc')` yields `NaN`, which Firestore rejects on save).
-- [ ] Add error handling to `useRecipes` (surface Firestore snapshot errors, not just loading).
 - [ ] Code-split / lazy-load routes to shrink the initial bundle (build warns ~865 KB chunk).
 - [ ] Show the recipe author on the list view (currently only on the detail page).
 - [ ] Show a hint on the detail page when ingredients/steps are empty (currently renders empty lists).
 - [ ] Make layout max width bigger.
+- [ ] Port search field for both home page and desktop navbar from legacy.
+- [ ] Change navbar and tabbar to use the actual menu items ("\<\>" is only visible for logged in users):
+  - Home, \<New\>, Search, \<Daily menu\>, Avatar/Login
+  - Brand, Search, \<New\>, Avatar/Login
+- [ ] Fix the tab bar pill animation on iOS (it jumps to the target instead of sliding, and the squash effect is lost).
+- [ ] Fix the search keyboard not opening on iOS when the search tab is tapped from another page (the input mounts after the tap gesture ends).
+- [ ] On recipe edit and add page change the steps and ingredients from a textarea to a list of text fields that can be added and deleted.
+- [ ] On add and edit page change the file upload to contain the image inside and clicking that should bring up the dialog.
+- [ ] Publish npm ui library package.
+- [ ] Change english defaults to hungarian.
