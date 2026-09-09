@@ -12,5 +12,6 @@ export default defineConfig({
     alias: {
       '~': import.meta.dirname + '/src',
     },
+    dedupe: ['react', 'react-dom', 'react/jsx-runtime'],
   },
 });
