@@ -1,4 +1,9 @@
-import { useLayoutEffect, useRef, type HTMLAttributes, type ReactNode } from 'react';
+import {
+  useLayoutEffect,
+  useRef,
+  type HTMLAttributes,
+  type ReactNode,
+} from "react";
 
 const CHIP_PADDING = 6;
 const px = (n: number): string => `${n}px`;
@@ -14,12 +19,19 @@ export interface TabBarItemProps extends HTMLAttributes<HTMLSpanElement> {
   activeIcon?: ReactNode;
 }
 
-function TabBarItem({ active = false, icon, activeIcon, className, ...rest }: TabBarItemProps) {
+function TabBarItem({
+  active = false,
+  icon,
+  activeIcon,
+  className,
+  ...rest
+}: TabBarItemProps) {
   return (
     <span
-      data-active={active ? 'true' : undefined}
-      className={`flex h-full w-full items-center justify-center ${className ?? ''}`}
-      {...rest}>
+      data-active={active ? "true" : undefined}
+      className={`flex h-full w-full items-center justify-center ${className ?? ""}`}
+      {...rest}
+    >
       {active && activeIcon ? activeIcon : icon}
     </span>
   );
@@ -41,9 +53,15 @@ function TabBarItem({ active = false, icon, activeIcon, className, ...rest }: Ta
  * The indicator slides to whichever child has `data-active="true"`. `TabBar.Item`
  * sets that attribute from its `active` prop, but any child can set it directly.
  */
-function TabBarComponent({ children, className, indicatorClassName, ...rest }: TabBarProps) {
+function TabBarComponent({
+  children,
+  className,
+  indicatorClassName,
+  ...rest
+}: TabBarProps) {
   const navRef = useRef<HTMLElement | null>(null);
   const pillRef = useRef<HTMLSpanElement | null>(null);
+  const squashAnimRef = useRef<Animation | null>(null);
   const firstRun = useRef(true);
 
   useLayoutEffect(() => {
@@ -51,21 +69,37 @@ function TabBarComponent({ children, className, indicatorClassName, ...rest }: T
     const pill = pillRef.current;
     if (!nav || !pill) return;
 
+    const squash = () => {
+      squashAnimRef.current?.cancel();
+      if (!pill.animate) return;
+      squashAnimRef.current = pill.animate(
+        [
+          { scale: "1 1" },
+          { scale: "1.02 0.925", offset: 0.2, easing: "ease-in-out" },
+          { scale: "1.005 1.02", offset: 0.85, easing: "ease-out" },
+          { scale: "1 1" },
+        ],
+        { duration: 400 }
+      );
+    };
+
     const measure = () => {
       const activeEl = nav.querySelector<HTMLElement>('[data-active="true"]');
       if (!activeEl) {
-        pill.style.opacity = '0';
+        // No active slot (e.g. a route without a tab): keep the pill in its
+        // last position instead of hiding it.
         return;
       }
       const navRect = nav.getBoundingClientRect();
       const elRect = activeEl.getBoundingClientRect();
 
       pill.style.transition = firstRun.current
-        ? 'none'
-        : 'opacity 200ms ease, transform 400ms cubic-bezier(0.68, -0.55, 0.265, 1.55)';
+        ? "none"
+        : "opacity 200ms ease, transform 400ms cubic-bezier(0.175, 0.885, 0.32, 1.15)";
+      if (!firstRun.current) squash();
       firstRun.current = false;
 
-      pill.style.opacity = '1';
+      pill.style.opacity = "1";
       pill.style.width = px(elRect.width + CHIP_PADDING * 2);
       pill.style.height = px(elRect.height);
       pill.style.transform = `translate(${elRect.left - navRect.left - CHIP_PADDING}px, ${
@@ -81,22 +115,23 @@ function TabBarComponent({ children, className, indicatorClassName, ...rest }: T
     const mutationObserver = new MutationObserver(() => measure());
     mutationObserver.observe(nav, {
       attributes: true,
-      attributeFilter: ['data-active'],
+      attributeFilter: ["data-active"],
       subtree: true,
     });
 
     return () => {
+      squashAnimRef.current?.cancel();
       resizeObserver.disconnect();
       mutationObserver.disconnect();
     };
   }, [children]);
 
   return (
-    <nav ref={navRef} className={`relative flex ${className ?? ''}`} {...rest}>
+    <nav ref={navRef} className={`relative flex ${className ?? ""}`} {...rest}>
       <span
         ref={pillRef}
         aria-hidden="true"
-        className={`bg-ui-text/20 pointer-events-none absolute top-0 left-0 rounded-full opacity-0 ${indicatorClassName ?? ''}`}
+        className={`bg-ui-text/20 pointer-events-none absolute top-0 left-0 rounded-full opacity-0 ${indicatorClassName ?? ""}`}
       />
       {children}
     </nav>
