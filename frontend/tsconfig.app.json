@@ -19,7 +19,8 @@
     "erasableSyntaxOnly": true,
     "noFallthroughCasesInSwitch": true,
     "paths": {
-      "~/*": ["./src/*"]
+      "~/*": ["./src/*"],
+      "@dhemeira/ui": ["../packages/ui/src/source.ts"]
     }
   },
   "include": ["src"]

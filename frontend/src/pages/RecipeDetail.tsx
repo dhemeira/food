@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { backend } from '~/backend';
 import WakeLock from '~/components/WakeLock';
@@ -15,7 +14,6 @@ function RecipeDetail() {
   const { user, isAdmin } = useAuth();
   const authorName = useUserDisplayName(recipe?.createdBy);
   const navigate = useNavigate();
-  const [confirmingDelete, setConfirmingDelete] = useState(false);
 
   if (loading) {
     return <LoadingState />;
@@ -78,61 +76,28 @@ function RecipeDetail() {
         </Button>
       ) : null}
       {isAdmin ? (
-        confirmingDelete ? (
-          <div>
-            <span>Biztosan törlöd ezt a receptet?</span>
-            <Button
-              type="button"
-              variant="danger-full"
-              small
-              onClick={() => {
-                void handleDelete();
-              }}>
+        <Modal
+          title="Törlés"
+          trigger={(open) => (
+            <Button variant="danger" block onClick={open}>
               Törlés
             </Button>
-            <Button
-              type="button"
-              variant="primary"
-              small
-              onClick={() => {
-                setConfirmingDelete(false);
-              }}>
-              Mégse
-            </Button>
-          </div>
-        ) : (
+          )}>
+          <p>Biztos törölni akarod?</p>
+          <Button variant="secondary" small data-modal-close>
+            Mégse
+          </Button>
           <Button
-            type="button"
-            variant="danger"
+            variant="danger-full"
             small
+            data-modal-close
             onClick={() => {
-              setConfirmingDelete(true);
+              void handleDelete();
             }}>
             Törlés
           </Button>
-        )
+        </Modal>
       ) : null}
-      <Modal
-        title="Törlés"
-        trigger={(open) => (
-          <Button variant="danger" block onClick={open}>
-            Törlés
-          </Button>
-        )}>
-        <p>Biztos törölni akarod?</p>
-        <Button variant="secondary" small data-modal-close>
-          Mégse
-        </Button>
-        <Button
-          variant="danger-full"
-          small
-          data-modal-close
-          onClick={() => {
-            void handleDelete();
-          }}>
-          Törlés
-        </Button>
-      </Modal>
     </div>
   );
 }
