@@ -1,27 +1,26 @@
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import RecipeList from '~/components/RecipeList';
 import Search from '~/components/Search';
 import { LoadingState } from '@dhemeira/ui';
 import { useRecipes } from '~/hooks/useRecipes';
 import { matchesRecipeQuery } from '~/lib/search';
+import { useSearchQuery } from '~/lib/searchStore';
 
 function Home() {
   const { recipes, loading } = useRecipes();
-  const [query, setQuery] = useState('');
+  const query = useSearchQuery();
 
   const results = useMemo(
     () => recipes.filter((recipe) => matchesRecipeQuery(query, recipe)),
     [recipes, query]
   );
 
-  if (loading) {
-    return <LoadingState />;
-  }
-
   return (
     <div>
-      <Search value={query} onChange={setQuery} />
-      <RecipeList recipes={results} />
+      {/* The search field stays mounted even while recipes load, so it can be
+          focused from the tab bar before the list is ready. */}
+      <Search />
+      {loading ? <LoadingState /> : <RecipeList recipes={results} />}
     </div>
   );
 }

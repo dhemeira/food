@@ -1,16 +1,42 @@
-interface SearchProps {
-  value: string;
-  onChange: (value: string) => void;
-}
+import { useEffect, useRef } from 'react';
+import {
+  registerSearchInput,
+  setSearchFocused,
+  setSearchQuery,
+  useSearchQuery,
+} from '~/lib/searchStore';
 
-function Search({ value, onChange }: SearchProps) {
+function Search() {
+  const query = useSearchQuery();
+  const inputRef = useRef<HTMLInputElement | null>(null);
+
+  useEffect(() => {
+    registerSearchInput(inputRef.current);
+    return () => {
+      registerSearchInput(null);
+      setSearchFocused(false);
+    };
+  }, []);
+
   return (
     <input
+      ref={inputRef}
       type="search"
-      value={value}
+      value={query}
       placeholder="Keresés…"
       onChange={(event) => {
-        onChange(event.target.value);
+        setSearchQuery(event.target.value);
+      }}
+      onFocus={() => {
+        setSearchFocused(true);
+      }}
+      onBlur={(event) => {
+        // If focus moved to a nav control (a tab is being tapped), don't clear
+        // search-active yet: the navigation/action will clear it, so the pill
+        // moves straight to the destination instead of stopping on Home.
+        const next = event.relatedTarget;
+        if (next instanceof Element && next.closest('nav, header')) return;
+        setSearchFocused(false);
       }}
     />
   );
