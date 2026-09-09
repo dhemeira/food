@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { backend } from '~/backend';
 import WakeLock from '~/components/WakeLock';
-import { Button, EmptyState, ErrorState, LoadingState } from '~/components/ui';
+import { Button, EmptyState, ErrorState, LoadingState, Modal } from '@dhemeira/ui';
 import { useAuth } from '~/context/auth';
 import { useRecipe } from '~/hooks/useRecipe';
 import { useRecipeImage } from '~/hooks/useRecipeImage';
@@ -72,14 +72,19 @@ function RecipeDetail() {
         ))}
       </ol>
 
-      {user ? <Link to={`/recipe/${current.id}/edit`}>Szerkesztés</Link> : null}
+      {user ? (
+        <Button as={Link} to={`/recipe/${current.id}/edit`} small>
+          Szerkesztés
+        </Button>
+      ) : null}
       {isAdmin ? (
         confirmingDelete ? (
           <div>
             <span>Biztosan törlöd ezt a receptet?</span>
             <Button
               type="button"
-              variant="danger"
+              variant="danger-full"
+              small
               onClick={() => {
                 void handleDelete();
               }}>
@@ -87,7 +92,8 @@ function RecipeDetail() {
             </Button>
             <Button
               type="button"
-              variant="secondary"
+              variant="primary"
+              small
               onClick={() => {
                 setConfirmingDelete(false);
               }}>
@@ -98,6 +104,7 @@ function RecipeDetail() {
           <Button
             type="button"
             variant="danger"
+            small
             onClick={() => {
               setConfirmingDelete(true);
             }}>
@@ -105,6 +112,27 @@ function RecipeDetail() {
           </Button>
         )
       ) : null}
+      <Modal
+        title="Törlés"
+        trigger={(open) => (
+          <Button variant="danger" block onClick={open}>
+            Törlés
+          </Button>
+        )}>
+        <p>Biztos törölni akarod?</p>
+        <Button variant="secondary" small data-modal-close>
+          Mégse
+        </Button>
+        <Button
+          variant="danger-full"
+          small
+          data-modal-close
+          onClick={() => {
+            void handleDelete();
+          }}>
+          Törlés
+        </Button>
+      </Modal>
     </div>
   );
 }

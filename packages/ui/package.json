@@ -1,0 +1,54 @@
+{
+  "name": "@dhemeira/ui",
+  "version": "0.1.0",
+  "description": "Dependency-free React UI primitives built on plain HTML elements and Tailwind.",
+  "type": "module",
+  "license": "MIT",
+  "keywords": ["react", "ui", "components", "tailwind", "primitives"],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dhemeira/food.git",
+    "directory": "packages/ui"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "sideEffects": ["./dist/index.js"],
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": ["dist"],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "clean": "node scripts/clean.mjs",
+    "build": "npm run clean && vite build && tsc -p tsconfig.build.json",
+    "prepublishOnly": "npm run build",
+    "dev": "node scripts/dev.mjs",
+    "dev:js": "vite build --watch",
+    "dev:types": "tsc -p tsconfig.build.json --watch",
+    "icons": "node scripts/gen-icons.mjs",
+    "typecheck": "tsc --noEmit"
+  },
+  "peerDependencies": {
+    "react": ">=19.0.0",
+    "react-dom": ">=19.0.0"
+  },
+  "devDependencies": {
+    "@tailwindcss/vite": "^4.3.0",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^6.0.1",
+    "heroicons": "^2.2.0",
+    "react": "^19.2.6",
+    "react-dom": "^19.2.6",
+    "tailwindcss": "^4.3.0",
+    "typescript": "~6.0.2",
+    "vite": "^8.0.12",
+    "vite-plugin-css-injected-by-js": "^5.0.2"
+  }
+}

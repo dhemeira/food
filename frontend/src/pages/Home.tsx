@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react';
 import RecipeList from '~/components/RecipeList';
 import Search from '~/components/Search';
-import { LoadingState } from '~/components/ui';
+import { LoadingState } from '@dhemeira/ui';
 import { useRecipes } from '~/hooks/useRecipes';
 import { matchesRecipeQuery } from '~/lib/search';
 

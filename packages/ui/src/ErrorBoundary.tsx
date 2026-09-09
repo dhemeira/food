@@ -3,12 +3,24 @@ import ErrorState from './ErrorState';
 
 interface ErrorBoundaryProps {
   children: ReactNode;
+  title?: string;
+  retryLabel?: string;
 }
 
 interface ErrorBoundaryState {
   error: Error | null;
 }
 
+/**
+ * ErrorBoundary catches errors thrown while rendering its children and shows
+ * an ErrorState instead.
+ *
+ * ```tsx
+ * <ErrorBoundary>
+ *   <RecipeView />
+ * </ErrorBoundary>
+ * ```
+ */
 class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
   state: ErrorBoundaryState = { error: null };
 
@@ -25,6 +37,8 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
       return (
         <ErrorState
           message={this.state.error.message}
+          title={this.props.title}
+          retryLabel={this.props.retryLabel}
           onRetry={() => {
             this.setState({ error: null });
           }}
