@@ -8,7 +8,7 @@
   --color-border-hover: #3c3c63;
   --color-border-focus: #4b4b7c;
   --color-accent: #818cf8;
-  --color-accent-hover: color-mix(in oklch, var(--color-accent), black 10%);
+  --color-accent-hover: color-mix(in oklch, var(--color-accent), white 12%);
   --color-accent-soft: rgba(129 140 248 / 0.14);
   --color-text: #eef0fb;
   --color-success: #34d399;
@@ -19,6 +19,7 @@
   --color-danger: #dc2626;
   --font-sans: 'Plus Jakarta Sans Variable', sans-serif;
   --default-font-family: 'Plus Jakarta Sans Variable', sans-serif;
+  --color-danger-hover: color-mix(in oklch, var(--color-danger), white 12%);
 }
 
 @keyframes hint-pop {

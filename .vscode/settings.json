@@ -1,0 +1,8 @@
+{
+  "tailwindCSS.experimental.classRegex": [
+    [
+      "\\b[A-Za-z]*[cC]lass(?:es)?\\b\\s*[:=]\\s*([^;]+);",
+      "['\"`]([^'\"`\\r\\n]+)['\"`]"
+    ]
+  ]
+}
