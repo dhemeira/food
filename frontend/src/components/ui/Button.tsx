@@ -1,6 +1,6 @@
 import type { ButtonHTMLAttributes } from 'react';
 
-type ButtonVariant = 'primary' | 'secondary' | 'danger';
+type ButtonVariant = 'primary' | 'secondary' | 'danger' | 'danger-full';
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: ButtonVariant;
@@ -29,6 +29,10 @@ const variantClass: Record<ButtonVariant, string> = {
     'active:shadow-[0_0_25px_-10px_var(--color-accent)] ' +
     'pointer-fine:hover:bg-accent pointer-fine:hover:text-surface pointer-fine:hover:shadow-[0_0_25px_-10px_var(--color-accent)]',
   danger:
+    'border-danger bg-transparent text-danger ' +
+    'active:shadow-[0_0_25px_-5px_var(--color-danger)] ' +
+    'pointer-fine:hover:bg-danger pointer-fine:hover:text-white pointer-fine:hover:shadow-[0_0_25px_-10px_var(--color-danger)]',
+  'danger-full':
     'border-danger bg-danger text-white ' +
     'active:shadow-[0_0_25px_-5px_var(--color-danger)] ' +
     'pointer-fine:hover:bg-danger-hover pointer-fine:hover:shadow-[0_0_25px_-5px_var(--color-danger)]',
