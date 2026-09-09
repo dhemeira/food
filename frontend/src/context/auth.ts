@@ -20,3 +20,7 @@ export function useAuth(): AuthContextValue {
 
   return context;
 }
+
+export function username(user: User): string {
+  return user.displayName ?? user.email ?? user.id;
+}
