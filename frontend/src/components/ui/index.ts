@@ -1,4 +1,5 @@
 export { default as Button } from './Button';
+export { default as LinkButton } from './LinkButton';
 export { default as EmptyState } from './EmptyState';
 export { default as ErrorBoundary } from './ErrorBoundary';
 export { default as ErrorState } from './ErrorState';
