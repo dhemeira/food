@@ -1,6 +1,6 @@
 import { Navigate, useLocation } from 'react-router-dom';
 import type { ReactNode } from 'react';
-import { LoadingState } from '~/components/ui';
+import { LoadingState } from '@dhemeira/ui';
 import { useAuth } from '~/context/auth';
 
 interface ProtectedRouteProps {

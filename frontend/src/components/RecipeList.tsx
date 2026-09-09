@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import type { Recipe } from '~/backend';
-import { EmptyState } from '~/components/ui';
+import { EmptyState } from '@dhemeira/ui';
 import { requestWakeLock } from '~/lib/wakeLock';
 
 interface RecipeListProps {

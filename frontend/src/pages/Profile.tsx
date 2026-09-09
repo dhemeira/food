@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { backend } from '~/backend';
-import { Button, Input } from '~/components/ui';
+import { Button, Input } from '@dhemeira/ui';
 import { useAuth } from '~/context/auth';
 
 function Profile() {

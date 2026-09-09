@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { EmptyState } from '~/components/ui';
+import { EmptyState } from '@dhemeira/ui';
 
 function NotFound() {
   return (

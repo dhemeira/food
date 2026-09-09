@@ -1,5 +1,5 @@
 import { Navigate } from 'react-router-dom';
-import { Button, LoadingState } from '~/components/ui';
+import { Button, LoadingState } from '@dhemeira/ui';
 import { useAuth } from '~/context/auth';
 
 function Login() {

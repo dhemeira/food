@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import { useAuth, username } from '~/context/auth';
-import { Avatar } from './ui';
+import { Avatar } from '@dhemeira/ui';
 
 function Navbar() {
   const { user, signIn, signOut } = useAuth();

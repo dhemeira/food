@@ -16,7 +16,7 @@ import {
   LoadingState,
   Select,
   Textarea,
-} from '~/components/ui';
+} from '@dhemeira/ui';
 import { useRecipe } from '~/hooks/useRecipe';
 import { useRecipeImage } from '~/hooks/useRecipeImage';
 import { processRecipeImage } from '~/lib/image';

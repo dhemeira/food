@@ -1,8 +1,8 @@
 import { useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import { backend } from '~/backend';
 import WakeLock from '~/components/WakeLock';
-import { Button, EmptyState, ErrorState, LinkButton, LoadingState } from '~/components/ui';
+import { Button, EmptyState, ErrorState, LoadingState, Modal } from '@dhemeira/ui';
 import { useAuth } from '~/context/auth';
 import { useRecipe } from '~/hooks/useRecipe';
 import { useRecipeImage } from '~/hooks/useRecipeImage';
@@ -73,9 +73,9 @@ function RecipeDetail() {
       </ol>
 
       {user ? (
-        <LinkButton to={`/recipe/${current.id}/edit`} small>
+        <Button as={Link} to={`/recipe/${current.id}/edit`} small>
           Szerkesztés
-        </LinkButton>
+        </Button>
       ) : null}
       {isAdmin ? (
         confirmingDelete ? (
@@ -112,6 +112,27 @@ function RecipeDetail() {
           </Button>
         )
       ) : null}
+      <Modal
+        title="Törlés"
+        trigger={(open) => (
+          <Button variant="danger" block onClick={open}>
+            Törlés
+          </Button>
+        )}>
+        <p>Biztos törölni akarod?</p>
+        <Button variant="secondary" small data-modal-close>
+          Mégse
+        </Button>
+        <Button
+          variant="danger-full"
+          small
+          data-modal-close
+          onClick={() => {
+            void handleDelete();
+          }}>
+          Törlés
+        </Button>
+      </Modal>
     </div>
   );
 }
