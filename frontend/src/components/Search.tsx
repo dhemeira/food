@@ -67,8 +67,8 @@ function Search({ register = false, onFocus }: SearchProps) {
           setSearchFocused(false);
         }}
         className={
-          'text-text placeholder:text-text/50 bg-transparent py-2.5 pr-9 pl-10 transition-all outline-none sm:hover:w-60 sm:focus:w-60 [&::-webkit-search-cancel-button]:hidden' +
-          (query ? ' w-60' : ' w-34')
+          'text-text placeholder:text-text/50 w-full bg-transparent py-2.5 pr-9 pl-10 transition-all outline-none sm:hover:w-60 sm:focus:w-60 [&::-webkit-search-cancel-button]:hidden' +
+          (query ? ' sm:w-60' : ' sm:w-34')
         }
       />
       {query ? (
