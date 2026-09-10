@@ -8,6 +8,7 @@ import {
   PlusCircleIcon as PlusOutline,
 } from '@heroicons/react/24/outline';
 import {
+  ArrowRightEndOnRectangleIcon as ArrowRightEndOnRectangleSolid,
   CalendarDaysIcon as CalendarDaysSolid,
   HomeIcon as HomeSolid,
   MagnifyingGlassIcon as MagnifyingGlassSolid,
@@ -22,7 +23,7 @@ import {
   useSearchFocused,
 } from '~/lib/searchStore';
 
-type TabKey = 'home' | 'new' | 'menu';
+type TabKey = 'home' | 'new' | 'menu' | 'login';
 
 const ITEM_CLASS = 'text-ui-text relative z-10 flex-1';
 const MENU_ITEM_CLASS =
@@ -30,14 +31,22 @@ const MENU_ITEM_CLASS =
 const MENU_ITEM_ACTIVE_CLASS = 'bg-white/15';
 
 function Navbar() {
-  const { user, signIn, signOut } = useAuth();
+  const { user, signOut } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
   const searchFocused = useSearchFocused();
 
   const path = location.pathname;
   const routeTab: TabKey | null =
-    path === '/' ? 'home' : path === '/recipe/new' ? 'new' : path === '/menu' ? 'menu' : null;
+    path === '/'
+      ? 'home'
+      : path === '/recipe/new'
+        ? 'new'
+        : path === '/menu'
+          ? 'menu'
+          : path === '/login'
+            ? 'login'
+            : null;
   const onProfile = path === '/profile';
 
   // Remember the last real tab so that on tabless routes (a recipe detail,
@@ -57,10 +66,11 @@ function Navbar() {
   const activeTab: TabKey | 'search' = searchFocused
     ? 'search'
     : (pendingTab ?? routeTab ?? lastTab);
-  // When signed out the New/Menu tabs are hidden, so fall back to Home rather
-  // than leaving the pill on a slot that no longer exists.
+  // Hide the tabs that don't exist in the current auth state (New/Menu when
+  // signed out, Login when signed in) so the pill never sits on a missing slot.
+  const hiddenTabs: readonly TabKey[] = user ? ['login'] : ['new', 'menu'];
   const visibleTab: TabKey | 'search' =
-    !user && activeTab !== 'home' && activeTab !== 'search' ? 'home' : activeTab;
+    activeTab !== 'search' && hiddenTabs.includes(activeTab) ? 'home' : activeTab;
 
   function pressTab(tab: TabKey): void {
     setPendingTab(tab);
@@ -111,12 +121,9 @@ function Navbar() {
                 </button>
               </>
             ) : (
-              <button
-                type="button"
-                onClick={() => void signIn()}
-                className="text-ui-text p-2 hover:brightness-80">
+              <Link to="/login" className="text-ui-text p-2 hover:brightness-80">
                 Bejelentkezés
-              </button>
+              </Link>
             )}
           </div>
         </div>
@@ -212,13 +219,19 @@ function Navbar() {
               )}
             </Popover>
           ) : (
-            <button
-              type="button"
-              onClick={() => void signIn()}
+            <Link
+              to="/login"
+              onPointerDown={() => {
+                pressTab('login');
+              }}
               aria-label="Bejelentkezés"
-              className={`${ITEM_CLASS} flex items-center justify-center`}>
-              <ArrowRightEndOnRectangleIcon className="size-6.5" />
-            </button>
+              className={ITEM_CLASS}>
+              <TabBar.Item
+                active={visibleTab === 'login'}
+                icon={<ArrowRightEndOnRectangleIcon className="size-6.5" />}
+                activeIcon={<ArrowRightEndOnRectangleSolid className="size-6.5" />}
+              />
+            </Link>
           )}
         </TabBar>
       </GlassSurface>

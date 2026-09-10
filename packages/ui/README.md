@@ -6,7 +6,6 @@ Dependency-free React UI primitives built on plain HTML elements. Components ren
 - **Zero setup for consumers** — the compiled CSS is injected automatically when the package is imported. No stylesheet to import, no Tailwind required, no icon dependency.
 - **Tree-shakeable** — ESM-only with named exports, so `import { Button } from '@dhemeira/ui'` pulls in only what you use.
 - **Collision-proof theming** — all colors come from prefixed `--color-ui-*` tokens, so they never clash with a consumer's own Tailwind theme.
-- **Icons** — inline SVG components using `currentColor`; they follow text color automatically.
 
 Requires `react >= 19` (peer dependency). No other runtime dependencies.
 
@@ -37,7 +36,6 @@ import { Button, Input, Modal } from '@dhemeira/ui';
 | `LoadingState` | `<p>` | `label` |
 | `ErrorState` | layout + `Button` | `message`, `title`, `retryLabel`, `onRetry` |
 | `ErrorBoundary` | error boundary | `children` |
-| `CheckIcon`, `PlusIcon`, `XMarkIcon` | `<svg>` | standard SVG props |
 
 Every component forwards its own `className`/`style` to the root element, and all native props pass through. Hover any component in your editor for a usage example.
 
@@ -109,16 +107,6 @@ The library ships sensible dark defaults; override any token by defining it on `
 | `--color-ui-danger` | `#dc2626` |
 | `--color-ui-danger-hover` | `color-mix(in oklch, var(--color-ui-danger), white 12%)` |
 
-## Icons
-
-Icons are static inline SVGs (`stroke="currentColor"`), generated from [heroicons](https://heroicons.com). They ship as part of the package — no separate icon dependency.
-
-```tsx
-import { XMarkIcon } from '@dhemeira/ui';
-
-<XMarkIcon className="size-5 text-ui-danger" />
-```
-
 ## Development
 
 This package lives in the repo's npm workspaces. From the repo root:
@@ -128,12 +116,6 @@ npm install
 npm run build --workspace @dhemeira/ui   # production build (js + css-injected + types)
 npm run dev --workspace @dhemeira/ui     # rebuild on change (js/css + types)
 npm run typecheck --workspace @dhemeira/ui
-```
-
-To (re)generate icons from heroicons, edit the icon list in `scripts/gen-icons.mjs`, then:
-
-```sh
-npm run icons --workspace @dhemeira/ui
 ```
 
 The build outputs to `dist/`:
