@@ -31,7 +31,9 @@ const MENU_ITEM_CLASS =
 const MENU_ITEM_ACTIVE_CLASS = 'bg-white/15';
 
 function Navbar() {
-  const { user, signOut } = useAuth();
+  const { user, signOut, isAllowed } = useAuth();
+  // A signed-in but non-allowlisted account is treated as a guest everywhere.
+  const activeUser = isAllowed ? user : null;
   const location = useLocation();
   const navigate = useNavigate();
   const searchFocused = useSearchFocused();
@@ -68,7 +70,7 @@ function Navbar() {
     : (pendingTab ?? routeTab ?? lastTab);
   // Hide the tabs that don't exist in the current auth state (New/Menu when
   // signed out, Login when signed in) so the pill never sits on a missing slot.
-  const hiddenTabs: readonly TabKey[] = user ? ['login'] : ['new', 'menu'];
+  const hiddenTabs: readonly TabKey[] = activeUser ? ['login'] : ['new', 'menu'];
   const visibleTab: TabKey | 'search' =
     activeTab !== 'search' && hiddenTabs.includes(activeTab) ? 'home' : activeTab;
 
@@ -100,7 +102,7 @@ function Navbar() {
             Receptek
           </Link>
           <div className="flex items-center gap-1 text-sm">
-            {user ? (
+            {activeUser ? (
               <>
                 <Link to="/menu" className="text-ui-text p-2 hover:brightness-80">
                   Napi menü
@@ -111,7 +113,7 @@ function Navbar() {
                 <Link
                   to="/profile"
                   className="text-ui-text flex items-center gap-2 p-2 hover:brightness-110">
-                  <Avatar username={username(user)} seed={user.id} />
+                  <Avatar username={username(activeUser)} seed={activeUser.id} />
                 </Link>
                 <button
                   type="button"
@@ -145,7 +147,7 @@ function Navbar() {
             />
           </Link>
 
-          {user ? (
+          {activeUser ? (
             <Link
               to="/recipe/new"
               onPointerDown={() => {
@@ -173,7 +175,7 @@ function Navbar() {
             />
           </button>
 
-          {user ? (
+          {activeUser ? (
             <Link
               to="/menu"
               onPointerDown={() => {
@@ -189,13 +191,15 @@ function Navbar() {
             </Link>
           ) : null}
 
-          {user ? (
+          {activeUser ? (
             <Popover
               label="Fiók"
               side="top"
               align="end"
               className={ITEM_CLASS}
-              trigger={<Avatar username={username(user)} seed={user.id} className="h-8" />}>
+              trigger={
+                <Avatar username={username(activeUser)} seed={activeUser.id} className="h-8" />
+              }>
               {(close) => (
                 <>
                   <Link

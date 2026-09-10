@@ -34,9 +34,14 @@ export interface ImagesApi {
   remove(recipeId: string): Promise<void>;
 }
 
+export interface SettingsApi {
+  getAllowedEmails(): Promise<string[]>;
+}
+
 export interface Backend {
   readonly auth: AuthApi;
   readonly recipes: RecipesApi;
   readonly users: UsersApi;
   readonly images: ImagesApi;
+  readonly settings: SettingsApi;
 }

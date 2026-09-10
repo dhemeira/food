@@ -4,6 +4,8 @@ import type { User } from '~/backend';
 export interface AuthContextValue {
   user: User | null;
   isAdmin: boolean;
+  /** Whether the signed-in user's email is in `settings/config.allowedEmails`. */
+  isAllowed: boolean;
   isLoading: boolean;
   signIn: () => Promise<void>;
   signOut: () => Promise<void>;

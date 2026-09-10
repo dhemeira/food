@@ -15,4 +15,3 @@ export { default as Select } from './Select';
 export { default as TabBar } from './TabBar';
 export type { TabBarItemProps, TabBarProps } from './TabBar';
 export { default as Textarea } from './Textarea';
-export { CheckIcon, PlusIcon, XMarkIcon } from './icons';

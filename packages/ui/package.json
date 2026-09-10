@@ -31,7 +31,6 @@
     "dev": "node scripts/dev.mjs",
     "dev:js": "vite build --watch",
     "dev:types": "tsc -p tsconfig.build.json --watch",
-    "icons": "node scripts/gen-icons.mjs",
     "typecheck": "tsc --noEmit"
   },
   "peerDependencies": {
@@ -39,11 +38,11 @@
     "react-dom": ">=19.0.0"
   },
   "devDependencies": {
+    "@heroicons/react": "^2.2.0",
     "@tailwindcss/vite": "^4.3.0",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^6.0.1",
-    "heroicons": "^2.2.0",
     "react": "^19.2.6",
     "react-dom": "^19.2.6",
     "tailwindcss": "^4.3.0",

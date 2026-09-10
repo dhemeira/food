@@ -20,25 +20,36 @@ import {
   writeBatch,
   type Firestore,
 } from 'firebase/firestore';
-import type { AuthApi, Backend, ImagesApi, RecipesApi, Unsubscribe, UsersApi } from '../Backend';
+import type {
+  AuthApi,
+  Backend,
+  ImagesApi,
+  RecipesApi,
+  SettingsApi,
+  Unsubscribe,
+  UsersApi,
+} from '../Backend';
 import type { User } from '../types';
 import { recipeFromFirestore, recipeToFields } from './converters';
 
 const RECIPES = 'recipes';
 const RECIPE_IMAGES = 'recipeImages';
 const USERS = 'users';
+const SETTINGS = 'settings';
 
 export class FirebaseBackend implements Backend {
   readonly auth: AuthApi;
   readonly recipes: RecipesApi;
   readonly users: UsersApi;
   readonly images: ImagesApi;
+  readonly settings: SettingsApi;
 
   constructor(firebaseAuth: Auth, firestore: Firestore) {
     this.auth = createAuthApi(firebaseAuth);
     this.recipes = createRecipesApi(firebaseAuth, firestore);
     this.users = createUsersApi(firestore);
     this.images = createImagesApi(firestore);
+    this.settings = createSettingsApi(firestore);
   }
 }
 
@@ -187,6 +198,24 @@ function createImagesApi(firestore: Firestore): ImagesApi {
       batch.delete(doc(images, recipeId));
       batch.update(doc(recipes, recipeId), { thumb: null, hasImage: false });
       await batch.commit();
+    },
+  };
+}
+
+function createSettingsApi(firestore: Firestore): SettingsApi {
+  const config = doc(firestore, SETTINGS, 'config');
+
+  return {
+    async getAllowedEmails() {
+      const snapshot = await getDoc(config);
+      if (!snapshot.exists()) {
+        return [];
+      }
+      const allowed = snapshot.data().allowedEmails as unknown;
+      if (!Array.isArray(allowed)) {
+        return [];
+      }
+      return allowed.filter((email): email is string => typeof email === 'string');
     },
   };
 }

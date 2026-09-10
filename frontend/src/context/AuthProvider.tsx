@@ -4,6 +4,7 @@ import { AuthContext, type AuthContextValue } from '~/context/auth';
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
+  const [allowedEmails, setAllowedEmails] = useState<string[] | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const profileUnsubscribeRef = useRef<Unsubscribe | null>(null);
 
@@ -14,9 +15,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       if (authUser === null) {
         setUser(null);
+        setAllowedEmails(null);
         setIsLoading(false);
         return;
       }
+
+      // The allowlist lives in settings/config (readable by any signed-in
+      // user). It only drives UI gating; writes are still enforced by rules.
+      backend.settings
+        .getAllowedEmails()
+        .then(setAllowedEmails)
+        .catch(() => {
+          setAllowedEmails([]);
+        });
 
       profileUnsubscribeRef.current = backend.users.watchProfile(authUser.id, (profile) => {
         setUser({
@@ -43,9 +54,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     await backend.auth.signOut();
   }
 
+  const email = user?.email ?? null;
+  const isAllowed = email !== null && (allowedEmails?.includes(email) ?? false);
+
   const value: AuthContextValue = {
     user,
     isAdmin: user?.role === 'admin',
+    isAllowed,
     isLoading,
     signIn,
     signOut,

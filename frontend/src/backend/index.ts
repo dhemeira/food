@@ -8,6 +8,7 @@ export type {
   Backend,
   ImagesApi,
   RecipesApi,
+  SettingsApi,
   Unsubscribe,
   UserProfile,
   UsersApi,

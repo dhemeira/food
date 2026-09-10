@@ -1,4 +1,5 @@
 import { useCallback, useId, useRef, type ReactNode } from 'react';
+import { XMarkIcon } from './icons';
 
 interface ModalProps {
   trigger: (open: () => void) => ReactNode;
@@ -65,6 +66,13 @@ function Modal({ trigger, children, title, closable = false, className }: ModalP
             <h2 id={titleId} className="text-lg font-semibold">
               {title}
             </h2>
+            <button
+              type="button"
+              aria-label="Bezárás"
+              data-modal-close
+              className="text-ui-text/60 hover:text-ui-text -m-1 shrink-0 rounded-full p-1 transition-colors">
+              <XMarkIcon className="size-5" />
+            </button>
           </div>
         ) : null}
         {children}

@@ -21,6 +21,8 @@
     "paths": {
       "~/*": ["./src/*"],
       "@dhemeira/ui": ["../packages/ui/src/source.ts"],
+      "@heroicons/react": ["./node_modules/@heroicons/react"],
+      "@heroicons/react/*": ["./node_modules/@heroicons/react/*"],
       "react": ["./node_modules/@types/react"],
       "react-dom": ["./node_modules/@types/react-dom"],
       "react/jsx-runtime": ["./node_modules/@types/react/jsx-runtime"]

@@ -19,6 +19,6 @@ export default defineConfig({
       '~': import.meta.dirname + '/src',
       '@dhemeira/ui': resolve(uiRoot, 'src/source.ts'),
     },
-    dedupe: ['react', 'react-dom', 'react/jsx-runtime'],
+    dedupe: ['react', 'react-dom', 'react/jsx-runtime', '@heroicons/react'],
   },
 });

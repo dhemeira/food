@@ -118,6 +118,8 @@ npm run dev --workspace @dhemeira/ui     # rebuild on change (js/css + types)
 npm run typecheck --workspace @dhemeira/ui
 ```
 
+Heroicons used internally by components are imported from `@heroicons/react` in `src/icons.tsx` and bundled as inline SVG, so the published package stays dependency-free — `@heroicons/react` is a dev dependency only. Icons are internal, not part of the public API.
+
 The build outputs to `dist/`:
 - `dist/index.js` — ESM bundle with the compiled CSS embedded and injected at import time
 - `dist/*.d.ts` — TypeScript declarations (carry the JSDoc usage docs)

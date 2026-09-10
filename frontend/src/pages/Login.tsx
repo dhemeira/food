@@ -3,13 +3,15 @@ import { Button, GlassSurface, LoadingState } from '@dhemeira/ui';
 import { useAuth } from '~/context/auth';
 
 function Login() {
-  const { user, isLoading, signIn } = useAuth();
+  const { user, isAllowed, isLoading, signIn } = useAuth();
 
   if (isLoading) {
     return <LoadingState />;
   }
 
-  if (user) {
+  // Only bounce back if the signed-in account is actually allowed; a
+  // non-allowlisted account stays here so it can switch accounts.
+  if (user && isAllowed) {
     return <Navigate to="/" replace />;
   }
 
