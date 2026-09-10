@@ -12,6 +12,7 @@ function Layout({ children }: LayoutProps) {
 
   return (
     <div className="flex flex-1 flex-col">
+      <div className="bg-background fixed inset-x-0 top-0 z-50 h-2 sm:hidden" />
       <main className="mx-auto flex w-full max-w-4xl flex-1 flex-col p-2 sm:p-4">
         {/* The search input stays mounted on every route so the tab bar can
             focus it synchronously within the tap gesture (iOS only opens the
