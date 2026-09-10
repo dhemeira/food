@@ -19,10 +19,8 @@ function App() {
     <AuthProvider>
       <BrowserRouter>
         <div className="flex min-h-dvh flex-col">
-          <div className="sticky top-0 z-40 flex flex-col">
-            <DevBanner />
-            <Navbar />
-          </div>
+          <Navbar />
+          <DevBanner />
           <WakeLockLifecycle />
           <Layout>
             <RoutedErrorBoundary>
