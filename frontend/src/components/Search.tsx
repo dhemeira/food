@@ -45,9 +45,14 @@ function Search({ register = false, onFocus }: SearchProps) {
         ref={inputRef}
         type="search"
         value={query}
-        placeholder="Keresés"
+        placeholder="Keresés…"
+        enterKeyHint="search"
         onChange={(event) => {
           setSearchQuery(event.target.value);
+        }}
+        onKeyDown={(event) => {
+          // Dismiss the on-screen keyboard on mobile when the user submits.
+          if (event.key === 'Enter') event.currentTarget.blur();
         }}
         onFocus={() => {
           setSearchFocused(true);
