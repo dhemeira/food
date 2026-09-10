@@ -17,9 +17,9 @@ function Login() {
 
   return (
     <div className="flex flex-1 items-center justify-center py-8">
-      <GlassSurface className="flex w-full max-w-sm flex-col gap-4 rounded-2xl! p-8 text-center">
-        <h1 className="text-ui-text text-3xl font-bold tracking-tight">Receptek</h1>
-        <p className="text-ui-text/70 text-sm leading-relaxed">
+      <GlassSurface className="flex w-full max-w-sm flex-col gap-4 rounded-2xl p-8 text-center">
+        <h1 className="text-text text-3xl font-bold tracking-tight">Receptek</h1>
+        <p className="text-text/70 text-sm leading-relaxed">
           Jelentkezz be, hogy recepteket ments, és összeállítsd a napi menüt.
         </p>
         <Button

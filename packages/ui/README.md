@@ -18,24 +18,24 @@ npm install @dhemeira/ui
 That's it — the styles are injected by the JS. Just import the components:
 
 ```tsx
-import { Button, Input, Modal } from '@dhemeira/ui';
+import { Button, Input, Modal } from "@dhemeira/ui";
 ```
 
 ## Components
 
-| Component | Renders | Props |
-|---|---|---|
-| `Button` | `<button>` (or `as`) | `variant`, `small`, `block`, `loading`, `loadingLabel`, `as` |
-| `Input` | `<label>` + `<input>` | `label`, `error`, `hint` |
-| `Select` | `<label>` + `<select>` | `label`, `error` |
-| `Textarea` | `<label>` + `<textarea>` | `label`, `error` |
-| `Modal` | `<dialog>` (native Popover-free) | `trigger`, `title`, `closable` |
-| `Popover` | `<div>` + `<button>` + menu | `trigger`, `label`, `side`, `align` |
-| `Avatar` | `<span>` | `username`, `className` |
-| `EmptyState` | `<p>` | `message` |
-| `LoadingState` | `<p>` | `label` |
-| `ErrorState` | layout + `Button` | `message`, `title`, `retryLabel`, `onRetry` |
-| `ErrorBoundary` | error boundary | `children` |
+| Component       | Renders                          | Props                                                        |
+| --------------- | -------------------------------- | ------------------------------------------------------------ |
+| `Button`        | `<button>` (or `as`)             | `variant`, `small`, `block`, `loading`, `loadingLabel`, `as` |
+| `Input`         | `<label>` + `<input>`            | `label`, `error`, `hint`                                     |
+| `Select`        | `<label>` + `<select>`           | `label`, `error`                                             |
+| `Textarea`      | `<label>` + `<textarea>`         | `label`, `error`                                             |
+| `Modal`         | `<dialog>` (native Popover-free) | `trigger`, `title`, `closable`                               |
+| `Popover`       | `<div>` + `<button>` + menu      | `trigger`, `label`, `side`, `align`                          |
+| `Avatar`        | `<span>`                         | `username`, `className`                                      |
+| `EmptyState`    | `<p>`                            | `message`                                                    |
+| `LoadingState`  | `<p>`                            | `label`                                                      |
+| `ErrorState`    | layout + `Button`                | `message`, `title`, `retryLabel`, `onRetry`                  |
+| `ErrorBoundary` | error boundary                   | `children`                                                   |
 
 Every component forwards its own `className`/`style` to the root element, and all native props pass through. Hover any component in your editor for a usage example.
 
@@ -61,9 +61,11 @@ Every component forwards its own `className`/`style` to the root element, and al
 `Button` renders a native `<button>` by default, but `as` can point at any element or component — so a link-style button stays in your router:
 
 ```tsx
-import { Link } from 'react-router-dom';
+import { Link } from "react-router-dom";
 
-<Button as={Link} to="/recipes">View recipes</Button>
+<Button as={Link} to="/recipes">
+  View recipes
+</Button>;
 ```
 
 ### Styling
@@ -71,7 +73,9 @@ import { Link } from 'react-router-dom';
 Colors are driven by prefixed tokens, so instances never read a consumer's theme by accident. Override a component's look with normal `className`, or restyle one instance by overriding a token on it:
 
 ```tsx
-<Button style={{ '--color-ui-accent': '#f472b6' } as React.CSSProperties}>Custom</Button>
+<Button style={{ "--color-ui-accent": "#f472b6" } as React.CSSProperties}>
+  Custom
+</Button>
 ```
 
 ## Theming
@@ -87,25 +91,25 @@ The library ships sensible dark defaults; override any token by defining it on `
 }
 ```
 
-| Token | Default |
-|---|---|
-| `--color-ui-background` | `#11111e` |
-| `--color-ui-surface` | `#181827` |
-| `--color-ui-surface-2` | `#1f1f33` |
-| `--color-ui-border` | `#2d2d4c` |
-| `--color-ui-border-hover` | `#3c3c63` |
-| `--color-ui-border-focus` | `#4b4b7c` |
-| `--color-ui-accent` | `#818cf8` |
-| `--color-ui-accent-hover` | `color-mix(in oklch, var(--color-ui-accent), white 12%)` |
-| `--color-ui-accent-soft` | `rgba(129 140 248 / 0.14)` |
-| `--color-ui-text` | `#eef0fb` |
-| `--color-ui-success` | `#34d399` |
-| `--color-ui-success-bg` | `#0d2818` |
-| `--color-ui-warning` | `#fbbf24` |
-| `--color-ui-warning-bg` | `#2a1f05` |
-| `--color-ui-warning-border` | `#b45309` |
-| `--color-ui-danger` | `#dc2626` |
-| `--color-ui-danger-hover` | `color-mix(in oklch, var(--color-ui-danger), white 12%)` |
+| Token                       | Default                                                                 |
+| --------------------------- | ----------------------------------------------------------------------- |
+| `--color-ui-background`     | `#11111e`                                                               |
+| `--color-ui-surface`        | `#181827`                                                               |
+| `--color-ui-surface-2`      | `#1f1f33`                                                               |
+| `--color-ui-border`         | `#2d2d4c`                                                               |
+| `--color-ui-border-hover`   | `#3c3c63`                                                               |
+| `--color-ui-border-focus`   | `#4b4b7c`                                                               |
+| `--color-ui-accent`         | `#818cf8`                                                               |
+| `--color-ui-accent-hover`   | `color-mix(in oklch, var(--color-ui-accent), var(--color-ui-text) 12%)` |
+| `--color-ui-accent-soft`    | `rgba(129 140 248 / 0.14)`                                              |
+| `--color-ui-text`           | `#eef0fb`                                                               |
+| `--color-ui-success`        | `#34d399`                                                               |
+| `--color-ui-success-bg`     | `#0d2818`                                                               |
+| `--color-ui-warning`        | `#fbbf24`                                                               |
+| `--color-ui-warning-bg`     | `#2a1f05`                                                               |
+| `--color-ui-warning-border` | `#b45309`                                                               |
+| `--color-ui-danger`         | `#dc2626`                                                               |
+| `--color-ui-danger-hover`   | `color-mix(in oklch, var(--color-ui-danger), var(--color-ui-text) 12%)` |
 
 ## Development
 
@@ -121,6 +125,7 @@ npm run typecheck --workspace @dhemeira/ui
 Heroicons used internally by components are imported from `@heroicons/react` in `src/icons.tsx` and bundled as inline SVG, so the published package stays dependency-free — `@heroicons/react` is a dev dependency only. Icons are internal, not part of the public API.
 
 The build outputs to `dist/`:
+
 - `dist/index.js` — ESM bundle with the compiled CSS embedded and injected at import time
 - `dist/*.d.ts` — TypeScript declarations (carry the JSDoc usage docs)
 

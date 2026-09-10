@@ -22,13 +22,15 @@ import {
   requestSearchFocus,
   useSearchFocused,
 } from '~/lib/searchStore';
+import Search from './Search';
 
 type TabKey = 'home' | 'new' | 'menu' | 'login' | 'profile';
 
-const ITEM_CLASS = 'text-ui-text relative z-10 flex-1';
-const MENU_ITEM_CLASS =
-  'text-ui-text block w-full rounded-lg px-3 py-2 text-left hover:bg-white/10';
-const MENU_ITEM_ACTIVE_CLASS = 'bg-white/15';
+const ITEM_CLASS = 'text-text relative z-10 flex-1';
+const MENU_ITEM_CLASS = 'text-text block w-full rounded-lg px-3 py-2 text-left hover:bg-text/20';
+const MENU_ITEM_ACTIVE_CLASS = 'bg-text/20';
+const DESKTOP_LINK_CLASS = 'text-text rounded-lg p-2 hover:bg-text/20';
+const DESKTOP_LINK_ACTIVE_CLASS = 'bg-text/20';
 
 function Navbar() {
   const { user, signOut, isAllowed } = useAuth();
@@ -100,32 +102,69 @@ function Navbar() {
     <>
       <TopNavbar className="hidden border-b sm:block">
         <div className="mx-auto flex max-w-4xl items-center justify-between px-2 py-1">
-          <Link to="/" className="text-ui-text p-2 text-xl font-semibold hover:brightness-80">
+          <Link to="/" className="text-text p-2 text-xl font-semibold">
             Receptek
           </Link>
           <div className="flex items-center gap-1 text-sm">
+            <Search
+              onFocus={() => {
+                if (location.pathname !== '/') void navigate('/');
+              }}
+            />
+            <Link
+              to="/"
+              className={`${DESKTOP_LINK_CLASS} ${routeTab === 'home' ? DESKTOP_LINK_ACTIVE_CLASS : ''}`}>
+              Receptek
+            </Link>
             {activeUser ? (
               <>
-                <Link to="/menu" className="text-ui-text p-2 hover:brightness-80">
-                  Napi menü
-                </Link>
-                <Link to="/recipe/new" className="text-ui-text p-2 hover:brightness-80">
+                <Link
+                  to="/recipe/new"
+                  className={`${DESKTOP_LINK_CLASS} ${routeTab === 'new' ? DESKTOP_LINK_ACTIVE_CLASS : ''}`}>
                   Új recept
                 </Link>
                 <Link
-                  to="/profile"
-                  className="text-ui-text flex items-center gap-2 p-2 hover:brightness-110">
-                  <Avatar username={username(activeUser)} seed={activeUser.id} />
+                  to="/menu"
+                  className={`${DESKTOP_LINK_CLASS} ${routeTab === 'menu' ? DESKTOP_LINK_ACTIVE_CLASS : ''}`}>
+                  Napi menü
                 </Link>
-                <button
-                  type="button"
-                  onClick={() => void signOut()}
-                  className="text-ui-text p-2 hover:brightness-80">
-                  Kijelentkezés
-                </button>
+                <Popover
+                  label="Fiók"
+                  side="bottom"
+                  align="end"
+                  gap={1}
+                  active={visibleTab === 'profile'}
+                  className={ITEM_CLASS}
+                  trigger={
+                    <Avatar username={username(activeUser)} seed={activeUser.id} className="h-8" />
+                  }>
+                  {(close) => (
+                    <>
+                      <Link
+                        to="/profile"
+                        role="menuitem"
+                        onClick={close}
+                        className={`${MENU_ITEM_CLASS} ${onProfile ? MENU_ITEM_ACTIVE_CLASS : ''}`}>
+                        Profil szerkesztése
+                      </Link>
+                      <button
+                        type="button"
+                        role="menuitem"
+                        className={MENU_ITEM_CLASS}
+                        onClick={() => {
+                          close();
+                          void signOut();
+                        }}>
+                        Kijelentkezés
+                      </button>
+                    </>
+                  )}
+                </Popover>
               </>
             ) : (
-              <Link to="/login" className="text-ui-text p-2 hover:brightness-80">
+              <Link
+                to="/login"
+                className={`${DESKTOP_LINK_CLASS} ${routeTab === 'login' ? DESKTOP_LINK_ACTIVE_CLASS : ''}`}>
                 Bejelentkezés
               </Link>
             )}
@@ -133,7 +172,7 @@ function Navbar() {
         </div>
       </TopNavbar>
 
-      <GlassSurface className="fixed right-5.5 bottom-5.5 left-5.5 z-20 sm:hidden">
+      <GlassSurface className="fixed right-5.5 bottom-5.5 left-5.5 z-20 rounded-full sm:hidden">
         <TabBar className="h-15 gap-0.5 px-3 py-1.25">
           <Link
             to="/"

@@ -6,7 +6,11 @@
   --color-ui-border-hover: #3c3c63;
   --color-ui-border-focus: #4b4b7c;
   --color-ui-accent: #818cf8;
-  --color-ui-accent-hover: color-mix(in oklch, var(--color-ui-accent), white 12%);
+  --color-ui-accent-hover: color-mix(
+    in oklch,
+    var(--color-ui-accent),
+    var(--color-ui-text) 12%
+  );
   --color-ui-accent-soft: rgba(129 140 248 / 0.14);
   --color-ui-text: #eef0fb;
   --color-ui-success: #34d399;
@@ -15,10 +19,18 @@
   --color-ui-warning-bg: #2a1f05;
   --color-ui-warning-border: #b45309;
   --color-ui-danger: #dc2626;
-  --color-ui-danger-hover: color-mix(in oklch, var(--color-ui-danger), white 12%);
+  --color-ui-danger-hover: color-mix(
+    in oklch,
+    var(--color-ui-danger),
+    var(--color-ui-text) 12%
+  );
 }
 
 .ui-modal::backdrop {
-  background-color: color-mix(in oklch, var(--color-ui-background), transparent 40%);
+  background-color: color-mix(
+    in oklch,
+    var(--color-ui-background),
+    transparent 40%
+  );
   backdrop-filter: blur(2px);
 }

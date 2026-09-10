@@ -1,11 +1,13 @@
-import { useEffect, useRef, useState, type ReactNode } from 'react';
+import { useEffect, useRef, useState, type ReactNode } from "react";
 
 interface PopoverProps {
   trigger: ReactNode;
   label: string;
   children: ReactNode | ((close: () => void) => ReactNode);
-  side?: 'top' | 'bottom';
-  align?: 'start' | 'center' | 'end';
+  side?: "top" | "bottom";
+  align?: "start" | "center" | "end";
+  /** Space between the trigger and the menu, in Tailwind spacing steps (1 = 0.25rem). */
+  gap?: number;
   /** Marks the root with `data-active` so a TabBar pill can sit on it. */
   active?: boolean;
   className?: string;
@@ -33,8 +35,9 @@ function Popover({
   trigger,
   label,
   children,
-  side = 'top',
-  align = 'center',
+  side = "top",
+  align = "center",
+  gap = 2,
   active = false,
   className,
   menuClassName,
@@ -58,42 +61,56 @@ function Popover({
     }
 
     function handleKeyDown(event: KeyboardEvent): void {
-      if (event.key === 'Escape') setOpen(false);
+      if (event.key === "Escape") setOpen(false);
     }
 
-    document.addEventListener('pointerdown', handlePointerDown);
-    document.addEventListener('keydown', handleKeyDown);
+    document.addEventListener("pointerdown", handlePointerDown);
+    document.addEventListener("keydown", handleKeyDown);
     return () => {
-      document.removeEventListener('pointerdown', handlePointerDown);
-      document.removeEventListener('keydown', handleKeyDown);
+      document.removeEventListener("pointerdown", handlePointerDown);
+      document.removeEventListener("keydown", handleKeyDown);
     };
   }, [open]);
 
-  const sideClass = side === 'top' ? 'bottom-full mb-2' : 'top-full mt-2';
+  const sideClass = side === "top" ? "bottom-full" : "top-full";
+  // A dynamic `mt-${gap}` class wouldn't be generated at build time, so the
+  // spacing is applied inline in Tailwind's 0.25rem step units.
+  const gapStyle =
+    side === "top"
+      ? { marginBottom: `${String(gap * 0.25)}rem` }
+      : { marginTop: `${String(gap * 0.25)}rem` };
   const alignClass =
-    align === 'start' ? 'left-0' : align === 'end' ? 'right-0' : 'left-1/2 -translate-x-1/2';
+    align === "start"
+      ? "left-0"
+      : align === "end"
+        ? "right-0"
+        : "left-1/2 -translate-x-1/2";
 
   return (
     <div
       ref={rootRef}
-      data-active={active ? 'true' : undefined}
-      className={`relative ${className ?? ''}`}>
+      data-active={active ? "true" : undefined}
+      className={`relative ${className ?? ""}`}
+    >
       <button
         type="button"
         aria-label={label}
         aria-haspopup="menu"
         aria-expanded={open}
         onClick={() => setOpen((value) => !value)}
-        className="flex h-full w-full items-center justify-center">
+        className="flex h-full w-full items-center justify-center"
+      >
         {trigger}
       </button>
       {open ? (
         <div
           role="menu"
+          style={gapStyle}
           className={`border-ui-border bg-ui-surface-2 text-ui-text absolute z-30 min-w-44 rounded-2xl border p-1.5 shadow-2xl ${sideClass} ${alignClass} ${
-            menuClassName ?? ''
-          }`}>
-          {typeof children === 'function' ? children(close) : children}
+            menuClassName ?? ""
+          }`}
+        >
+          {typeof children === "function" ? children(close) : children}
         </div>
       ) : null}
     </div>

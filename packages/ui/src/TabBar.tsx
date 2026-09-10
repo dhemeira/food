@@ -3,11 +3,11 @@ import {
   useRef,
   type HTMLAttributes,
   type ReactNode,
-} from 'react';
+} from "react";
 
 const CHIP_PADDING = 6;
 const px = (n: number): string => `${n}px`;
-const SLIDE_EASING = 'cubic-bezier(0.175, 0.885, 0.32, 1.15)';
+const SLIDE_EASING = "cubic-bezier(0.175, 0.885, 0.32, 1.15)";
 
 export interface TabBarProps extends HTMLAttributes<HTMLElement> {
   children: ReactNode;
@@ -39,12 +39,14 @@ function StackedIcon({
     <span aria-hidden="true" className="grid place-items-center">
       <span
         className="[grid-area:1/1] transition-opacity duration-200"
-        style={{ opacity: active ? 0 : 1 }}>
+        style={{ opacity: active ? 0 : 1 }}
+      >
         {icon}
       </span>
       <span
         className="[grid-area:1/1] transition-opacity duration-200"
-        style={{ opacity: active ? 1 : 0 }}>
+        style={{ opacity: active ? 1 : 0 }}
+      >
         {solid}
       </span>
     </span>
@@ -60,9 +62,10 @@ function TabBarItem({
 }: TabBarItemProps) {
   return (
     <span
-      data-active={active ? 'true' : undefined}
-      className={`flex h-full w-full items-center justify-center ${className ?? ''}`}
-      {...rest}>
+      data-active={active ? "true" : undefined}
+      className={`flex h-full w-full items-center justify-center ${className ?? ""}`}
+      {...rest}
+    >
       <StackedIcon active={active} icon={icon} activeIcon={activeIcon} />
     </span>
   );
@@ -112,15 +115,19 @@ function TabBarComponent({
 
     const playSquash = () => {
       squashAnimRef.current?.cancel();
-      if (typeof squash.animate !== 'function') return;
+      if (typeof squash.animate !== "function") return;
       squashAnimRef.current = squash.animate(
         [
-          { transform: 'scale(1, 1)' },
-          { transform: 'scale(1.04, 0.92)', offset: 0.2, easing: 'ease-in-out' },
-          { transform: 'scale(0.99, 1.03)', offset: 0.8, easing: 'ease-out' },
-          { transform: 'scale(1, 1)' },
+          { transform: "scale(1, 1)" },
+          {
+            transform: "scale(1.04, 0.92)",
+            offset: 0.2,
+            easing: "ease-in-out",
+          },
+          { transform: "scale(0.99, 1.03)", offset: 0.8, easing: "ease-out" },
+          { transform: "scale(1, 1)" },
         ],
-        { duration: 400, easing: 'ease-in-out' }
+        { duration: 400, easing: "ease-in-out" },
       );
     };
 
@@ -135,12 +142,12 @@ function TabBarComponent({
       const elRect = activeEl.getBoundingClientRect();
 
       pill.style.transition = firstRun.current
-        ? 'none'
+        ? "none"
         : `transform 400ms ${SLIDE_EASING}, opacity 200ms ease`;
       if (!firstRun.current) playSquash();
       firstRun.current = false;
 
-      pill.style.opacity = '1';
+      pill.style.opacity = "1";
       pill.style.width = px(elRect.width + CHIP_PADDING * 2);
       pill.style.height = px(elRect.height);
       pill.style.transform = `translate(${elRect.left - navRect.left - CHIP_PADDING}px, ${
@@ -156,7 +163,7 @@ function TabBarComponent({
     const mutationObserver = new MutationObserver(() => measure());
     mutationObserver.observe(nav, {
       attributes: true,
-      attributeFilter: ['data-active'],
+      attributeFilter: ["data-active"],
       subtree: true,
     });
 
@@ -168,15 +175,16 @@ function TabBarComponent({
   }, [children]);
 
   return (
-    <nav ref={navRef} className={`relative flex ${className ?? ''}`} {...rest}>
+    <nav ref={navRef} className={`relative flex ${className ?? ""}`} {...rest}>
       <span
         ref={pillRef}
         aria-hidden="true"
-        className="pointer-events-none absolute top-0 left-0 z-0 opacity-0">
+        className="pointer-events-none absolute top-0 left-0 z-0 opacity-0"
+      >
         <span
           ref={squashRef}
-          className={`block h-full w-full rounded-full bg-white/15 backdrop-blur-xs backdrop-saturate-150 inset-shadow-[0_0_2px_1px_#eef0fb22] ${
-            indicatorClassName ?? ''
+          className={`block h-full w-full rounded-full bg-text/15 backdrop-blur-xs backdrop-saturate-150 inset-shadow-[0_0_2px_1px_#eef0fb22] ${
+            indicatorClassName ?? ""
           }`}
         />
       </span>

@@ -18,8 +18,8 @@ function Layout({ children }: LayoutProps) {
             focus it synchronously within the tap gesture (iOS only opens the
             keyboard for a gesture-driven focus). It is visually hidden with
             `sr-only` while off the home page. */}
-        <div className={onHome ? '' : 'sr-only'}>
-          <Search />
+        <div className={'sm:hidden ' + (onHome ? '' : 'sr-only')}>
+          <Search register />
         </div>
         {children}
       </main>
