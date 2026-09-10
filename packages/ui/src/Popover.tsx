@@ -6,6 +6,8 @@ interface PopoverProps {
   children: ReactNode | ((close: () => void) => ReactNode);
   side?: 'top' | 'bottom';
   align?: 'start' | 'center' | 'end';
+  /** Marks the root with `data-active` so a TabBar pill can sit on it. */
+  active?: boolean;
   className?: string;
   menuClassName?: string;
 }
@@ -33,6 +35,7 @@ function Popover({
   children,
   side = 'top',
   align = 'center',
+  active = false,
   className,
   menuClassName,
 }: PopoverProps) {
@@ -71,7 +74,10 @@ function Popover({
     align === 'start' ? 'left-0' : align === 'end' ? 'right-0' : 'left-1/2 -translate-x-1/2';
 
   return (
-    <div ref={rootRef} className={`relative ${className ?? ''}`}>
+    <div
+      ref={rootRef}
+      data-active={active ? 'true' : undefined}
+      className={`relative ${className ?? ''}`}>
       <button
         type="button"
         aria-label={label}

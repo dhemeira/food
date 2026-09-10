@@ -7,6 +7,8 @@ rules_version = '2';
 //
 // Reads (recipes + images) are PUBLIC so guests can browse without signing in.
 // Only allowlisted emails may create/update recipes (and thus upload images).
+// The allowlist doc (settings/config) is itself readable only by allowlisted
+// users, so non-allowlisted accounts can't see who has access.
 // Deletes require an admin role doc:
 //   users/<uid> -> { role: "admin" }
 //
@@ -32,7 +34,10 @@ service cloud.firestore {
     }
 
     match /settings/config {
-      allow read: if isSignedIn();
+      // Only allowlisted users can read the list itself, so a non-allowlisted
+      // signed-in user can't discover the family's email addresses.
+      allow read: if isSignedIn()
+        && request.auth.token.email in resource.data.allowedEmails;
       allow write: if isAdmin();
     }
 

@@ -23,7 +23,7 @@ import {
   useSearchFocused,
 } from '~/lib/searchStore';
 
-type TabKey = 'home' | 'new' | 'menu' | 'login';
+type TabKey = 'home' | 'new' | 'menu' | 'login' | 'profile';
 
 const ITEM_CLASS = 'text-ui-text relative z-10 flex-1';
 const MENU_ITEM_CLASS =
@@ -46,9 +46,11 @@ function Navbar() {
         ? 'new'
         : path === '/menu'
           ? 'menu'
-          : path === '/login'
-            ? 'login'
-            : null;
+          : path === '/profile'
+            ? 'profile'
+            : path === '/login'
+              ? 'login'
+              : null;
   const onProfile = path === '/profile';
 
   // Remember the last real tab so that on tabless routes (a recipe detail,
@@ -70,7 +72,7 @@ function Navbar() {
     : (pendingTab ?? routeTab ?? lastTab);
   // Hide the tabs that don't exist in the current auth state (New/Menu when
   // signed out, Login when signed in) so the pill never sits on a missing slot.
-  const hiddenTabs: readonly TabKey[] = activeUser ? ['login'] : ['new', 'menu'];
+  const hiddenTabs: readonly TabKey[] = activeUser ? ['login'] : ['new', 'menu', 'profile'];
   const visibleTab: TabKey | 'search' =
     activeTab !== 'search' && hiddenTabs.includes(activeTab) ? 'home' : activeTab;
 
@@ -196,6 +198,7 @@ function Navbar() {
               label="Fiók"
               side="top"
               align="end"
+              active={visibleTab === 'profile'}
               className={ITEM_CLASS}
               trigger={
                 <Avatar username={username(activeUser)} seed={activeUser.id} className="h-8" />
