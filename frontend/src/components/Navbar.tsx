@@ -111,7 +111,7 @@ function Navbar() {
                 <Link
                   to="/profile"
                   className="text-ui-text flex items-center gap-2 p-2 hover:brightness-110">
-                  <Avatar username={username(user)} />
+                  <Avatar username={username(user)} seed={user.id} />
                 </Link>
                 <button
                   type="button"
@@ -195,7 +195,7 @@ function Navbar() {
               side="top"
               align="end"
               className={ITEM_CLASS}
-              trigger={<Avatar username={username(user)} className="h-8" />}>
+              trigger={<Avatar username={username(user)} seed={user.id} className="h-8" />}>
               {(close) => (
                 <>
                   <Link

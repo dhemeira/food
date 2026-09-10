@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { XMarkIcon } from '@heroicons/react/24/outline';
 import {
   backend,
   CALORIE_UNITS,
@@ -203,7 +204,10 @@ function RecipeEditor({ editing, initial }: RecipeEditorProps) {
             onClick={() => {
               setProcessed(null);
             }}>
-            × Kiválasztott kép törlése
+            <span className="inline-flex items-center gap-2">
+              <XMarkIcon className="size-5" />
+              Kiválasztott kép törlése
+            </span>
           </Button>
         </div>
       ) : editing && initial?.hasImage && !removeImage ? (

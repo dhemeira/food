@@ -2,8 +2,25 @@ import type { CSSProperties } from "react";
 
 interface AvatarProps {
   username: string;
+  /**
+   * Value the background color is derived from. Defaults to `username`, so the
+   * color is stable for a given name — pass a stable id (e.g. the user id) if
+   * the name can change.
+   */
+  seed?: string;
   className?: string;
   style?: CSSProperties;
+}
+
+const HUES = [0, 225, 210, 15, 240, 250, 260, 275, 290, 330, 350];
+const HASH_SEED = 7;
+
+function hashSeed(seed: string): number {
+  let hash = HASH_SEED;
+  for (let index = 0; index < seed.length; index += 1) {
+    hash = (hash * 31 + seed.charCodeAt(index)) | 0;
+  }
+  return Math.abs(hash);
 }
 
 /**
@@ -13,23 +30,22 @@ interface AvatarProps {
  *
  * ```tsx
  * <Avatar username={user.displayName} />
- * <Avatar username={user.displayName} className="h-8" />
+ * <Avatar username={user.displayName} seed={user.id} className="h-8" />
  * ```
  */
-function Avatar({ username, className, style }: AvatarProps) {
+function Avatar({ username, seed = username, className, style }: AvatarProps) {
   const initials = username
     .trim()
     .split(/\s+/)
     .map((word) => word.charAt(0))
     .join("");
-  const HUES = [0, 225, 210, 15, 240, 250, 260, 275, 290, 330, 350];
-  const hue = HUES[initials.charCodeAt(0) % HUES.length] ?? 0;
+  const hue = HUES[hashSeed(seed) % HUES.length] ?? 0;
 
   return (
     <span
       style={{ ...style, backgroundColor: `hsl(${String(hue)}, 60%, 40%)` }}
       title={username}
-      className={`bg-ui-surface text-ui-text inline-flex border-ui-text aspect-square rounded-full border-2 items-center justify-center font-bold ${
+      className={`bg-ui-surface text-ui-text border-ui-text inline-flex aspect-square items-center justify-center rounded-full border-2 font-bold ${
         className ?? "h-9"
       }`}
     >

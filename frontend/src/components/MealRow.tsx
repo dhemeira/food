@@ -1,3 +1,4 @@
+import { XMarkIcon } from '@heroicons/react/24/outline';
 import type { Recipe } from '~/backend';
 import { amountLabel, mealKcal } from '~/lib/dailyMenu';
 import RecipeCombobox from './RecipeCombobox';
@@ -32,8 +33,8 @@ function MealRow({
             type="button"
             onClick={onClear}
             aria-label={`${label} törlése`}
-            className="text-text/60 hover:text-danger p-1 text-lg leading-none">
-            ×
+            className="text-text/60 hover:text-danger p-1">
+            <XMarkIcon className="size-5" />
           </button>
         ) : null}
       </div>
