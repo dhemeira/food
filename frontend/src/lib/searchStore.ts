@@ -67,6 +67,18 @@ export function clearSearch(): void {
   }
 }
 
+/**
+ * Unfocus the search field without clearing the query. Used when navigating
+ * to another tab (e.g. New, Daily menu) so the pill/keyboard leaves search
+ * but the typed query is preserved.
+ */
+export function dismissSearch(): void {
+  setState({ focused: false, focusRequested: false });
+  if (state.input) {
+    state.input.blur();
+  }
+}
+
 /** Reactive: the current search query. */
 export function useSearchQuery(): string {
   return useSyncExternalStore(subscribe, () => state.query);

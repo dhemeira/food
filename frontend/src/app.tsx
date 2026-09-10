@@ -6,6 +6,7 @@ import ProtectedRoute from '~/components/ProtectedRoute';
 import RoutedErrorBoundary from '~/components/RoutedErrorBoundary';
 import WakeLockLifecycle from '~/components/WakeLockLifecycle';
 import { AuthProvider } from '~/context/AuthProvider';
+import DailyMenu from '~/pages/DailyMenu';
 import Home from '~/pages/Home';
 import Login from '~/pages/Login';
 import NotFound from '~/pages/NotFound';
@@ -27,6 +28,14 @@ function App() {
                 <Route path="/" element={<Home />} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/recipe/:id" element={<RecipeDetail />} />
+                <Route
+                  path="/menu"
+                  element={
+                    <ProtectedRoute>
+                      <DailyMenu />
+                    </ProtectedRoute>
+                  }
+                />
                 <Route
                   path="/profile"
                   element={

@@ -1,6 +1,5 @@
 import { useMemo } from 'react';
 import RecipeList from '~/components/RecipeList';
-import Search from '~/components/Search';
 import { LoadingState } from '@dhemeira/ui';
 import { useRecipes } from '~/hooks/useRecipes';
 import { matchesRecipeQuery } from '~/lib/search';
@@ -15,14 +14,7 @@ function Home() {
     [recipes, query]
   );
 
-  return (
-    <div>
-      {/* The search field stays mounted even while recipes load, so it can be
-          focused from the tab bar before the list is ready. */}
-      <Search />
-      {loading ? <LoadingState /> : <RecipeList recipes={results} />}
-    </div>
-  );
+  return <div>{loading ? <LoadingState /> : <RecipeList recipes={results} />}</div>;
 }
 
 export default Home;

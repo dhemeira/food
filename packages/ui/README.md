@@ -31,7 +31,8 @@ import { Button, Input, Modal } from '@dhemeira/ui';
 | `Select` | `<label>` + `<select>` | `label`, `error` |
 | `Textarea` | `<label>` + `<textarea>` | `label`, `error` |
 | `Modal` | `<dialog>` (native Popover-free) | `trigger`, `title`, `closable` |
-| `Avatar` | `<button>` | `username`, `popoverTarget` |
+| `Popover` | `<div>` + `<button>` + menu | `trigger`, `label`, `side`, `align` |
+| `Avatar` | `<span>` | `username`, `className` |
 | `EmptyState` | `<p>` | `message` |
 | `LoadingState` | `<p>` | `label` |
 | `ErrorState` | layout + `Button` | `message`, `title`, `retryLabel`, `onRetry` |

@@ -10,6 +10,7 @@ export { default as Input } from './Input';
 export { default as LoadingState } from './LoadingState';
 export { default as Modal } from './Modal';
 export { default as Navbar } from './Navbar';
+export { default as Popover } from './Popover';
 export { default as Select } from './Select';
 export { default as TabBar } from './TabBar';
 export type { TabBarItemProps, TabBarProps } from './TabBar';

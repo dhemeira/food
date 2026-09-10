@@ -1,24 +1,33 @@
 import { useState } from 'react';
-import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import {
   ArrowRightEndOnRectangleIcon,
-  ArrowRightStartOnRectangleIcon,
+  CalendarDaysIcon as CalendarDaysOutline,
   HomeIcon as HomeOutline,
   MagnifyingGlassIcon as MagnifyingGlassOutline,
   PlusCircleIcon as PlusOutline,
-  UserCircleIcon as UserOutline,
 } from '@heroicons/react/24/outline';
 import {
+  CalendarDaysIcon as CalendarDaysSolid,
   HomeIcon as HomeSolid,
   MagnifyingGlassIcon as MagnifyingGlassSolid,
   PlusCircleIcon as PlusSolid,
-  UserCircleIcon as UserSolid,
 } from '@heroicons/react/24/solid';
-import { Avatar, GlassSurface, Navbar as TopNavbar, TabBar } from '@dhemeira/ui';
+import { Avatar, GlassSurface, Navbar as TopNavbar, Popover, TabBar } from '@dhemeira/ui';
 import { useAuth, username } from '~/context/auth';
-import { clearSearch, requestSearchFocus, useSearchFocused } from '~/lib/searchStore';
+import {
+  clearSearch,
+  dismissSearch,
+  requestSearchFocus,
+  useSearchFocused,
+} from '~/lib/searchStore';
 
-type TabKey = 'home' | 'new' | 'profile';
+type TabKey = 'home' | 'new' | 'menu';
+
+const ITEM_CLASS = 'text-ui-text relative z-10 flex-1';
+const MENU_ITEM_CLASS =
+  'text-ui-text block w-full rounded-lg px-3 py-2 text-left hover:bg-white/10';
+const MENU_ITEM_ACTIVE_CLASS = 'bg-white/15';
 
 function Navbar() {
   const { user, signIn, signOut } = useAuth();
@@ -28,27 +37,45 @@ function Navbar() {
 
   const path = location.pathname;
   const routeTab: TabKey | null =
-    path === '/' ? 'home' : path === '/recipe/new' ? 'new' : path === '/profile' ? 'profile' : null;
+    path === '/' ? 'home' : path === '/recipe/new' ? 'new' : path === '/menu' ? 'menu' : null;
+  const onProfile = path === '/profile';
 
-  // Remember the last real tab so that on tabless routes (e.g. a recipe) the
-  // pill (and its solid icon) stays put instead of jumping or hiding.
+  // Remember the last real tab so that on tabless routes (a recipe detail,
+  // the profile edit, …) the pill and its solid icon stay put.
   const [lastTab, setLastTab] = useState<TabKey>('home');
   const [prevRouteTab, setPrevRouteTab] = useState<TabKey | null>(routeTab);
+  // The tab being pressed, set on pointerdown so the pill jumps straight to
+  // the destination instead of passing through Home while search dismisses.
+  const [pendingTab, setPendingTab] = useState<TabKey | null>(null);
 
   if (routeTab !== prevRouteTab) {
     setPrevRouteTab(routeTab);
-    if (routeTab !== null) {
-      setLastTab(routeTab);
+    setPendingTab(null);
+    if (routeTab !== null) setLastTab(routeTab);
+  }
+
+  const activeTab: TabKey | 'search' = searchFocused
+    ? 'search'
+    : (pendingTab ?? routeTab ?? lastTab);
+  // When signed out the New/Menu tabs are hidden, so fall back to Home rather
+  // than leaving the pill on a slot that no longer exists.
+  const visibleTab: TabKey | 'search' =
+    !user && activeTab !== 'home' && activeTab !== 'search' ? 'home' : activeTab;
+
+  function pressTab(tab: TabKey): void {
+    setPendingTab(tab);
+    if (tab === 'home') {
+      clearSearch();
+    } else {
+      dismissSearch();
     }
   }
 
-  const activeTab: TabKey | 'search' = searchFocused ? 'search' : (routeTab ?? lastTab);
-
-  function handleHomeClick(): void {
-    clearSearch();
-  }
-
   function handleSearchClick(): void {
+    if (searchFocused) {
+      clearSearch();
+      return;
+    }
     if (location.pathname !== '/') {
       void navigate('/');
     }
@@ -65,14 +92,16 @@ function Navbar() {
           <div className="flex items-center gap-1 text-sm">
             {user ? (
               <>
+                <Link to="/menu" className="text-ui-text p-2 hover:brightness-80">
+                  Napi menü
+                </Link>
                 <Link to="/recipe/new" className="text-ui-text p-2 hover:brightness-80">
                   Új recept
                 </Link>
                 <Link
                   to="/profile"
-                  className="text-ui-text flex items-center gap-2 p-2 hover:brightness-80">
+                  className="text-ui-text flex items-center gap-2 p-2 hover:brightness-110">
                   <Avatar username={username(user)} />
-                  {username(user)}
                 </Link>
                 <button
                   type="button"
@@ -95,61 +124,99 @@ function Navbar() {
 
       <GlassSurface className="fixed right-5.5 bottom-5.5 left-5.5 z-20 sm:hidden">
         <TabBar className="h-15 gap-0.5 px-3 py-1.25">
-          <NavLink to="/" end onPointerDown={handleHomeClick} className="flex-1">
+          <Link
+            to="/"
+            onPointerDown={() => {
+              pressTab('home');
+            }}
+            aria-label="Kezdőlap"
+            className={ITEM_CLASS}>
             <TabBar.Item
-              active={activeTab === 'home'}
+              active={visibleTab === 'home'}
               icon={<HomeOutline className="size-6.5" />}
               activeIcon={<HomeSolid className="size-6.5" />}
             />
-          </NavLink>
+          </Link>
 
           {user ? (
-            <NavLink to="/recipe/new" className="flex-1">
+            <Link
+              to="/recipe/new"
+              onPointerDown={() => {
+                pressTab('new');
+              }}
+              aria-label="Új recept"
+              className={ITEM_CLASS}>
               <TabBar.Item
-                active={activeTab === 'new'}
+                active={visibleTab === 'new'}
                 icon={<PlusOutline className="size-6.5" />}
                 activeIcon={<PlusSolid className="size-6.5" />}
               />
-            </NavLink>
+            </Link>
           ) : null}
 
           <button
             type="button"
             onClick={handleSearchClick}
             aria-label="Keresés"
-            data-active={searchFocused ? 'true' : undefined}
-            className="text-ui-text flex flex-1 items-center justify-center">
-            {searchFocused ? (
-              <MagnifyingGlassSolid className="size-6.5" />
-            ) : (
-              <MagnifyingGlassOutline className="size-6.5" />
-            )}
+            className={ITEM_CLASS}>
+            <TabBar.Item
+              active={visibleTab === 'search'}
+              icon={<MagnifyingGlassOutline className="size-6.5" />}
+              activeIcon={<MagnifyingGlassSolid className="size-6.5" />}
+            />
           </button>
 
           {user ? (
-            <>
-              <NavLink to="/profile" className="flex-1">
-                <TabBar.Item
-                  active={activeTab === 'profile'}
-                  icon={<UserOutline className="size-6.5" />}
-                  activeIcon={<UserSolid className="size-6.5" />}
-                />
-              </NavLink>
+            <Link
+              to="/menu"
+              onPointerDown={() => {
+                pressTab('menu');
+              }}
+              aria-label="Napi menü"
+              className={ITEM_CLASS}>
+              <TabBar.Item
+                active={visibleTab === 'menu'}
+                icon={<CalendarDaysOutline className="size-6.5" />}
+                activeIcon={<CalendarDaysSolid className="size-6.5" />}
+              />
+            </Link>
+          ) : null}
 
-              <button
-                type="button"
-                onClick={() => void signOut()}
-                aria-label="Kijelentkezés"
-                className="text-ui-text flex flex-1 items-center justify-center">
-                <ArrowRightStartOnRectangleIcon className="size-6.5" />
-              </button>
-            </>
+          {user ? (
+            <Popover
+              label="Fiók"
+              side="top"
+              align="end"
+              className={ITEM_CLASS}
+              trigger={<Avatar username={username(user)} className="h-8" />}>
+              {(close) => (
+                <>
+                  <Link
+                    to="/profile"
+                    role="menuitem"
+                    onClick={close}
+                    className={`${MENU_ITEM_CLASS} ${onProfile ? MENU_ITEM_ACTIVE_CLASS : ''}`}>
+                    Profil szerkesztése
+                  </Link>
+                  <button
+                    type="button"
+                    role="menuitem"
+                    className={MENU_ITEM_CLASS}
+                    onClick={() => {
+                      close();
+                      void signOut();
+                    }}>
+                    Kijelentkezés
+                  </button>
+                </>
+              )}
+            </Popover>
           ) : (
             <button
               type="button"
               onClick={() => void signIn()}
               aria-label="Bejelentkezés"
-              className="text-ui-text flex flex-1 items-center justify-center">
+              className={`${ITEM_CLASS} flex items-center justify-center`}>
               <ArrowRightEndOnRectangleIcon className="size-6.5" />
             </button>
           )}
