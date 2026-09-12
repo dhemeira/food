@@ -102,7 +102,8 @@ function Navbar() {
     <>
       <TopNavbar className="hidden border-b sm:block">
         <div className="mx-auto flex max-w-4xl items-center justify-between px-2 py-1">
-          <Link to="/" className="text-text p-2 text-xl font-semibold">
+          <Link to="/" className="text-text flex items-center gap-2 p-2 text-xl font-semibold">
+            <img src="/icon.svg" alt="" className="size-7" />
             Receptek
           </Link>
           <div className="flex items-center gap-1 text-sm">

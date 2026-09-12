@@ -8,6 +8,7 @@
     "dev:host": "concurrently -k -n vite,tunnel -c cyan,magenta \"vite\" \"cloudflared tunnel run food-dev\"",
     "build": "tsc -b && vite build",
     "build:watch": "vite build --watch",
+    "gen-icons": "node scripts/generate-icons.mjs",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "format:check": "prettier --check .",
@@ -41,6 +42,7 @@
     "lint-staged": "^17.0.5",
     "prettier": "^3.5.3",
     "prettier-plugin-tailwindcss": "^0.8.0",
+    "sharp": "^0.35.4",
     "typescript": "~6.0.2",
     "typescript-eslint": "^8.59.2",
     "vite": "^8.0.12"
