@@ -17,3 +17,4 @@
 - [ ] On add and edit page change the file upload to contain the image inside and clicking that should bring up the dialog.
 - [ ] Publish npm ui library package.
 - [ ] Change english defaults to hungarian.
+- [ ] Look through the three projects (money-tracker, food, icon-maker) and pick out UI elements worth extracting into `@dhemeira/ui`.
