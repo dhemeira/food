@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react';
 import { useLocation } from 'react-router-dom';
+import Logo from '~/components/Logo';
 import Search from '~/components/Search';
 
 interface LayoutProps {
@@ -16,7 +17,7 @@ function Layout({ children }: LayoutProps) {
       <main className="mx-auto flex w-full max-w-4xl flex-1 flex-col p-2 sm:p-4">
         {onHome ? (
           <div className="mb-2 flex items-center gap-2 sm:hidden">
-            <img src="/icon.svg" alt="" className="size-6" />
+            <Logo className="size-6" />
             <span className="text-text text-lg font-semibold">Receptek</span>
           </div>
         ) : null}
