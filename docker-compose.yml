@@ -1,0 +1,30 @@
+name: food
+
+services:
+  web:
+    build: .
+    init: true
+    command: npm run dev -- --host 0.0.0.0
+    ports:
+      - '5050:5050'
+    volumes:
+      # Mount only source/config so the image's Linux node_modules (native
+      # bindings) is not shadowed by the host's.
+      - ./src:/app/src
+      - ./public:/app/public
+      - ./index.html:/app/index.html
+      - ./vite.config.ts:/app/vite.config.ts
+      - ./tsconfig.json:/app/tsconfig.json
+      - ./tsconfig.app.json:/app/tsconfig.app.json
+      - ./tsconfig.node.json:/app/tsconfig.node.json
+      - ./.env:/app/.env:ro
+    environment:
+      # File watching over Docker Desktop bind mounts is unreliable without this.
+      - CHOKIDAR_USEPOLLING=true
+
+  tunnel:
+    image: cloudflare/cloudflared:2026.10.7
+    command: tunnel --no-autoupdate run --token ${CLOUDFLARED_TUNNEL_TOKEN}
+    depends_on:
+      - web
+    restart: unless-stopped

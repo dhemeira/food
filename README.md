@@ -30,6 +30,8 @@ recipes-app/
 ├── public/                       # static assets (PWA icons, manifest, sw.js)
 ├── index.html
 ├── vite.config.ts
+├── Dockerfile                    # reproducible dev image (Node 22.22.1)
+├── docker-compose.yml            # web + cloudflared tunnel (single `up`)
 ├── firestore.rules               # security rules (source of truth, deployed by CI)
 ├── firestore.indexes.json        # composite indexes (empty — none needed yet)
 ├── firebase.json                 # Firebase CLI config (points at the two files above)
@@ -120,6 +122,30 @@ of truth; rules read it via `get()`.
 - Lint/prettier run on commit via husky + lint-staged.
 - UI components come from the published [`@dhemeira/ui`](https://github.com/dhemeira/ui) package.
   Its source is scanned by Tailwind via `@source` in `src/index.css`.
+
+## Docker (reproducible dev environment)
+
+`docker compose up` builds and starts both the Vite app and a Cloudflare tunnel, so any machine
+with Docker gets the same Node + cloudflared setup — no local toolchain drift.
+
+- `web` — Node `22.22.1` (from `.nvmrc`) running Vite on http://localhost:5050, source bind-mounted for HMR.
+- `tunnel` — `cloudflare/cloudflared:2026.10.7`, exposing the app through your Cloudflare tunnel.
+
+One-time setup per machine:
+
+1. `cp .env.example .env` and fill in the Firebase vars.
+2. Add `CLOUDFLARED_TUNNEL_TOKEN` to `.env` (Cloudflare Zero Trust → Tunnels → your tunnel → token).
+   Point the tunnel's public hostname at `http://web:5050` (the compose service name, not localhost).
+3. If the public hostname isn't already in `vite.config.ts` → `server.allowedHosts`, add it.
+
+```sh
+docker compose up          # web + tunnel (http://localhost:5050, or the tunnel URL)
+docker compose up web      # app only
+docker compose down        # stop
+docker compose up --build  # rebuild after dependency changes
+```
+
+Prefer plain `npm run dev` if you don't need container parity or the tunnel.
 
 ## Gotchas
 
