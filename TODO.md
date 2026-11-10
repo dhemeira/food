@@ -15,6 +15,5 @@
 - [ ] Fix the search keyboard not opening on iOS when the search tab is tapped from another page (the input mounts after the tap gesture ends).
 - [ ] On recipe edit and add page change the steps and ingredients from a textarea to a list of text fields that can be added and deleted.
 - [ ] On add and edit page change the file upload to contain the image inside and clicking that should bring up the dialog.
-- [ ] Publish npm ui library package.
 - [ ] Change english defaults to hungarian.
 - [ ] Look through the three projects (money-tracker, food, icon-maker) and pick out UI elements worth extracting into `@dhemeira/ui`.

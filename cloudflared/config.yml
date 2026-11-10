@@ -1,0 +1,4 @@
+ingress:
+  - hostname: test.dhemeira.hu
+    service: http://web:5050
+  - service: http_status:404

@@ -4,6 +4,28 @@ A family recipe app: a React SPA backed by **Firebase** (free "Spark" tier) and 
 **Cloudflare Pages**. There is no backend server, no payment method, and no Cloudflare Worker —
 data lives in Firestore, and images are stored as base64 data URIs inside Firestore.
 
+## Quick start (new machine)
+
+Requires [Docker](https://docs.docker.com/get-docker/) only — no Node, cloudflared, or Firebase CLI.
+
+```sh
+git clone https://github.com/dhemeira/food.git && cd food
+cp .env.example .env   # fill in the values below
+docker compose up --build
+```
+
+Fill in `.env`:
+
+- `VITE_FIREBASE_*` — Firebase web config (Firebase console → Project settings → Your apps).
+- `CLOUDFLARED_TUNNEL_TOKEN` — get it with `cloudflared tunnel token food-dev` (or copy from another machine).
+
+Then open http://localhost:5050 (local) or https://test.dhemeira.hu (via the tunnel). Stop with
+`docker compose down`.
+
+```sh
+docker compose down -v && docker compose up --build   # clean rebuild (also resets the node_modules volume)
+```
+
 ## Stack
 
 - **Frontend:** React 19 + TypeScript + Vite + Tailwind CSS v4 (`react-router-dom` for routing)
@@ -16,22 +38,26 @@ data lives in Firestore, and images are stored as base64 data URIs inside Firest
 
 ```
 recipes-app/
-├── frontend/                     # the React app (Pages build root)
-│   └── src/
-│       ├── backend/              # ← swappable data layer (the important part)
-│       │   ├── Backend.ts        #    Backend interface (the contract)
-│       │   ├── index.ts          #    factory: creates + exports the singleton `backend`
-│       │   ├── types.ts          #    domain types (User, Recipe, RecipeImage, …)
-│       │   └── firebase/         #    Firebase implementation (only files importing Firebase)
-│       ├── context/              # AuthProvider + useAuth
-│       ├── hooks/                # useRecipes, useRecipe, useRecipeImage
-│       ├── lib/                  # image.ts — client-side crop/resize to base64
-│       ├── components/           # Navbar, Search, RecipeList, ProtectedRoute
-│       └── pages/                # Home, Login, RecipeDetail, RecipeForm, NotFound
+├── src/                          # the React app (Pages build root)
+│   ├── backend/                  # ← swappable data layer (the important part)
+│   │   ├── Backend.ts            #    Backend interface (the contract)
+│   │   ├── index.ts              #    factory: creates + exports the singleton `backend`
+│   │   ├── types.ts              #    domain types (User, Recipe, RecipeImage, …)
+│   │   └── firebase/             #    Firebase implementation (only files importing Firebase)
+│   ├── context/                  # AuthProvider + useAuth
+│   ├── hooks/                    # useRecipes, useRecipe, useRecipeImage
+│   ├── lib/                      # image.ts — client-side crop/resize to base64
+│   ├── components/               # Navbar, Search, RecipeList, ProtectedRoute
+│   └── pages/                    # Home, Login, RecipeDetail, RecipeForm, NotFound
+├── public/                       # static assets (PWA icons, manifest, sw.js)
+├── index.html
+├── vite.config.ts
+├── Dockerfile                    # reproducible dev image (Node 22.22.1)
+├── docker-compose.yml            # web + cloudflared tunnel (single `up`)
 ├── firestore.rules               # security rules (source of truth, deployed by CI)
 ├── firestore.indexes.json        # composite indexes (empty — none needed yet)
 ├── firebase.json                 # Firebase CLI config (points at the two files above)
-├── wrangler.jsonc                # Pages/Wrangler config (pages_build_output_dir)
+├── wrangler.jsonc                # Pages/Wrangler config (assets: ./dist)
 └── .github/workflows/            # deploy-firestore.yml
 ```
 
@@ -45,7 +71,7 @@ four facets:
 - `users` — `watchRole`
 - `images` — `set` / `get` / `remove`
 
-`frontend/src/backend/index.ts` builds a `FirebaseBackend` and exports it as `backend`.
+`src/backend/index.ts` builds a `FirebaseBackend` and exports it as `backend`.
 Components and hooks import `backend` (or the `useX` hooks), never the Firebase SDK. To swap the
 backend (e.g. a REST API), implement `Backend` once and change that single factory line.
 
@@ -54,12 +80,12 @@ documents ↔ domain objects.
 
 ## Data model
 
-| Collection       | Doc id     | Fields | Notes |
-|------------------|------------|--------|-------|
-| `recipes`        | auto       | `title`, `description`, `calorieValue`, `calorieUnit`, `hasImage`, `thumb`, `ingredients[]`, `steps[]`, `createdBy`, `createdAt`, `updatedAt` | `thumb` is a small base64 data URI, denormalized so the list query carries it with **no extra read** |
-| `recipeImages`   | = recipe id | `full` (1000×400 data URI), `updatedAt` | read only on the detail view |
-| `settings/config`| `config`   | `allowedEmails[]` | who may write — edit in the console |
-| `users`          | = auth uid | `role: 'admin' \| 'family'` | admins may delete |
+| Collection        | Doc id      | Fields                                                                                                                                        | Notes                                                                                                |
+| ----------------- | ----------- | --------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------- |
+| `recipes`         | auto        | `title`, `description`, `calorieValue`, `calorieUnit`, `hasImage`, `thumb`, `ingredients[]`, `steps[]`, `createdBy`, `createdAt`, `updatedAt` | `thumb` is a small base64 data URI, denormalized so the list query carries it with **no extra read** |
+| `recipeImages`    | = recipe id | `full` (1000×400 data URI), `updatedAt`                                                                                                       | read only on the detail view                                                                         |
+| `settings/config` | `config`    | `allowedEmails[]`                                                                                                                             | who may write — edit in the console                                                                  |
+| `users`           | = auth uid  | `role: 'admin' \| 'family'`                                                                                                                   | admins may delete                                                                                    |
 
 `ingredients` = `{ quantity, name }`; `steps` = `{ instruction }`. Both are embedded arrays — a
 recipe is fully replaced on save.
@@ -109,12 +135,45 @@ of truth; rules read it via `get()`.
 
 ## Dev conventions
 
-- Node 22 (`.nvmrc`). Install husky at the repo root, then work in `frontend/`.
-- Scripts (frontend): `dev`, `build` (`tsc -b && vite build`), `lint`, `format:check`/`format:fix`.
-- `~` aliases to `frontend/src` (set in `vite.config.ts` + `tsconfig.app.json`).
-- Env: `frontend/.env` holds 6 `VITE_FIREBASE_*` vars (see `.env.example`). These are inlined at
-  build time, so they must also be set as build environment variables in Cloudflare Pages.
-- Lint/prettier run on commit via husky + lint-staged (frontend only).
+- Node 22 (`.nvmrc` → `22.22.1`). `npm install` at the repo root, then `npm run dev`.
+- Scripts: `dev`, `dev:host` (Vite + local cloudflared tunnel), `build` (`tsc -b && vite build`),
+  `lint`, `format:check`/`format:fix`.
+- `~` aliases to `src` (set in `vite.config.ts` + `tsconfig.app.json`).
+- Env: `.env` at the repo root holds the `VITE_FIREBASE_*` vars (see `.env.example`). These are
+  inlined at build time, so they must also be set as build environment variables in Cloudflare Pages.
+- Lint/prettier run on commit via husky + lint-staged.
+- UI components come from the published [`@dhemeira/ui`](https://github.com/dhemeira/ui) package.
+  Its source is scanned by Tailwind via `@source` in `src/index.css`.
+
+## Docker (reproducible dev environment)
+
+`docker compose up` builds and starts both the Vite app and a Cloudflare tunnel, so any machine
+with Docker gets the same Node + cloudflared setup — no local toolchain drift.
+
+- `web` — Node `22.22.1` (from `.nvmrc`) running Vite on http://localhost:5050, source bind-mounted for HMR.
+- `tunnel` — `cloudflare/cloudflared:2026.10.7` running your `food-dev` tunnel, exposing the app at
+  `test.dhemeira.hu`.
+
+The tunnel is self-contained: its routing lives in `cloudflared/config.yml` (pointing at
+`http://web:5050`, the Docker service name). The only per-machine secret is the tunnel token.
+
+One-time setup per machine:
+
+1. `cp .env.example .env` and fill in the Firebase vars.
+2. Put your tunnel token in `.env` as `CLOUDFLARED_TUNNEL_TOKEN`. Get it with:
+
+```sh
+cloudflared tunnel token food-dev
+```
+
+```sh
+docker compose up --build      # first run, or after changing the Dockerfile / .dockerignore
+docker compose up              # start (web + tunnel)
+docker compose up web          # app only
+docker compose down            # stop
+```
+
+Prefer plain `npm run dev` (or `npm run dev:host` for the local tunnel) if you don't need container parity.
 
 ## Gotchas
 

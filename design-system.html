@@ -1,0 +1,3770 @@
+<!doctype html>
+<html lang="hu">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Design System — Receptek</title>
+    <meta name="color-scheme" content="dark" />
+    <style>
+      :root {
+        --bg: #151c21;
+        --bg-rgb: 21, 28, 33;
+        --surface: #1c242b;
+        --surface-2: #222c34;
+        --border: #2c3a44;
+        --border-hover: #3a4b5a;
+        --border-focus: #3d5060;
+        --accent: #8b5cf6;
+        --accent-hover: #7c4ce0;
+        --accent-rgb: 139, 92, 246;
+        --accent-soft: rgba(var(--accent-rgb), 0.14);
+        --text: #f1f5f9;
+        --muted: #8899a6;
+        --success: #34d399;
+        --success-bg: #0d2818;
+        --warning: #fbbf24;
+        --warning-bg: #2a1f05;
+        --danger: #dc2626;
+      }
+
+      /* ------------------------------------------------------------------
+         Themes — accent + matching background tint. The tint always echoes
+         the accent hue; the border is the same hue at higher saturation.
+         default    = brand purple accent on teal-tinted surfaces
+         brand-bg   = brand purple accent on purple-tinted surfaces
+         blue       = blue accent on blue-tinted surfaces
+         indigo     = indigo accent on indigo-tinted surfaces
+         orange     = orange accent on orange-tinted surfaces
+      ------------------------------------------------------------------ */
+      html[data-theme='brand-bg'] {
+        --bg: #161019;
+        --bg-rgb: 22, 16, 25;
+        --surface: #1d1623;
+        --surface-2: #241b2c;
+        --border: #332445;
+        --border-hover: #423059;
+        --border-focus: #4f3a6e;
+        --accent: #9d6bff;
+        --accent-hover: #8557e8;
+        --accent-rgb: 157, 107, 255;
+        --text: #f5f1f9;
+        --muted: #a79ab8;
+      }
+      html[data-theme='blue'] {
+        --bg: #0f1a26;
+        --bg-rgb: 15, 26, 38;
+        --surface: #152230;
+        --surface-2: #1b2b3c;
+        --border: #254056;
+        --border-hover: #315470;
+        --border-focus: #3d6789;
+        --accent: #60a5fa;
+        --accent-hover: #4d8fe0;
+        --accent-rgb: 96, 165, 250;
+        --text: #eef3f9;
+        --muted: #7d93a8;
+      }
+      html[data-theme='indigo'] {
+        --bg: #11111e;
+        --bg-rgb: 17, 17, 30;
+        --surface: #181827;
+        --surface-2: #1f1f33;
+        --border: #2d2d4c;
+        --border-hover: #3c3c63;
+        --border-focus: #4b4b7c;
+        --accent: #818cf8;
+        --accent-hover: #6e79e6;
+        --accent-rgb: 129, 140, 248;
+        --text: #eef0fb;
+        --muted: #8b8fb0;
+      }
+      html[data-theme='orange'] {
+        --bg: #1d130c;
+        --bg-rgb: 29, 19, 12;
+        --surface: #251a12;
+        --surface-2: #2d2017;
+        --border: #4a3a2a;
+        --border-hover: #5e4a36;
+        --border-focus: #725b43;
+        --accent: #fb923c;
+        --accent-hover: #e07c2a;
+        --accent-rgb: 251, 146, 60;
+        --text: #faf1ea;
+        --muted: #a89a8c;
+      }
+
+      /* ------------------------------------------------------------------
+         Type scale presets — compact / normal / spaced. Every size tier
+         (meta, body, headings) is scaled so the whole hierarchy responds,
+         not just the headers. normal = the current hand-tuned sizes.
+      ------------------------------------------------------------------ */
+      /* compact · tighter throughout */
+      html[data-type='compact'] [style*='font-size: 11px'] {
+        font-size: 10px !important;
+      }
+      html[data-type='compact'] [style*='font-size: 12px'] {
+        font-size: 11px !important;
+      }
+      html[data-type='compact'] [style*='font-size: 13px'] {
+        font-size: 12px !important;
+      }
+      html[data-type='compact'] [style*='font-size: 14px'] {
+        font-size: 13px !important;
+      }
+      html[data-type='compact'] [style*='font-size: 15px'] {
+        font-size: 14px !important;
+      }
+      html[data-type='compact'] [style*='font-size: 16px'] {
+        font-size: 15px !important;
+      }
+      html[data-type='compact'] [style*='font-size: 17px'] {
+        font-size: 16px !important;
+      }
+      html[data-type='compact'] [style*='font-size: 18px'] {
+        font-size: 17px !important;
+      }
+      html[data-type='compact'] [style*='font-size: 20px'] {
+        font-size: 19px !important;
+      }
+      html[data-type='compact'] [style*='font-size: 22px'] {
+        font-size: 21px !important;
+      }
+      html[data-type='compact'] [style*='font-size: 24px'] {
+        font-size: 23px !important;
+      }
+      html[data-type='compact'] [style*='font-size: 38px'] {
+        font-size: 36px !important;
+      }
+      /* spaced · looser throughout */
+      html[data-type='spaced'] [style*='font-size: 11px'] {
+        font-size: 12px !important;
+      }
+      html[data-type='spaced'] [style*='font-size: 12px'] {
+        font-size: 13px !important;
+      }
+      html[data-type='spaced'] [style*='font-size: 13px'] {
+        font-size: 14px !important;
+      }
+      html[data-type='spaced'] [style*='font-size: 14px'] {
+        font-size: 15px !important;
+      }
+      html[data-type='spaced'] [style*='font-size: 15px'] {
+        font-size: 16px !important;
+      }
+      html[data-type='spaced'] [style*='font-size: 16px'] {
+        font-size: 17px !important;
+      }
+      html[data-type='spaced'] [style*='font-size: 17px'] {
+        font-size: 18px !important;
+      }
+      html[data-type='spaced'] [style*='font-size: 18px'] {
+        font-size: 19px !important;
+      }
+      html[data-type='spaced'] [style*='font-size: 20px'] {
+        font-size: 22px !important;
+      }
+      html[data-type='spaced'] [style*='font-size: 22px'] {
+        font-size: 24px !important;
+      }
+      html[data-type='spaced'] [style*='font-size: 24px'] {
+        font-size: 26px !important;
+      }
+      html[data-type='spaced'] [style*='font-size: 38px'] {
+        font-size: 40px !important;
+      }
+
+      /* Font themes — sans-serif only */
+      html[data-font='inter'] body {
+        font-family:
+          'Inter',
+          system-ui,
+          -apple-system,
+          'Segoe UI',
+          sans-serif;
+      }
+      html[data-font='manrope'] body {
+        font-family:
+          'Manrope',
+          system-ui,
+          -apple-system,
+          'Segoe UI',
+          sans-serif;
+      }
+      html[data-font='grotesk'] body {
+        font-family:
+          'Space Grotesk',
+          system-ui,
+          -apple-system,
+          'Segoe UI',
+          sans-serif;
+      }
+      html[data-font='outfit'] body {
+        font-family:
+          'Outfit',
+          system-ui,
+          -apple-system,
+          'Segoe UI',
+          sans-serif;
+      }
+      html[data-font='jakarta'] body {
+        font-family:
+          'Plus Jakarta Sans',
+          system-ui,
+          -apple-system,
+          'Segoe UI',
+          sans-serif;
+      }
+      html[data-font='figtree'] body {
+        font-family:
+          'Figtree',
+          system-ui,
+          -apple-system,
+          'Segoe UI',
+          sans-serif;
+      }
+      html[data-font='plex'] body {
+        font-family:
+          'IBM Plex Sans',
+          system-ui,
+          -apple-system,
+          'Segoe UI',
+          sans-serif;
+      }
+      html[data-font='dmsans'] body {
+        font-family:
+          'DM Sans',
+          system-ui,
+          -apple-system,
+          'Segoe UI',
+          sans-serif;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      html {
+        scroll-behavior: smooth;
+      }
+      body {
+        margin: 0;
+        font-family:
+          'Inter',
+          system-ui,
+          -apple-system,
+          'Segoe UI',
+          sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        -webkit-font-smoothing: antialiased;
+      }
+      a {
+        color: var(--accent);
+      }
+      ::selection {
+        background: var(--accent);
+        color: #fff;
+      }
+
+      /* Demo interactions (hover/focus/pulse) live here; everything else is inline */
+      .btn-primary:hover {
+        background: var(--accent-hover) !important;
+        box-shadow: 0 0 16px rgba(var(--accent-rgb), 0.3) !important;
+        transform: translateY(-1px);
+      }
+      .btn-secondary:hover {
+        background: var(--surface-2) !important;
+      }
+      .btn-ghost:hover {
+        background: var(--surface) !important;
+      }
+      .btn-danger:hover {
+        background: #b91c1c !important;
+      }
+      .btn-disabled:hover {
+        background: var(--accent) !important;
+        box-shadow: none !important;
+        transform: none !important;
+      }
+      .input-demo:focus {
+        outline: none;
+        border-color: var(--accent) !important;
+        box-shadow: 0 0 0 3px rgba(var(--accent-rgb), 0.25) !important;
+      }
+      .card-hover:hover {
+        background: var(--surface-2) !important;
+        border-color: rgba(var(--accent-rgb), 0.35) !important;
+        transform: translateY(-3px);
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+      }
+      .card-hover {
+        transition: all 0.2s ease;
+      }
+      .card-hover img {
+        transition: transform 0.3s ease;
+      }
+      .card-hover:hover img {
+        transform: scale(1.04);
+      }
+      @keyframes skeleton-pulse {
+        0%,
+        100% {
+          opacity: 0.5;
+        }
+        50% {
+          opacity: 0.9;
+        }
+      }
+      .skeleton {
+        animation: skeleton-pulse 1.6s ease-in-out infinite;
+      }
+      .chip {
+        background: var(--surface);
+        color: var(--text);
+        border: 1px solid var(--border);
+        border-radius: 999px;
+        padding: 6px 14px;
+        font-size: 13px;
+        font-family: inherit;
+        text-decoration: none;
+        cursor: pointer;
+        transition: all 0.15s ease;
+        white-space: nowrap;
+      }
+      .chip:hover {
+        background: var(--surface-2);
+      }
+      .chip-active {
+        background: var(--accent-soft) !important;
+        color: var(--accent) !important;
+        border-color: var(--accent) !important;
+      }
+      .ds-select {
+        background: var(--surface);
+        color: var(--text);
+        border: 1px solid var(--border);
+        border-radius: 999px;
+        padding: 6px 12px;
+        font-size: 13px;
+        font-family: inherit;
+        cursor: pointer;
+      }
+      .nav-group {
+        font-size: 11px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: var(--muted);
+        margin-right: 2px;
+      }
+    </style>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=Figtree:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=Manrope:wght@400;500;600;700&family=Outfit:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap"
+      rel="stylesheet" />
+  </head>
+
+  <body>
+    <!-- Sticky nav -->
+    <nav
+      style="
+        position: sticky;
+        top: 0;
+        z-index: 50;
+        background: rgba(var(--bg-rgb), 0.92);
+        backdrop-filter: blur(8px);
+        border-bottom: 1px solid var(--border);
+      ">
+      <div style="max-width: 960px; margin: 0 auto; padding: 10px 24px 6px">
+        <!-- controls row -->
+        <div
+          style="
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 8px;
+          ">
+          <span style="font-weight: 700; font-size: 15px; color: var(--text); margin-right: 4px"
+            >Design System</span
+          >
+          <span class="nav-group">Téma</span>
+          <button id="theme-default" class="chip chip-active" data-theme-set="default">
+            Lila · teal
+          </button>
+          <button class="chip" data-theme-set="brand-bg">Lila · lila</button>
+          <button class="chip" data-theme-set="blue">Kék</button>
+          <button class="chip" data-theme-set="indigo">Indigó</button>
+          <button class="chip" data-theme-set="orange">Narancs</button>
+          <span class="nav-group">Betűtípus</span>
+          <select id="font-select" class="ds-select">
+            <option value="inter">Inter</option>
+            <option value="manrope">Manrope</option>
+            <option value="grotesk">Space Grotesk</option>
+            <option value="outfit">Outfit</option>
+            <option value="jakarta">Plus Jakarta</option>
+            <option value="figtree">Figtree</option>
+            <option value="plex">IBM Plex Sans</option>
+            <option value="dmsans">DM Sans</option>
+          </select>
+          <span class="nav-group">Típus skála</span>
+          <select id="type-select" class="ds-select">
+            <option value="compact">Compact</option>
+            <option value="normal" selected>Normál</option>
+            <option value="spaced">Spaced</option>
+          </select>
+        </div>
+        <!-- section links row -->
+        <div
+          style="
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+            padding-bottom: 4px;
+          ">
+          <span class="nav-group">Alapok</span>
+          <a href="#colors" class="chip">Színek</a>
+          <a href="#surfaces" class="chip">Felületek</a>
+          <a href="#borders" class="chip">Borderek</a>
+          <a href="#type" class="chip">Tipográfia</a>
+          <a href="#buttons" class="chip">Gombok</a>
+          <a href="#inputs" class="chip">Űrlap elemek</a>
+          <span class="nav-group" style="margin-left: 8px">Képernyők</span>
+          <a href="#card" class="chip">Receptkártya</a>
+          <a href="#detail" class="chip">Részlet nézet</a>
+          <a href="#login" class="chip">Belépés</a>
+          <a href="#form" class="chip">Recept űrlap</a>
+          <a href="#upload" class="chip">Képfeltöltés</a>
+          <a href="#admin" class="chip">Admin</a>
+          <a href="#menu" class="chip">Étlap</a>
+          <span class="nav-group" style="margin-left: 8px">Egyéb</span>
+          <a href="#toast" class="chip">Értesítések</a>
+          <a href="#mobile" class="chip">Mobil</a>
+          <a href="#states" class="chip">Állapotok</a>
+          <a href="#bits" class="chip">Egyéb elemek</a>
+        </div>
+      </div>
+    </nav>
+
+    <main style="max-width: 960px; margin: 0 auto; padding: 32px 24px 80px">
+      <p style="color: var(--muted); font-size: 13px; margin: 0 0 32px">
+        Referencia a felépítéshez — nem az alkalmazás. Színkódok a jobb oldalon minden részletnél.
+      </p>
+
+      <!-- ===================== 1. COLORS ===================== -->
+      <section id="colors" style="margin-bottom: 56px">
+        <h2 style="font-size: 20px; font-weight: 600; letter-spacing: -0.02em; margin: 0 0 4px">
+          01 · Színskála
+        </h2>
+        <p style="color: var(--muted); font-size: 13px; margin: 0 0 20px">
+          A fenti kapcsolóval váltogathatsz téma és betűtípus között. Minden témánál az összes szín
+          azonos árnyalatú — a bordere a felület színe magasabb színtelítettséggel. A lila (#35063e)
+          a márkaszín.
+        </p>
+        <div
+          style="
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+            gap: 14px;
+          ">
+          <div
+            style="
+              border: 1px solid var(--border);
+              border-radius: 12px;
+              overflow: hidden;
+              background: var(--surface);
+            ">
+            <div style="height: 72px; background: var(--bg)"></div>
+            <div style="padding: 10px 12px">
+              <div style="font-size: 13px; font-weight: 600">background</div>
+              <div style="font-size: 12px; color: var(--muted); font-family: monospace">
+                #151c21
+              </div>
+            </div>
+          </div>
+          <div
+            style="
+              border: 1px solid var(--border);
+              border-radius: 12px;
+              overflow: hidden;
+              background: var(--surface);
+            ">
+            <div style="height: 72px; background: var(--surface)"></div>
+            <div style="padding: 10px 12px">
+              <div style="font-size: 13px; font-weight: 600">surface</div>
+              <div style="font-size: 12px; color: var(--muted); font-family: monospace">
+                #1c242b
+              </div>
+            </div>
+          </div>
+          <div
+            style="
+              border: 1px solid var(--border);
+              border-radius: 12px;
+              overflow: hidden;
+              background: var(--surface);
+            ">
+            <div style="height: 72px; background: var(--surface-2)"></div>
+            <div style="padding: 10px 12px">
+              <div style="font-size: 13px; font-weight: 600">surface-2</div>
+              <div style="font-size: 12px; color: var(--muted); font-family: monospace">
+                #222c34
+              </div>
+            </div>
+          </div>
+          <div
+            style="
+              border: 1px solid var(--border);
+              border-radius: 12px;
+              overflow: hidden;
+              background: var(--surface);
+            ">
+            <div style="height: 72px; background: var(--border)"></div>
+            <div style="padding: 10px 12px">
+              <div style="font-size: 13px; font-weight: 600">border</div>
+              <div style="font-size: 12px; color: var(--muted); font-family: monospace">
+                #2c3a44
+              </div>
+            </div>
+          </div>
+          <div
+            style="
+              border: 1px solid var(--border);
+              border-radius: 12px;
+              overflow: hidden;
+              background: var(--surface);
+            ">
+            <div style="height: 72px; background: var(--border-focus)"></div>
+            <div style="padding: 10px 12px">
+              <div style="font-size: 13px; font-weight: 600">border-focus</div>
+              <div style="font-size: 12px; color: var(--muted); font-family: monospace">
+                #3d5060
+              </div>
+            </div>
+          </div>
+          <div
+            style="
+              border: 1px solid var(--border);
+              border-radius: 12px;
+              overflow: hidden;
+              background: var(--surface);
+            ">
+            <div style="height: 72px; background: var(--accent)"></div>
+            <div style="padding: 10px 12px">
+              <div style="font-size: 13px; font-weight: 600">accent</div>
+              <div style="font-size: 12px; color: var(--muted); font-family: monospace">
+                #8b5cf6
+              </div>
+            </div>
+          </div>
+          <div
+            style="
+              border: 1px solid var(--border);
+              border-radius: 12px;
+              overflow: hidden;
+              background: var(--surface);
+            ">
+            <div style="height: 72px; background: var(--accent-soft)"></div>
+            <div style="padding: 10px 12px">
+              <div style="font-size: 13px; font-weight: 600">accent-soft</div>
+              <div style="font-size: 12px; color: var(--muted); font-family: monospace">
+                rgba(139,92,246,.14)
+              </div>
+            </div>
+          </div>
+          <div
+            style="
+              border: 1px solid var(--border);
+              border-radius: 12px;
+              overflow: hidden;
+              background: var(--surface);
+            ">
+            <div
+              style="height: 72px; background: var(--text); display: flex; align-items: flex-end">
+              <span style="font-size: 12px; color: var(--bg); padding: 8px; font-weight: 600"
+                >Aa</span
+              >
+            </div>
+            <div style="padding: 10px 12px">
+              <div style="font-size: 13px; font-weight: 600">text</div>
+              <div style="font-size: 12px; color: var(--muted); font-family: monospace">
+                #f1f5f9
+              </div>
+            </div>
+          </div>
+          <div
+            style="
+              border: 1px solid var(--border);
+              border-radius: 12px;
+              overflow: hidden;
+              background: var(--surface);
+            ">
+            <div
+              style="height: 72px; background: var(--muted); display: flex; align-items: flex-end">
+              <span style="font-size: 12px; color: var(--surface); padding: 8px; font-weight: 600"
+                >Aa</span
+              >
+            </div>
+            <div style="padding: 10px 12px">
+              <div style="font-size: 13px; font-weight: 600">text-muted</div>
+              <div style="font-size: 12px; color: var(--muted); font-family: monospace">
+                #8899a6
+              </div>
+            </div>
+          </div>
+          <div
+            style="
+              border: 1px solid var(--border);
+              border-radius: 12px;
+              overflow: hidden;
+              background: var(--surface);
+            ">
+            <div style="height: 72px; background: var(--success)"></div>
+            <div style="padding: 10px 12px">
+              <div style="font-size: 13px; font-weight: 600">success</div>
+              <div style="font-size: 12px; color: var(--muted); font-family: monospace">
+                #34d399
+              </div>
+            </div>
+          </div>
+          <div
+            style="
+              border: 1px solid var(--border);
+              border-radius: 12px;
+              overflow: hidden;
+              background: var(--surface);
+            ">
+            <div style="height: 72px; background: var(--warning)"></div>
+            <div style="padding: 10px 12px">
+              <div style="font-size: 13px; font-weight: 600">warning</div>
+              <div style="font-size: 12px; color: var(--muted); font-family: monospace">
+                #fbbf24
+              </div>
+            </div>
+          </div>
+          <div
+            style="
+              border: 1px solid var(--border);
+              border-radius: 12px;
+              overflow: hidden;
+              background: var(--surface);
+            ">
+            <div style="height: 72px; background: var(--danger)"></div>
+            <div style="padding: 10px 12px">
+              <div style="font-size: 13px; font-weight: 600">danger</div>
+              <div style="font-size: 12px; color: var(--muted); font-family: monospace">
+                #dc2626
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================== 2. SURFACES ===================== -->
+      <section id="surfaces" style="margin-bottom: 56px">
+        <h2 style="font-size: 20px; font-weight: 600; letter-spacing: -0.02em; margin: 0 0 4px">
+          02 · Felületek
+        </h2>
+        <p style="color: var(--muted); font-size: 13px; margin: 0 0 20px">
+          Egy felület mindig azonos árnyalatú, a bordere a felület színe magasabb színtelítettséggel
+          + kicsit világosabban.
+        </p>
+        <div
+          style="
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 16px;
+          ">
+          <!-- plain surface -->
+          <div
+            style="
+              border: 1px solid var(--border);
+              border-radius: 14px;
+              background: var(--surface);
+              padding: 20px;
+            ">
+            <div style="font-size: 14px; font-weight: 600; margin-bottom: 4px">
+              Kártya / felület
+            </div>
+            <div style="font-size: 12px; color: var(--muted); margin-bottom: 16px">
+              bg: surface · border: border
+            </div>
+            <div style="font-size: 13px; color: var(--text)">Ez egy sima felület szöveggel.</div>
+            <div style="font-size: 13px; color: var(--muted); margin-top: 6px">
+              Másodlagos szöveg ugyanezen a felületen.
+            </div>
+          </div>
+          <!-- raised surface -->
+          <div
+            style="
+              border: 1px solid var(--border);
+              border-radius: 14px;
+              background: var(--surface-2);
+              padding: 20px;
+            ">
+            <div style="font-size: 14px; font-weight: 600; margin-bottom: 4px">Kiemelt felület</div>
+            <div style="font-size: 12px; color: var(--muted); margin-bottom: 16px">
+              bg: surface-2 (hover, dropdown)
+            </div>
+            <div style="font-size: 13px; color: var(--text)">Hover állapot, fölé emelt elem.</div>
+          </div>
+          <!-- tinted accent surface -->
+          <div
+            style="
+              border: 1px solid rgba(var(--accent-rgb), 0.35);
+              border-radius: 14px;
+              background: var(--accent-soft);
+              padding: 20px;
+            ">
+            <div style="font-size: 14px; font-weight: 600; margin-bottom: 4px">Akcent felület</div>
+            <div style="font-size: 12px; color: var(--muted); margin-bottom: 16px">
+              bg: accent-soft · border: accent
+            </div>
+            <div style="font-size: 13px; color: var(--accent); font-weight: 500">
+              Aktív chip, kiemelt jelvény.
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================== 3. BORDERS ===================== -->
+      <section id="borders" style="margin-bottom: 56px">
+        <h2 style="font-size: 20px; font-weight: 600; letter-spacing: -0.02em; margin: 0 0 4px">
+          03 · Bordertípusok
+        </h2>
+        <p style="color: var(--muted); font-size: 13px; margin: 0 0 20px">
+          Ugyanaz a hue, növekvő színtelítettség: default → hover → focus → accent.
+        </p>
+        <div style="display: flex; flex-wrap: wrap; gap: 14px">
+          <div
+            style="
+              border: 1px solid var(--border);
+              border-radius: 12px;
+              background: var(--surface);
+              padding: 16px 22px;
+            ">
+            <div style="font-size: 13px; font-weight: 500">Default</div>
+            <div style="font-size: 12px; color: var(--muted); font-family: monospace">#2c3a44</div>
+          </div>
+          <div
+            style="
+              border: 1px solid var(--border-hover);
+              border-radius: 12px;
+              background: var(--surface-2);
+              padding: 16px 22px;
+            ">
+            <div style="font-size: 13px; font-weight: 500">Hover</div>
+            <div style="font-size: 12px; color: var(--muted); font-family: monospace">#3a4b5a</div>
+          </div>
+          <div
+            style="
+              border: 1px solid var(--border-focus);
+              border-radius: 12px;
+              background: var(--surface);
+              padding: 16px 22px;
+              box-shadow: 0 0 0 3px rgba(var(--accent-rgb), 0.15);
+            ">
+            <div style="font-size: 13px; font-weight: 500">Focus</div>
+            <div style="font-size: 12px; color: var(--muted); font-family: monospace">#3d5060</div>
+          </div>
+          <div
+            style="
+              border: 1px solid var(--accent);
+              border-radius: 12px;
+              background: var(--accent-soft);
+              padding: 16px 22px;
+            ">
+            <div style="font-size: 13px; font-weight: 500; color: var(--accent)">Accent</div>
+            <div style="font-size: 12px; color: var(--muted); font-family: monospace">#8b5cf6</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================== 4. TYPOGRAPHY ===================== -->
+      <section id="type" style="margin-bottom: 56px">
+        <h2 style="font-size: 20px; font-weight: 600; letter-spacing: -0.02em; margin: 0 0 4px">
+          04 · Tipográfia
+        </h2>
+        <p style="color: var(--muted); font-size: 13px; margin: 0 0 20px">
+          Egy család (Inter), a hangsúlyt a font-weight és a tracking adja. A "Típus skála" választó
+          (compact / normal / spaced) a teljes betűhierarchiát léptékeli — nem csak a fejléceket.
+        </p>
+        <div style="display: flex; flex-direction: column; gap: 18px">
+          <div>
+            <div
+              style="
+                font-size: 24px;
+                font-weight: 600;
+                letter-spacing: -0.02em;
+                color: var(--text);
+              ">
+              Receptek — oldalcím (<span class="type-size" data-base="24">24</span> / 600 / tight)
+            </div>
+            <div style="font-size: 12px; color: var(--muted)">
+              felhasználás: fejléc, oldal főcím
+            </div>
+          </div>
+          <div>
+            <div style="font-size: 17px; font-weight: 600; color: var(--text)">
+              Csirke paprikás — kártyacím (<span class="type-size" data-base="17">17</span> / 600)
+            </div>
+            <div style="font-size: 12px; color: var(--muted)">
+              felhasználás: receptkártya, részlet cím
+            </div>
+          </div>
+          <div>
+            <div style="font-size: 15px; font-weight: 500; color: var(--text)">
+              Szöveg (<span class="type-size" data-base="15">15</span> / 500)
+            </div>
+            <div style="font-size: 12px; color: var(--muted)">felhasználás: test szöveg, lista</div>
+          </div>
+          <div>
+            <div style="font-size: 14px; color: var(--muted)">
+              Másodlagos szöveg (<span class="type-size" data-base="14">14</span> / 400 / muted)
+            </div>
+            <div style="font-size: 12px; color: var(--muted)">
+              felhasználás: meta, leírás, jelölés
+            </div>
+          </div>
+          <div>
+            <div
+              style="
+                font-size: 12px;
+                font-weight: 600;
+                text-transform: uppercase;
+                letter-spacing: 0.05em;
+                color: var(--muted);
+              ">
+              Címke / label (<span class="type-size" data-base="12">12</span> / 600 / caps)
+            </div>
+            <div style="font-size: 12px; color: var(--muted)">
+              felhasználás: űrlap címkék, kis szekciócímek
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================== 5. BUTTONS ===================== -->
+      <section id="buttons" style="margin-bottom: 56px">
+        <h2 style="font-size: 20px; font-weight: 600; letter-spacing: -0.02em; margin: 0 0 4px">
+          05 · Gombok
+        </h2>
+        <p style="color: var(--muted); font-size: 13px; margin: 0 0 20px">
+          Normál, hover (vigyél rá az egérrel) és disabled állapot.
+        </p>
+        <div style="display: flex; flex-wrap: wrap; gap: 14px; align-items: flex-start">
+          <div style="display: flex; flex-direction: column; gap: 8px">
+            <span style="font-size: 12px; color: var(--muted)">Primary</span>
+            <button
+              class="btn-primary"
+              style="
+                background: var(--accent);
+                color: #fff;
+                border: none;
+                border-radius: 10px;
+                padding: 10px 18px;
+                font-size: 14px;
+                font-weight: 500;
+                font-family: inherit;
+                cursor: pointer;
+                transition: all 0.15s ease;
+                box-shadow: 0 0 12px rgba(var(--accent-rgb), 0.15);
+              ">
+              Bejelentkezés
+            </button>
+            <button
+              class="btn-disabled"
+              style="
+                background: var(--accent);
+                color: rgba(255, 255, 255, 0.6);
+                border: none;
+                border-radius: 10px;
+                padding: 10px 18px;
+                font-size: 14px;
+                font-weight: 500;
+                font-family: inherit;
+                cursor: not-allowed;
+                opacity: 0.5;
+              ">
+              Disabled
+            </button>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 8px">
+            <span style="font-size: 12px; color: var(--muted)">Secondary</span>
+            <button
+              class="btn-secondary"
+              style="
+                background: var(--surface);
+                color: var(--text);
+                border: 1px solid var(--border);
+                border-radius: 10px;
+                padding: 10px 18px;
+                font-size: 14px;
+                font-weight: 500;
+                font-family: inherit;
+                cursor: pointer;
+                transition: all 0.15s ease;
+              ">
+              Jelszó módosítása
+            </button>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 8px">
+            <span style="font-size: 12px; color: var(--muted)">Ghost</span>
+            <button
+              class="btn-ghost"
+              style="
+                background: transparent;
+                color: var(--text);
+                border: none;
+                border-radius: 10px;
+                padding: 10px 18px;
+                font-size: 14px;
+                font-weight: 500;
+                font-family: inherit;
+                cursor: pointer;
+                transition: all 0.15s ease;
+              ">
+              Kijelentkezés
+            </button>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 8px">
+            <span style="font-size: 12px; color: var(--muted)">Danger</span>
+            <button
+              class="btn-danger"
+              style="
+                background: var(--danger);
+                color: #fff;
+                border: none;
+                border-radius: 10px;
+                padding: 10px 18px;
+                font-size: 14px;
+                font-weight: 500;
+                font-family: inherit;
+                cursor: pointer;
+                transition: all 0.15s ease;
+              ">
+              Recept törlése
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================== 6. INPUTS & CHIPS ===================== -->
+      <section id="inputs" style="margin-bottom: 56px">
+        <h2 style="font-size: 20px; font-weight: 600; letter-spacing: -0.02em; margin: 0 0 4px">
+          06 · Űrlap
+        </h2>
+        <p style="color: var(--muted); font-size: 13px; margin: 0 0 20px">
+          Inputok sötét felülettel + színtelített border fókuszban. Chipek a szűréshez.
+        </p>
+        <div
+          style="
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 18px;
+          ">
+          <div style="display: flex; flex-direction: column; gap: 8px">
+            <label
+              style="font-size: 12px; font-weight: 600; color: var(--text); letter-spacing: 0.02em"
+              >Felhasználónév</label
+            >
+            <input
+              class="input-demo"
+              placeholder="pl. mami"
+              style="
+                background: var(--surface);
+                border: 1px solid var(--border);
+                border-radius: 10px;
+                padding: 10px 12px;
+                font-size: 14px;
+                color: var(--text);
+                font-family: inherit;
+                transition: all 0.15s ease;
+                caret-color: var(--accent);
+              " />
+            <span style="font-size: 12px; color: var(--muted)">Alap állapot</span>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 8px">
+            <label
+              style="font-size: 12px; font-weight: 600; color: var(--text); letter-spacing: 0.02em"
+              >Keresés</label
+            >
+            <input
+              class="input-demo"
+              placeholder="paprikás, gulyás..."
+              style="
+                background: var(--surface);
+                border: 1px solid var(--accent);
+                border-radius: 10px;
+                padding: 10px 12px;
+                font-size: 14px;
+                color: var(--text);
+                font-family: inherit;
+                outline: none;
+                box-shadow: 0 0 0 3px rgba(var(--accent-rgb), 0.25);
+                transition: all 0.15s ease;
+                caret-color: var(--accent);
+              " />
+            <span style="font-size: 12px; color: var(--muted)">Fókusz állapot</span>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 8px">
+            <label
+              style="font-size: 12px; font-weight: 600; color: var(--text); letter-spacing: 0.02em"
+              >Jelszó</label
+            >
+            <input
+              type="password"
+              value="hibasjelszo"
+              style="
+                background: var(--surface);
+                border: 1px solid var(--danger);
+                border-radius: 10px;
+                padding: 10px 12px;
+                font-size: 14px;
+                color: var(--text);
+                font-family: inherit;
+                transition: all 0.15s ease;
+              " />
+            <span style="font-size: 12px; color: var(--danger)">Hibás jelszó</span>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 10px">
+            <label
+              style="font-size: 12px; font-weight: 600; color: var(--text); letter-spacing: 0.02em"
+              >Szűrő chipek</label
+            >
+            <div style="display: flex; gap: 8px; flex-wrap: wrap">
+              <button
+                class="chip"
+                style="
+                  background: var(--accent-soft);
+                  color: var(--accent);
+                  border: 1px solid var(--accent);
+                  border-radius: 999px;
+                  padding: 6px 14px;
+                  font-size: 13px;
+                  font-weight: 500;
+                  font-family: inherit;
+                  cursor: pointer;
+                  transition: all 0.15s ease;
+                ">
+                Összes
+              </button>
+              <button
+                class="chip"
+                style="
+                  background: var(--surface);
+                  color: var(--text);
+                  border: 1px solid var(--border);
+                  border-radius: 999px;
+                  padding: 6px 14px;
+                  font-size: 13px;
+                  font-family: inherit;
+                  cursor: pointer;
+                  transition: all 0.15s ease;
+                ">
+                Levesek
+              </button>
+              <button
+                class="chip"
+                style="
+                  background: var(--surface);
+                  color: var(--text);
+                  border: 1px solid var(--border);
+                  border-radius: 999px;
+                  padding: 6px 14px;
+                  font-size: 13px;
+                  font-family: inherit;
+                  cursor: pointer;
+                  transition: all 0.15s ease;
+                ">
+                Főételek
+              </button>
+              <button
+                class="chip"
+                style="
+                  background: var(--surface);
+                  color: var(--text);
+                  border: 1px solid var(--border);
+                  border-radius: 999px;
+                  padding: 6px 14px;
+                  font-size: 13px;
+                  font-family: inherit;
+                  cursor: pointer;
+                  transition: all 0.15s ease;
+                ">
+                Sütik
+              </button>
+            </div>
+            <span style="font-size: 12px; color: var(--muted)"
+              >Aktív chip lila tint + lila border</span
+            >
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================== 7. RECIPE CARD ===================== -->
+      <section id="card" style="margin-bottom: 56px">
+        <h2 style="font-size: 20px; font-weight: 600; letter-spacing: -0.02em; margin: 0 0 4px">
+          07 · Receptkártya
+        </h2>
+        <p style="color: var(--muted); font-size: 13px; margin: 0 0 20px">
+          Normál, hover (vigyél rá az egérrel) és skeleton állapot (betöltés).
+        </p>
+        <div
+          style="
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 18px;
+            max-width: 720px;
+          ">
+          <!-- normal card -->
+          <a href="#card" style="text-decoration: none; display: block">
+            <div
+              class="card-hover"
+              style="
+                border: 1px solid var(--border);
+                border-radius: 14px;
+                background: var(--surface);
+                overflow: hidden;
+                cursor: pointer;
+              ">
+              <div
+                style="
+                  overflow: hidden;
+                  height: 150px;
+                  background: linear-gradient(135deg, var(--surface-2), var(--border));
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                ">
+                <span style="font-size: 12px; color: var(--muted)">kép · 150px</span>
+              </div>
+              <div style="padding: 14px 16px">
+                <div style="font-size: 15px; font-weight: 600; color: var(--text)">
+                  Csirke paprikás
+                </div>
+                <div style="font-size: 13px; color: var(--muted); margin-top: 4px">
+                  60 perc · 540 kcal
+                </div>
+              </div>
+            </div>
+          </a>
+          <!-- hover card (as-is) -->
+          <a href="#card" style="text-decoration: none; display: block">
+            <div
+              class="card-hover"
+              style="
+                border: 1px solid rgba(var(--accent-rgb), 0.35);
+                border-radius: 14px;
+                background: var(--surface-2);
+                overflow: hidden;
+                box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+                cursor: pointer;
+                transform: translateY(-3px);
+              ">
+              <div
+                style="
+                  overflow: hidden;
+                  height: 150px;
+                  background: linear-gradient(135deg, var(--border), var(--surface-2));
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                ">
+                <span style="font-size: 12px; color: var(--muted)">kép · hover</span>
+              </div>
+              <div style="padding: 14px 16px">
+                <div style="font-size: 15px; font-weight: 600; color: var(--text)">Gulyásleves</div>
+                <div style="font-size: 13px; color: var(--muted); margin-top: 4px">
+                  120 perc · 380 kcal
+                </div>
+              </div>
+            </div>
+          </a>
+          <!-- skeleton -->
+          <div
+            style="
+              border: 1px solid var(--border);
+              border-radius: 14px;
+              background: var(--surface);
+              overflow: hidden;
+            ">
+            <div class="skeleton" style="height: 150px; background: var(--surface-2)"></div>
+            <div style="padding: 14px 16px; display: flex; flex-direction: column; gap: 8px">
+              <div
+                class="skeleton"
+                style="
+                  height: 14px;
+                  width: 70%;
+                  background: var(--surface-2);
+                  border-radius: 6px;
+                "></div>
+              <div
+                class="skeleton"
+                style="
+                  height: 11px;
+                  width: 40%;
+                  background: var(--surface-2);
+                  border-radius: 6px;
+                "></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================== 8. DETAIL VIEW ===================== -->
+      <section id="detail" style="margin-bottom: 56px">
+        <h2 style="font-size: 20px; font-weight: 600; letter-spacing: -0.02em; margin: 0 0 4px">
+          08 · Részlet nézet — változatok
+        </h2>
+        <p style="color: var(--muted); font-size: 13px; margin: 0 0 24px">
+          Két változat összehasonlításra (360px hős, lebegő megosztás gomb). A hős képnél a gradiens
+          a "nincs kép" helyettesítő. Mobilon mindegyik egy oszlopra esik össze.
+        </p>
+        <div style="font-size: 13px; font-weight: 600; color: var(--muted); margin: 0 0 8px">
+          A · Bejelentkezve (Szerkesztés + Törlés a láblécben, Megosztás lebeg)
+        </div>
+        <div
+          style="
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            overflow: hidden;
+            background: var(--surface);
+            margin-bottom: 40px;
+          ">
+          <!-- hero -->
+          <div
+            style="
+              position: relative;
+              height: 360px;
+              background: linear-gradient(135deg, var(--surface-2), var(--border));
+            ">
+            <div
+              style="
+                position: absolute;
+                inset: 0;
+                background: linear-gradient(to top, rgba(var(--bg-rgb), 0.97), transparent 45%);
+              "></div>
+            <div style="position: absolute; top: 20px; right: 20px">
+              <button
+                class="btn-secondary"
+                style="
+                  background: rgba(var(--bg-rgb), 0.6);
+                  backdrop-filter: blur(6px);
+                  color: var(--text);
+                  border: 1px solid rgba(255, 255, 255, 0.16);
+                  border-radius: 999px;
+                  padding: 10px 18px;
+                  font-size: 14px;
+                  font-weight: 500;
+                  font-family: inherit;
+                  cursor: pointer;
+                  transition: all 0.15s ease;
+                ">
+                Megosztás ↗
+              </button>
+            </div>
+            <div style="position: absolute; left: 36px; right: 36px; bottom: 28px">
+              <div
+                style="
+                  font-size: 38px;
+                  font-weight: 600;
+                  letter-spacing: -0.03em;
+                  line-height: 1.1;
+                  color: var(--text);
+                ">
+                Csirke paprikás
+              </div>
+              <div style="display: flex; gap: 8px; margin-top: 16px; flex-wrap: wrap">
+                <span
+                  style="
+                    background: rgba(255, 255, 255, 0.08);
+                    border: 1px solid rgba(255, 255, 255, 0.16);
+                    color: var(--text);
+                    border-radius: 999px;
+                    padding: 7px 16px;
+                    font-size: 14px;
+                  "
+                  >4 adag</span
+                >
+                <span
+                  style="
+                    background: rgba(255, 255, 255, 0.08);
+                    border: 1px solid rgba(255, 255, 255, 0.16);
+                    color: var(--text);
+                    border-radius: 999px;
+                    padding: 7px 16px;
+                    font-size: 14px;
+                  "
+                  >60 perc</span
+                >
+                <span
+                  style="
+                    background: rgba(255, 255, 255, 0.08);
+                    border: 1px solid rgba(255, 255, 255, 0.16);
+                    color: var(--text);
+                    border-radius: 999px;
+                    padding: 7px 16px;
+                    font-size: 14px;
+                  "
+                  >540 kcal</span
+                >
+                <span
+                  style="
+                    background: rgba(255, 255, 255, 0.08);
+                    border: 1px solid rgba(255, 255, 255, 0.16);
+                    color: var(--text);
+                    border-radius: 999px;
+                    padding: 7px 16px;
+                    font-size: 14px;
+                  "
+                  >Sós</span
+                >
+              </div>
+            </div>
+          </div>
+          <!-- two columns -->
+          <div style="display: grid; grid-template-columns: 360px 1fr; gap: 36px; padding: 36px">
+            <!-- ingredients -->
+            <div
+              style="
+                background: var(--surface-2);
+                border: 1px solid var(--border);
+                border-radius: 18px;
+                padding: 24px;
+                align-self: start;
+              ">
+              <div
+                style="
+                  display: flex;
+                  align-items: center;
+                  justify-content: space-between;
+                  margin-bottom: 16px;
+                ">
+                <div
+                  style="
+                    font-size: 13px;
+                    font-weight: 600;
+                    text-transform: uppercase;
+                    letter-spacing: 0.06em;
+                    color: var(--muted);
+                  ">
+                  Hozzávalók
+                </div>
+                <span
+                  style="
+                    background: var(--accent-soft);
+                    color: var(--accent);
+                    border-radius: 999px;
+                    padding: 4px 12px;
+                    font-size: 13px;
+                    font-weight: 500;
+                  "
+                  >4 adaghoz</span
+                >
+              </div>
+              <ul
+                style="
+                  margin: 0;
+                  padding: 0;
+                  list-style: none;
+                  display: flex;
+                  flex-direction: column;
+                  gap: 12px;
+                ">
+                <li
+                  style="
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: baseline;
+                    gap: 12px;
+                    font-size: 16px;
+                  ">
+                  <span style="color: var(--text)">csirkemell</span
+                  ><span style="color: var(--muted); white-space: nowrap">500 g</span>
+                </li>
+                <li
+                  style="
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: baseline;
+                    gap: 12px;
+                    font-size: 16px;
+                  ">
+                  <span style="color: var(--text)">őrölt paprika</span
+                  ><span style="color: var(--muted); white-space: nowrap">2 ek</span>
+                </li>
+                <li
+                  style="
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: baseline;
+                    gap: 12px;
+                    font-size: 16px;
+                  ">
+                  <span style="color: var(--text)">tejföl</span
+                  ><span style="color: var(--muted); white-space: nowrap">2 dl</span>
+                </li>
+                <li
+                  style="
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: baseline;
+                    gap: 12px;
+                    font-size: 16px;
+                  ">
+                  <span style="color: var(--text)">vöröshagyma</span
+                  ><span style="color: var(--muted); white-space: nowrap">1 db</span>
+                </li>
+                <li
+                  style="
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: baseline;
+                    gap: 12px;
+                    font-size: 16px;
+                  ">
+                  <span style="color: var(--text)">zsír</span
+                  ><span style="color: var(--muted); white-space: nowrap">3 ek</span>
+                </li>
+                <li
+                  style="
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: baseline;
+                    gap: 12px;
+                    font-size: 16px;
+                  ">
+                  <span style="color: var(--text)">só, bors, nokedli</span
+                  ><span style="color: var(--muted); white-space: nowrap">ízlés szerint</span>
+                </li>
+              </ul>
+            </div>
+            <!-- steps -->
+            <div style="display: flex; flex-direction: column; gap: 22px">
+              <div
+                style="
+                  font-size: 13px;
+                  font-weight: 600;
+                  text-transform: uppercase;
+                  letter-spacing: 0.06em;
+                  color: var(--muted);
+                ">
+                Elkészítés
+              </div>
+              <ol
+                style="
+                  margin: 0;
+                  padding: 0;
+                  list-style: none;
+                  display: flex;
+                  flex-direction: column;
+                  gap: 22px;
+                ">
+                <li
+                  style="
+                    display: flex;
+                    gap: 16px;
+                    font-size: 16px;
+                    line-height: 1.7;
+                    color: var(--text);
+                  ">
+                  <span
+                    style="
+                      flex: none;
+                      width: 36px;
+                      height: 36px;
+                      border-radius: 999px;
+                      background: var(--accent-soft);
+                      color: var(--accent);
+                      font-size: 16px;
+                      font-weight: 600;
+                      display: flex;
+                      align-items: center;
+                      justify-content: center;
+                    "
+                    >1</span
+                  >
+                  Vöröshagymát aprítasz, üvegesre pirítod a zsíron, majd hozzáadod a paprikát.
+                </li>
+                <li
+                  style="
+                    display: flex;
+                    gap: 16px;
+                    font-size: 16px;
+                    line-height: 1.7;
+                    color: var(--text);
+                  ">
+                  <span
+                    style="
+                      flex: none;
+                      width: 36px;
+                      height: 36px;
+                      border-radius: 999px;
+                      background: var(--accent-soft);
+                      color: var(--accent);
+                      font-size: 16px;
+                      font-weight: 600;
+                      display: flex;
+                      align-items: center;
+                      justify-content: center;
+                    "
+                    >2</span
+                  >
+                  Ráteszed a csirkét, megpirítod, felöntöd vízzel, sózod, borsozod.
+                </li>
+                <li
+                  style="
+                    display: flex;
+                    gap: 16px;
+                    font-size: 16px;
+                    line-height: 1.7;
+                    color: var(--text);
+                  ">
+                  <span
+                    style="
+                      flex: none;
+                      width: 36px;
+                      height: 36px;
+                      border-radius: 999px;
+                      background: var(--accent-soft);
+                      color: var(--accent);
+                      font-size: 16px;
+                      font-weight: 600;
+                      display: flex;
+                      align-items: center;
+                      justify-content: center;
+                    "
+                    >3</span
+                  >
+                  Lassú tűzön puhára főzöd, a végén tejföllel besűríted, nokedlivel tálalod.
+                </li>
+              </ol>
+              <!-- actions -->
+              <div
+                style="
+                  border-top: 1px dashed var(--border);
+                  padding-top: 20px;
+                  margin-top: 8px;
+                  display: flex;
+                  gap: 12px;
+                  flex-wrap: wrap;
+                ">
+                <button
+                  class="btn-primary"
+                  style="
+                    background: var(--accent);
+                    color: #fff;
+                    border: none;
+                    border-radius: 12px;
+                    padding: 12px 22px;
+                    font-size: 15px;
+                    font-weight: 500;
+                    font-family: inherit;
+                    cursor: pointer;
+                    transition: all 0.15s ease;
+                    box-shadow: 0 0 14px rgba(var(--accent-rgb), 0.18);
+                  ">
+                  Recept szerkesztése
+                </button>
+                <button
+                  class="btn-danger"
+                  style="
+                    background: transparent;
+                    color: var(--danger);
+                    border: 1px solid rgba(220, 38, 38, 0.4);
+                    border-radius: 12px;
+                    padding: 12px 22px;
+                    font-size: 15px;
+                    font-weight: 500;
+                    font-family: inherit;
+                    cursor: pointer;
+                    transition: all 0.15s ease;
+                  ">
+                  Törlés
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ============ 8B · LOGGED OUT ============ -->
+        <div style="font-size: 13px; font-weight: 600; color: var(--muted); margin: 0 0 8px">
+          B · Kijelentkezve — nincs művelet gomb (Megosztás marad)
+        </div>
+        <div
+          style="
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            overflow: hidden;
+            background: var(--surface);
+          ">
+          <div
+            style="
+              position: relative;
+              height: 360px;
+              background: linear-gradient(135deg, var(--surface-2), var(--border));
+            ">
+            <div
+              style="
+                position: absolute;
+                inset: 0;
+                background: linear-gradient(to top, rgba(var(--bg-rgb), 0.97), transparent 45%);
+              "></div>
+            <div style="position: absolute; top: 20px; right: 20px">
+              <button
+                class="btn-secondary"
+                style="
+                  background: rgba(var(--bg-rgb), 0.6);
+                  backdrop-filter: blur(6px);
+                  color: var(--text);
+                  border: 1px solid rgba(255, 255, 255, 0.16);
+                  border-radius: 999px;
+                  padding: 10px 18px;
+                  font-size: 14px;
+                  font-weight: 500;
+                  font-family: inherit;
+                  cursor: pointer;
+                  transition: all 0.15s ease;
+                ">
+                Megosztás ↗
+              </button>
+            </div>
+            <div style="position: absolute; left: 36px; right: 36px; bottom: 28px">
+              <div
+                style="
+                  font-size: 38px;
+                  font-weight: 600;
+                  letter-spacing: -0.03em;
+                  line-height: 1.1;
+                  color: var(--text);
+                ">
+                Gulyásleves
+              </div>
+              <div style="display: flex; gap: 8px; margin-top: 16px; flex-wrap: wrap">
+                <span
+                  style="
+                    background: rgba(255, 255, 255, 0.08);
+                    border: 1px solid rgba(255, 255, 255, 0.16);
+                    color: var(--text);
+                    border-radius: 999px;
+                    padding: 7px 16px;
+                    font-size: 14px;
+                  "
+                  >6 adag</span
+                >
+                <span
+                  style="
+                    background: rgba(255, 255, 255, 0.08);
+                    border: 1px solid rgba(255, 255, 255, 0.16);
+                    color: var(--text);
+                    border-radius: 999px;
+                    padding: 7px 16px;
+                    font-size: 14px;
+                  "
+                  >120 perc</span
+                >
+                <span
+                  style="
+                    background: rgba(255, 255, 255, 0.08);
+                    border: 1px solid rgba(255, 255, 255, 0.16);
+                    color: var(--text);
+                    border-radius: 999px;
+                    padding: 7px 16px;
+                    font-size: 14px;
+                  "
+                  >380 kcal</span
+                >
+              </div>
+            </div>
+          </div>
+          <div style="display: grid; grid-template-columns: 360px 1fr; gap: 36px; padding: 36px">
+            <div
+              style="
+                background: var(--surface-2);
+                border: 1px solid var(--border);
+                border-radius: 18px;
+                padding: 24px;
+                align-self: start;
+              ">
+              <div
+                style="
+                  display: flex;
+                  align-items: center;
+                  justify-content: space-between;
+                  margin-bottom: 16px;
+                ">
+                <div
+                  style="
+                    font-size: 13px;
+                    font-weight: 600;
+                    text-transform: uppercase;
+                    letter-spacing: 0.06em;
+                    color: var(--muted);
+                  ">
+                  Hozzávalók
+                </div>
+                <span
+                  style="
+                    background: var(--accent-soft);
+                    color: var(--accent);
+                    border-radius: 999px;
+                    padding: 4px 12px;
+                    font-size: 13px;
+                    font-weight: 500;
+                  "
+                  >6 adaghoz</span
+                >
+              </div>
+              <ul
+                style="
+                  margin: 0;
+                  padding: 0;
+                  list-style: none;
+                  display: flex;
+                  flex-direction: column;
+                  gap: 12px;
+                ">
+                <li
+                  style="
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: baseline;
+                    gap: 12px;
+                    font-size: 16px;
+                  ">
+                  <span style="color: var(--text)">marhalábszár</span
+                  ><span style="color: var(--muted); white-space: nowrap">800 g</span>
+                </li>
+                <li
+                  style="
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: baseline;
+                    gap: 12px;
+                    font-size: 16px;
+                  ">
+                  <span style="color: var(--text)">vöröshagyma</span
+                  ><span style="color: var(--muted); white-space: nowrap">2 db</span>
+                </li>
+                <li
+                  style="
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: baseline;
+                    gap: 12px;
+                    font-size: 16px;
+                  ">
+                  <span style="color: var(--text)">paprika</span
+                  ><span style="color: var(--muted); white-space: nowrap">2 ek</span>
+                </li>
+                <li
+                  style="
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: baseline;
+                    gap: 12px;
+                    font-size: 16px;
+                  ">
+                  <span style="color: var(--text)">burgonya</span
+                  ><span style="color: var(--muted); white-space: nowrap">4 db</span>
+                </li>
+                <li
+                  style="
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: baseline;
+                    gap: 12px;
+                    font-size: 16px;
+                  ">
+                  <span style="color: var(--text)">csipetke</span
+                  ><span style="color: var(--muted); white-space: nowrap">10 dkg</span>
+                </li>
+              </ul>
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 22px">
+              <div
+                style="
+                  font-size: 13px;
+                  font-weight: 600;
+                  text-transform: uppercase;
+                  letter-spacing: 0.06em;
+                  color: var(--muted);
+                ">
+                Elkészítés
+              </div>
+              <ol
+                style="
+                  margin: 0;
+                  padding: 0;
+                  list-style: none;
+                  display: flex;
+                  flex-direction: column;
+                  gap: 22px;
+                ">
+                <li
+                  style="
+                    display: flex;
+                    gap: 16px;
+                    font-size: 16px;
+                    line-height: 1.7;
+                    color: var(--text);
+                  ">
+                  <span
+                    style="
+                      flex: none;
+                      width: 36px;
+                      height: 36px;
+                      border-radius: 999px;
+                      background: var(--accent-soft);
+                      color: var(--accent);
+                      font-size: 16px;
+                      font-weight: 600;
+                      display: flex;
+                      align-items: center;
+                      justify-content: center;
+                    "
+                    >1</span
+                  >
+                  A hagymát megpirítod, ráteted a paprikát és a feldarabolt húst.
+                </li>
+                <li
+                  style="
+                    display: flex;
+                    gap: 16px;
+                    font-size: 16px;
+                    line-height: 1.7;
+                    color: var(--text);
+                  ">
+                  <span
+                    style="
+                      flex: none;
+                      width: 36px;
+                      height: 36px;
+                      border-radius: 999px;
+                      background: var(--accent-soft);
+                      color: var(--accent);
+                      font-size: 16px;
+                      font-weight: 600;
+                      display: flex;
+                      align-items: center;
+                      justify-content: center;
+                    "
+                    >2</span
+                  >
+                  Felöntöd, és fedő alatt puhára főzöd a húst (kb. 1,5 óra).
+                </li>
+                <li
+                  style="
+                    display: flex;
+                    gap: 16px;
+                    font-size: 16px;
+                    line-height: 1.7;
+                    color: var(--text);
+                  ">
+                  <span
+                    style="
+                      flex: none;
+                      width: 36px;
+                      height: 36px;
+                      border-radius: 999px;
+                      background: var(--accent-soft);
+                      color: var(--accent);
+                      font-size: 16px;
+                      font-weight: 600;
+                      display: flex;
+                      align-items: center;
+                      justify-content: center;
+                    "
+                    >3</span
+                  >
+                  Hozzáadod a burgonyát, a végén a csipetkét és fűszerezed.
+                </li>
+              </ol>
+              <div
+                style="
+                  border-top: 1px dashed var(--border);
+                  padding-top: 20px;
+                  font-size: 15px;
+                  color: var(--muted);
+                ">
+                Szerkesztéshez és mentéshez jelentkezz be.
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================== 9. NOTIFICATIONS ===================== -->
+      <section id="toast" style="margin-bottom: 56px">
+        <h2 style="font-size: 20px; font-weight: 600; letter-spacing: -0.02em; margin: 0 0 4px">
+          09 · Értesítések
+        </h2>
+        <p style="color: var(--muted); font-size: 13px; margin: 0 0 20px">
+          Az app push értesítéseket küld (új recept), és frissítés sávot is mutat. Két megjelenési
+          forma:
+        </p>
+        <div
+          style="
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 16px;
+            max-width: 720px;
+          ">
+          <!-- in-app toast -->
+          <div
+            style="
+              border: 1px solid var(--border);
+              border-radius: 14px;
+              background: var(--surface);
+              padding: 14px 16px;
+              display: flex;
+              align-items: flex-start;
+              gap: 12px;
+              box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35);
+            ">
+            <span
+              style="
+                flex: none;
+                width: 34px;
+                height: 34px;
+                border-radius: 999px;
+                background: var(--accent-soft);
+                color: var(--accent);
+                font-size: 16px;
+                font-weight: 600;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+              "
+              >✓</span
+            >
+            <div style="flex: 1; min-width: 0">
+              <div style="font-size: 14px; font-weight: 600; color: var(--text)">Recept mentve</div>
+              <div style="font-size: 13px; color: var(--muted); margin-top: 2px">
+                A csirke paprikás elmentve.
+              </div>
+            </div>
+            <button
+              style="
+                flex: none;
+                background: transparent;
+                border: none;
+                color: var(--muted);
+                font-size: 16px;
+                cursor: pointer;
+                font-family: inherit;
+                line-height: 1;
+              ">
+              ×
+            </button>
+          </div>
+          <!-- OS push -->
+          <div
+            style="
+              border: 1px solid rgba(var(--accent-rgb), 0.4);
+              border-radius: 14px;
+              background: var(--accent-soft);
+              padding: 14px 16px;
+              display: flex;
+              align-items: flex-start;
+              gap: 12px;
+            ">
+            <span
+              style="
+                flex: none;
+                width: 34px;
+                height: 34px;
+                border-radius: 10px;
+                background: var(--accent);
+                color: #fff;
+                font-size: 15px;
+                font-weight: 700;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+              "
+              >R</span
+            >
+            <div style="flex: 1; min-width: 0">
+              <div style="font-size: 13px; color: var(--muted)">Receptek</div>
+              <div style="font-size: 14px; font-weight: 600; color: var(--text)">
+                Új recept hozzáadva
+              </div>
+              <div style="font-size: 13px; color: var(--muted); margin-top: 2px">
+                Csirke paprikás
+              </div>
+            </div>
+          </div>
+        </div>
+        <p style="color: var(--muted); font-size: 12px; margin-top: 8px">
+          In-app toast: felül-belül lebegő, eltűnik automatikusan. Push: az operációs rendszer
+          értesítése a Web Push API-n keresztül.
+        </p>
+      </section>
+
+      <!-- ===================== 10. MOBILE ===================== -->
+      <section id="mobile" style="margin-bottom: 56px">
+        <h2 style="font-size: 20px; font-weight: 600; letter-spacing: -0.02em; margin: 0 0 4px">
+          10 · Mobil előnézet
+        </h2>
+        <p style="color: var(--muted); font-size: 13px; margin: 0 0 20px">
+          Az app elsősorban telefonon fut (PWA). A fő képernyő: kereső, szűrő chipek, kártya rács.
+        </p>
+        <div style="display: flex; justify-content: center">
+          <!-- phone frame -->
+          <div
+            style="
+              width: 320px;
+              border-radius: 36px;
+              background: #0a0a0f;
+              padding: 10px;
+              box-shadow: 0 24px 60px rgba(0, 0, 0, 0.5);
+            ">
+            <div
+              style="
+                border-radius: 28px;
+                overflow: hidden;
+                background: var(--bg);
+                border: 1px solid var(--border);
+                height: 640px;
+                display: flex;
+                flex-direction: column;
+              ">
+              <!-- mini header -->
+              <div
+                style="
+                  display: flex;
+                  align-items: center;
+                  justify-content: space-between;
+                  padding: 14px 16px 8px;
+                ">
+                <span
+                  style="
+                    font-size: 17px;
+                    font-weight: 700;
+                    letter-spacing: -0.02em;
+                    color: var(--text);
+                  "
+                  >Receptek</span
+                >
+                <span
+                  style="
+                    width: 30px;
+                    height: 30px;
+                    border-radius: 999px;
+                    background: var(--surface);
+                    border: 1px solid var(--border);
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    color: var(--muted);
+                    font-size: 13px;
+                    font-weight: 600;
+                  "
+                  >N</span
+                >
+              </div>
+              <!-- search -->
+              <div style="padding: 8px 16px 12px">
+                <div
+                  style="
+                    background: var(--surface);
+                    border: 1px solid var(--border);
+                    border-radius: 12px;
+                    padding: 9px 12px;
+                    font-size: 13px;
+                    color: var(--muted);
+                  ">
+                  Keresés...
+                </div>
+              </div>
+              <!-- chips -->
+              <div style="display: flex; gap: 8px; padding: 0 16px 14px; overflow: hidden">
+                <span
+                  style="
+                    background: var(--accent-soft);
+                    color: var(--accent);
+                    border: 1px solid var(--accent);
+                    border-radius: 999px;
+                    padding: 5px 12px;
+                    font-size: 12px;
+                    white-space: nowrap;
+                  "
+                  >Összes</span
+                >
+                <span
+                  style="
+                    background: var(--surface);
+                    color: var(--text);
+                    border: 1px solid var(--border);
+                    border-radius: 999px;
+                    padding: 5px 12px;
+                    font-size: 12px;
+                    white-space: nowrap;
+                  "
+                  >Levesek</span
+                >
+                <span
+                  style="
+                    background: var(--surface);
+                    color: var(--text);
+                    border: 1px solid var(--border);
+                    border-radius: 999px;
+                    padding: 5px 12px;
+                    font-size: 12px;
+                    white-space: nowrap;
+                  "
+                  >Főételek</span
+                >
+              </div>
+              <!-- cards -->
+              <div
+                style="
+                  display: flex;
+                  flex-direction: column;
+                  gap: 12px;
+                  padding: 0 16px;
+                  overflow: hidden;
+                ">
+                <div
+                  style="
+                    border: 1px solid var(--border);
+                    border-radius: 14px;
+                    overflow: hidden;
+                    background: var(--surface);
+                  ">
+                  <div
+                    style="
+                      height: 90px;
+                      background: linear-gradient(135deg, var(--surface-2), var(--border));
+                    "></div>
+                  <div style="padding: 10px 12px">
+                    <div style="font-size: 14px; font-weight: 600; color: var(--text)">
+                      Csirke paprikás
+                    </div>
+                    <div style="font-size: 12px; color: var(--muted); margin-top: 2px">
+                      60 perc · 540 kcal
+                    </div>
+                  </div>
+                </div>
+                <div
+                  style="
+                    border: 1px solid var(--border);
+                    border-radius: 14px;
+                    overflow: hidden;
+                    background: var(--surface);
+                  ">
+                  <div
+                    style="
+                      height: 90px;
+                      background: linear-gradient(135deg, var(--border), var(--surface-2));
+                    "></div>
+                  <div style="padding: 10px 12px">
+                    <div style="font-size: 14px; font-weight: 600; color: var(--text)">
+                      Gulyásleves
+                    </div>
+                    <div style="font-size: 12px; color: var(--muted); margin-top: 2px">
+                      120 perc · 380 kcal
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================== 11. LOGIN ===================== -->
+      <section id="login" style="margin-bottom: 56px">
+        <h2 style="font-size: 20px; font-weight: 600; letter-spacing: -0.02em; margin: 0 0 4px">
+          11 · Bejelentkezés
+        </h2>
+        <p style="color: var(--muted); font-size: 13px; margin: 0 0 20px">
+          Centrált kártya a háttér színén. A gomb az egész kártya szélességű.
+        </p>
+        <div
+          style="
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 48px 20px;
+            display: flex;
+            justify-content: center;
+          ">
+          <div
+            style="
+              background: var(--surface);
+              border: 1px solid var(--border);
+              border-radius: 20px;
+              padding: 32px;
+              width: 100%;
+              max-width: 380px;
+            ">
+            <div style="text-align: center">
+              <div
+                style="
+                  width: 44px;
+                  height: 44px;
+                  border-radius: 14px;
+                  background: var(--accent);
+                  color: #fff;
+                  font-size: 20px;
+                  font-weight: 700;
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                  margin: 0 auto 16px;
+                ">
+                R
+              </div>
+              <div
+                style="
+                  font-size: 22px;
+                  font-weight: 600;
+                  letter-spacing: -0.02em;
+                  color: var(--text);
+                ">
+                Bejelentkezés
+              </div>
+              <div style="font-size: 13px; color: var(--muted); margin-top: 4px">
+                Jelentkezz be, hogy elérd a recepteket.
+              </div>
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 14px; margin-top: 24px">
+              <div style="display: flex; flex-direction: column; gap: 6px">
+                <label style="font-size: 12px; font-weight: 600; color: var(--text)"
+                  >Felhasználónév</label
+                >
+                <input
+                  placeholder="pl. mami"
+                  style="
+                    background: var(--bg);
+                    border: 1px solid var(--border);
+                    border-radius: 10px;
+                    padding: 10px 12px;
+                    font-size: 14px;
+                    color: var(--text);
+                    font-family: inherit;
+                    caret-color: var(--accent);
+                  " />
+              </div>
+              <div style="display: flex; flex-direction: column; gap: 6px">
+                <label style="font-size: 12px; font-weight: 600; color: var(--text)">Jelszó</label>
+                <input
+                  type="password"
+                  placeholder="••••••••"
+                  style="
+                    background: var(--bg);
+                    border: 1px solid var(--border);
+                    border-radius: 10px;
+                    padding: 10px 12px;
+                    font-size: 14px;
+                    color: var(--text);
+                    font-family: inherit;
+                  " />
+              </div>
+              <p style="margin: 0; font-size: 13px; color: var(--danger)">
+                Hibás felhasználónév vagy jelszó.
+              </p>
+              <button
+                class="btn-primary"
+                style="
+                  background: var(--accent);
+                  color: #fff;
+                  border: none;
+                  border-radius: 10px;
+                  padding: 12px 16px;
+                  font-size: 14px;
+                  font-weight: 600;
+                  font-family: inherit;
+                  cursor: pointer;
+                  transition: all 0.15s ease;
+                  box-shadow: 0 0 14px rgba(var(--accent-rgb), 0.18);
+                ">
+                Bejelentkezés
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================== 12. RECIPE FORM ===================== -->
+      <section id="form" style="margin-bottom: 56px">
+        <h2 style="font-size: 20px; font-weight: 600; letter-spacing: -0.02em; margin: 0 0 4px">
+          12 · Recept űrlap
+        </h2>
+        <p style="color: var(--muted); font-size: 13px; margin: 0 0 20px">
+          Egy oszlop, a blokkokat vékony vonal választja el. A hozzávalók és lépések soronként
+          szerkeszthetők.
+        </p>
+        <div
+          style="
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            background: var(--surface);
+            padding: 48px;
+            max-width: 720px;
+          ">
+          <!-- title + description -->
+          <div style="display: flex; flex-direction: column; gap: 10px">
+            <label style="font-size: 12px; font-weight: 600; color: var(--text)">Recept neve</label>
+            <input
+              value="Csirke paprikás"
+              style="
+                background: var(--bg);
+                border: 1px solid var(--border);
+                border-radius: 12px;
+                padding: 15px 18px;
+                font-size: 16px;
+                color: var(--text);
+                font-family: inherit;
+              " />
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 28px">
+            <label style="font-size: 12px; font-weight: 600; color: var(--text)">Leírás</label>
+            <textarea
+              rows="3"
+              style="
+                background: var(--bg);
+                border: 1px solid var(--border);
+                border-radius: 12px;
+                padding: 15px 18px;
+                font-size: 16px;
+                color: var(--text);
+                font-family: inherit;
+                resize: vertical;
+                line-height: 1.6;
+              ">
+A család kedvence — nokedlivel az igazi.</textarea>
+          </div>
+          <!-- category chips -->
+          <div style="display: flex; flex-direction: column; gap: 12px; margin-top: 28px">
+            <label style="font-size: 12px; font-weight: 600; color: var(--text)">Kategória</label>
+            <div style="display: flex; gap: 12px; flex-wrap: wrap">
+              <span
+                style="
+                  background: var(--accent-soft);
+                  color: var(--accent);
+                  border: 1px solid var(--accent);
+                  border-radius: 999px;
+                  padding: 10px 20px;
+                  font-size: 14px;
+                "
+                >Főétel</span
+              >
+              <span
+                style="
+                  background: var(--surface);
+                  color: var(--text);
+                  border: 1px solid var(--border);
+                  border-radius: 999px;
+                  padding: 10px 20px;
+                  font-size: 14px;
+                "
+                >Leves</span
+              >
+              <span
+                style="
+                  background: var(--surface);
+                  color: var(--text);
+                  border: 1px solid var(--border);
+                  border-radius: 999px;
+                  padding: 10px 20px;
+                  font-size: 14px;
+                "
+                >Sütemény</span
+              >
+              <span
+                style="
+                  background: var(--surface);
+                  color: var(--text);
+                  border: 1px solid var(--border);
+                  border-radius: 999px;
+                  padding: 10px 20px;
+                  font-size: 14px;
+                "
+                >Egyéb</span
+              >
+            </div>
+          </div>
+          <!-- ingredients -->
+          <div style="margin-top: 44px">
+            <div
+              style="
+                font-size: 13px;
+                font-weight: 600;
+                text-transform: uppercase;
+                letter-spacing: 0.06em;
+                color: var(--muted);
+                margin-bottom: 18px;
+              ">
+              Hozzávalók
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 12px">
+              <div style="display: grid; grid-template-columns: 120px 1fr 44px; gap: 12px">
+                <input
+                  value="500 g"
+                  style="
+                    background: var(--bg);
+                    border: 1px solid var(--border);
+                    border-radius: 12px;
+                    padding: 14px 16px;
+                    font-size: 15px;
+                    color: var(--text);
+                    font-family: inherit;
+                  " />
+                <input
+                  value="csirkemell"
+                  style="
+                    background: var(--bg);
+                    border: 1px solid var(--border);
+                    border-radius: 12px;
+                    padding: 14px 16px;
+                    font-size: 15px;
+                    color: var(--text);
+                    font-family: inherit;
+                  " />
+                <button
+                  style="
+                    background: var(--surface);
+                    border: 1px solid var(--border);
+                    color: var(--muted);
+                    font-size: 18px;
+                    cursor: pointer;
+                    font-family: inherit;
+                    border-radius: 12px;
+                  ">
+                  ×
+                </button>
+              </div>
+              <div style="display: grid; grid-template-columns: 120px 1fr 44px; gap: 12px">
+                <input
+                  value="2 ek"
+                  style="
+                    background: var(--bg);
+                    border: 1px solid var(--border);
+                    border-radius: 12px;
+                    padding: 14px 16px;
+                    font-size: 15px;
+                    color: var(--text);
+                    font-family: inherit;
+                  " />
+                <input
+                  value="őrölt paprika"
+                  style="
+                    background: var(--bg);
+                    border: 1px solid var(--border);
+                    border-radius: 12px;
+                    padding: 14px 16px;
+                    font-size: 15px;
+                    color: var(--text);
+                    font-family: inherit;
+                  " />
+                <button
+                  style="
+                    background: var(--surface);
+                    border: 1px solid var(--border);
+                    color: var(--muted);
+                    font-size: 18px;
+                    cursor: pointer;
+                    font-family: inherit;
+                    border-radius: 12px;
+                  ">
+                  ×
+                </button>
+              </div>
+              <div style="display: grid; grid-template-columns: 120px 1fr 44px; gap: 12px">
+                <input
+                  value="2 dl"
+                  style="
+                    background: var(--bg);
+                    border: 1px solid var(--border);
+                    border-radius: 12px;
+                    padding: 14px 16px;
+                    font-size: 15px;
+                    color: var(--text);
+                    font-family: inherit;
+                  " />
+                <input
+                  value="tejföl"
+                  style="
+                    background: var(--bg);
+                    border: 1px solid var(--border);
+                    border-radius: 12px;
+                    padding: 14px 16px;
+                    font-size: 15px;
+                    color: var(--text);
+                    font-family: inherit;
+                  " />
+                <button
+                  style="
+                    background: var(--surface);
+                    border: 1px solid var(--border);
+                    color: var(--muted);
+                    font-size: 18px;
+                    cursor: pointer;
+                    font-family: inherit;
+                    border-radius: 12px;
+                  ">
+                  ×
+                </button>
+              </div>
+            </div>
+            <button
+              style="
+                margin-top: 14px;
+                background: var(--surface);
+                color: var(--accent);
+                border: 1px dashed rgba(var(--accent-rgb), 0.5);
+                border-radius: 12px;
+                padding: 14px 18px;
+                font-size: 14px;
+                font-weight: 500;
+                font-family: inherit;
+                cursor: pointer;
+                width: 100%;
+                transition: all 0.15s ease;
+              ">
+              + Hozzávaló hozzáadása
+            </button>
+          </div>
+          <!-- steps -->
+          <div style="margin-top: 44px; border-top: 1px solid var(--border); padding-top: 44px">
+            <div
+              style="
+                font-size: 13px;
+                font-weight: 600;
+                text-transform: uppercase;
+                letter-spacing: 0.06em;
+                color: var(--muted);
+                margin-bottom: 18px;
+              ">
+              Elkészítés
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 16px">
+              <div style="display: flex; gap: 16px; align-items: flex-start">
+                <span
+                  style="
+                    flex: none;
+                    width: 34px;
+                    height: 34px;
+                    border-radius: 999px;
+                    background: var(--accent-soft);
+                    color: var(--accent);
+                    font-size: 16px;
+                    font-weight: 600;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    margin-top: 11px;
+                  "
+                  >1</span
+                >
+                <textarea
+                  rows="3"
+                  style="
+                    flex: 1;
+                    background: var(--bg);
+                    border: 1px solid var(--border);
+                    border-radius: 12px;
+                    padding: 14px 16px;
+                    font-size: 15px;
+                    color: var(--text);
+                    font-family: inherit;
+                    resize: vertical;
+                    line-height: 1.6;
+                  ">
+A hagymát üvegesre pirítod, hozzáadod a paprikát.</textarea>
+              </div>
+              <div style="display: flex; gap: 16px; align-items: flex-start">
+                <span
+                  style="
+                    flex: none;
+                    width: 34px;
+                    height: 34px;
+                    border-radius: 999px;
+                    background: var(--accent-soft);
+                    color: var(--accent);
+                    font-size: 16px;
+                    font-weight: 600;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    margin-top: 11px;
+                  "
+                  >2</span
+                >
+                <textarea
+                  rows="3"
+                  style="
+                    flex: 1;
+                    background: var(--bg);
+                    border: 1px solid var(--border);
+                    border-radius: 12px;
+                    padding: 14px 16px;
+                    font-size: 15px;
+                    color: var(--text);
+                    font-family: inherit;
+                    resize: vertical;
+                    line-height: 1.6;
+                  ">
+Ráteszed a húst, megpirítod, felöntöd, puhára főzöd.</textarea>
+              </div>
+            </div>
+            <button
+              style="
+                margin-top: 14px;
+                background: var(--surface);
+                color: var(--accent);
+                border: 1px dashed rgba(var(--accent-rgb), 0.5);
+                border-radius: 12px;
+                padding: 14px 18px;
+                font-size: 14px;
+                font-weight: 500;
+                font-family: inherit;
+                cursor: pointer;
+                width: 100%;
+                transition: all 0.15s ease;
+              ">
+              + Lépés hozzáadása
+            </button>
+          </div>
+          <!-- actions -->
+          <div style="display: flex; gap: 14px; margin-top: 44px; justify-content: flex-end">
+            <button
+              class="btn-secondary"
+              style="
+                background: var(--surface);
+                color: var(--text);
+                border: 1px solid var(--border);
+                border-radius: 12px;
+                padding: 14px 24px;
+                font-size: 15px;
+                font-weight: 500;
+                font-family: inherit;
+                cursor: pointer;
+                transition: all 0.15s ease;
+              ">
+              Mégse
+            </button>
+            <button
+              class="btn-primary"
+              style="
+                background: var(--accent);
+                color: #fff;
+                border: none;
+                border-radius: 12px;
+                padding: 14px 26px;
+                font-size: 15px;
+                font-weight: 600;
+                font-family: inherit;
+                cursor: pointer;
+                transition: all 0.15s ease;
+                box-shadow: 0 0 14px rgba(var(--accent-rgb), 0.18);
+              ">
+              Recept mentése
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================== 13. IMAGE UPLOAD ===================== -->
+      <section id="upload" style="margin-bottom: 56px">
+        <h2 style="font-size: 20px; font-weight: 600; letter-spacing: -0.02em; margin: 0 0 4px">
+          13 · Képfeltöltés
+        </h2>
+        <p style="color: var(--muted); font-size: 13px; margin: 0 0 20px">
+          Üres dropzóna és feltöltött állapot (a gradiens a "nincs kép" helyettesítő).
+        </p>
+        <div
+          style="
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 16px;
+            max-width: 720px;
+          ">
+          <!-- empty dropzone -->
+          <div
+            style="
+              border: 2px dashed var(--border);
+              border-radius: 16px;
+              background: var(--surface);
+              padding: 36px 20px;
+              text-align: center;
+            ">
+            <div
+              style="
+                width: 48px;
+                height: 48px;
+                border-radius: 14px;
+                background: var(--surface-2);
+                border: 1px solid var(--border);
+                margin: 0 auto 12px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: var(--muted);
+                font-size: 18px;
+              ">
+              ⤒
+            </div>
+            <div style="font-size: 14px; font-weight: 500; color: var(--text)">
+              Húzd ide a képet
+            </div>
+            <div style="font-size: 12px; color: var(--muted); margin-top: 4px">
+              vagy kattints a tallózáshoz · PNG, JPG · max 5 MB
+            </div>
+          </div>
+          <!-- uploaded -->
+          <div
+            style="
+              border: 1px solid var(--border);
+              border-radius: 16px;
+              overflow: hidden;
+              background: var(--surface);
+            ">
+            <div
+              style="
+                position: relative;
+                height: 130px;
+                background: linear-gradient(135deg, var(--surface-2), var(--border));
+              ">
+              <button
+                style="
+                  position: absolute;
+                  top: 8px;
+                  right: 8px;
+                  width: 28px;
+                  height: 28px;
+                  border-radius: 999px;
+                  background: rgba(var(--bg-rgb), 0.7);
+                  color: var(--text);
+                  border: 1px solid rgba(255, 255, 255, 0.16);
+                  font-size: 14px;
+                  cursor: pointer;
+                  font-family: inherit;
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                ">
+                ×
+              </button>
+            </div>
+            <div
+              style="
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                padding: 10px 12px;
+              ">
+              <span style="font-size: 13px; color: var(--text)">csirkepaprikas.jpg</span>
+              <span style="font-size: 12px; color: var(--muted)">1,2 MB</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================== 14. ADMIN ===================== -->
+      <section id="admin" style="margin-bottom: 56px">
+        <h2 style="font-size: 20px; font-weight: 600; letter-spacing: -0.02em; margin: 0 0 4px">
+          14 · Admin panel
+        </h2>
+        <p style="color: var(--muted); font-size: 13px; margin: 0 0 20px">
+          Felhasználói lista szerepkör jelvényekkel + jelszó módosítás párbeszédablak.
+        </p>
+        <div
+          style="
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            max-width: 820px;
+          ">
+          <!-- user list -->
+          <div
+            style="
+              border: 1px solid var(--border);
+              border-radius: 16px;
+              overflow: hidden;
+              background: var(--surface);
+            ">
+            <div
+              style="
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 12px;
+                border-bottom: 1px solid var(--border);
+                padding: 12px 16px;
+              ">
+              <div style="display: flex; align-items: center; gap: 10px">
+                <span
+                  style="
+                    width: 32px;
+                    height: 32px;
+                    border-radius: 999px;
+                    background: var(--accent-soft);
+                    color: var(--accent);
+                    font-size: 13px;
+                    font-weight: 600;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                  "
+                  >M</span
+                >
+                <span style="font-size: 14px; font-weight: 500; color: var(--text)">mami</span>
+                <span
+                  style="
+                    background: var(--accent-soft);
+                    color: var(--accent);
+                    border-radius: 999px;
+                    padding: 3px 10px;
+                    font-size: 11px;
+                    font-weight: 500;
+                  "
+                  >Admin</span
+                >
+                <span style="font-size: 12px; color: var(--muted)">(te)</span>
+              </div>
+              <button
+                class="btn-secondary"
+                style="
+                  background: var(--surface);
+                  color: var(--text);
+                  border: 1px solid var(--border);
+                  border-radius: 8px;
+                  padding: 6px 12px;
+                  font-size: 12px;
+                  font-weight: 500;
+                  font-family: inherit;
+                  cursor: pointer;
+                  transition: all 0.15s ease;
+                ">
+                Jelszó módosítása
+              </button>
+            </div>
+            <div
+              style="
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 12px;
+                border-bottom: 1px solid var(--border);
+                padding: 12px 16px;
+              ">
+              <div style="display: flex; align-items: center; gap: 10px">
+                <span
+                  style="
+                    width: 32px;
+                    height: 32px;
+                    border-radius: 999px;
+                    background: var(--surface-2);
+                    color: var(--text);
+                    font-size: 13px;
+                    font-weight: 600;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                  "
+                  >P</span
+                >
+                <span style="font-size: 14px; font-weight: 500; color: var(--text)">papa</span>
+                <span
+                  style="
+                    background: var(--surface);
+                    color: var(--text);
+                    border: 1px solid var(--border);
+                    border-radius: 999px;
+                    padding: 3px 10px;
+                    font-size: 11px;
+                  "
+                  >Családtag</span
+                >
+              </div>
+              <button
+                class="btn-secondary"
+                style="
+                  background: var(--surface);
+                  color: var(--text);
+                  border: 1px solid var(--border);
+                  border-radius: 8px;
+                  padding: 6px 12px;
+                  font-size: 12px;
+                  font-weight: 500;
+                  font-family: inherit;
+                  cursor: pointer;
+                  transition: all 0.15s ease;
+                ">
+                Jelszó módosítása
+              </button>
+            </div>
+            <div
+              style="
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 12px;
+                padding: 12px 16px;
+              ">
+              <div style="display: flex; align-items: center; gap: 10px">
+                <span
+                  style="
+                    width: 32px;
+                    height: 32px;
+                    border-radius: 999px;
+                    background: var(--surface-2);
+                    color: var(--text);
+                    font-size: 13px;
+                    font-weight: 600;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                  "
+                  >K</span
+                >
+                <span style="font-size: 14px; font-weight: 500; color: var(--text)">kata</span>
+                <span
+                  style="
+                    background: var(--surface);
+                    color: var(--text);
+                    border: 1px solid var(--border);
+                    border-radius: 999px;
+                    padding: 3px 10px;
+                    font-size: 11px;
+                  "
+                  >Családtag</span
+                >
+              </div>
+              <button
+                class="btn-secondary"
+                style="
+                  background: var(--surface);
+                  color: var(--text);
+                  border: 1px solid var(--border);
+                  border-radius: 8px;
+                  padding: 6px 12px;
+                  font-size: 12px;
+                  font-weight: 500;
+                  font-family: inherit;
+                  cursor: pointer;
+                  transition: all 0.15s ease;
+                ">
+                Jelszó módosítása
+              </button>
+            </div>
+          </div>
+          <!-- password modal -->
+          <div
+            style="
+              background: var(--bg);
+              border: 1px solid var(--border);
+              border-radius: 16px;
+              padding: 20px;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              position: relative;
+              min-height: 220px;
+            ">
+            <div
+              style="
+                position: absolute;
+                inset: 0;
+                background: rgba(0, 0, 0, 0.4);
+                border-radius: 16px;
+              "></div>
+            <div
+              style="
+                position: relative;
+                background: var(--surface);
+                border: 1px solid var(--border);
+                border-radius: 16px;
+                padding: 24px;
+                width: 100%;
+                max-width: 320px;
+                box-shadow: 0 20px 48px rgba(0, 0, 0, 0.5);
+              ">
+              <div style="font-size: 16px; font-weight: 600; color: var(--text)">
+                Jelszó módosítása
+              </div>
+              <div style="font-size: 13px; color: var(--muted); margin: 4px 0 16px">
+                mami számára
+              </div>
+              <div style="display: flex; flex-direction: column; gap: 10px">
+                <input
+                  type="password"
+                  placeholder="Új jelszó"
+                  style="
+                    background: var(--bg);
+                    border: 1px solid var(--border);
+                    border-radius: 10px;
+                    padding: 10px 12px;
+                    font-size: 14px;
+                    color: var(--text);
+                    font-family: inherit;
+                  " />
+                <input
+                  type="password"
+                  placeholder="Új jelszó újra"
+                  style="
+                    background: var(--bg);
+                    border: 1px solid var(--border);
+                    border-radius: 10px;
+                    padding: 10px 12px;
+                    font-size: 14px;
+                    color: var(--text);
+                    font-family: inherit;
+                  " />
+              </div>
+              <div style="display: flex; gap: 10px; margin-top: 16px; justify-content: flex-end">
+                <button
+                  class="btn-secondary"
+                  style="
+                    background: var(--surface);
+                    color: var(--text);
+                    border: 1px solid var(--border);
+                    border-radius: 8px;
+                    padding: 8px 14px;
+                    font-size: 13px;
+                    font-weight: 500;
+                    font-family: inherit;
+                    cursor: pointer;
+                  ">
+                  Mégse
+                </button>
+                <button
+                  class="btn-primary"
+                  style="
+                    background: var(--accent);
+                    color: #fff;
+                    border: none;
+                    border-radius: 8px;
+                    padding: 8px 14px;
+                    font-size: 13px;
+                    font-weight: 600;
+                    font-family: inherit;
+                    cursor: pointer;
+                  ">
+                  Mentés
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================== 15. DAILY MENU ===================== -->
+      <section id="menu" style="margin-bottom: 56px">
+        <h2 style="font-size: 20px; font-weight: 600; letter-spacing: -0.02em; margin: 0 0 4px">
+          15 · Napi étlap
+        </h2>
+        <p style="color: var(--muted); font-size: 13px; margin: 0 0 20px">
+          Egy nap 3–4 étkezés (reggeli / ebéd / vacsora). Az uzsonna opcionális — üres étkezésnél "+
+          Recept".
+        </p>
+        <div style="display: flex; flex-direction: column; gap: 14px; max-width: 680px">
+          <div
+            style="
+              display: flex;
+              gap: 16px;
+              align-items: center;
+              justify-content: space-between;
+              border-bottom: 1px solid var(--border);
+              padding-bottom: 10px;
+            ">
+            <div style="font-size: 15px; font-weight: 600; color: var(--text)">
+              2026. augusztus 3., hétfő
+            </div>
+            <span
+              style="
+                background: var(--accent-soft);
+                color: var(--accent);
+                border-radius: 999px;
+                padding: 5px 12px;
+                font-size: 12px;
+                font-weight: 600;
+              "
+              >Ma</span
+            >
+          </div>
+          <div style="display: flex; gap: 16px; align-items: flex-start">
+            <span
+              style="
+                flex: none;
+                width: 76px;
+                font-size: 12px;
+                font-weight: 600;
+                color: var(--muted);
+                padding-top: 12px;
+              "
+              >Reggeli</span
+            >
+            <div
+              style="
+                flex: 1;
+                display: flex;
+                gap: 14px;
+                align-items: center;
+                background: var(--surface);
+                border: 1px solid var(--border);
+                border-radius: 16px;
+                padding: 12px;
+              ">
+              <div
+                style="
+                  flex: none;
+                  width: 56px;
+                  height: 56px;
+                  border-radius: 12px;
+                  background: linear-gradient(135deg, var(--surface-2), var(--border));
+                "></div>
+              <div style="flex: 1; min-width: 0">
+                <div style="font-size: 14px; font-weight: 600; color: var(--text)">
+                  Sajtos-ropogós szendvics
+                </div>
+                <div style="font-size: 12px; color: var(--muted)">320 kcal · 15 perc</div>
+              </div>
+              <button
+                style="
+                  flex: none;
+                  background: var(--surface);
+                  border: 1px solid var(--border);
+                  color: var(--text);
+                  border-radius: 10px;
+                  padding: 8px 12px;
+                  font-size: 13px;
+                  font-weight: 500;
+                  font-family: inherit;
+                  cursor: pointer;
+                ">
+                Csere
+              </button>
+            </div>
+          </div>
+          <div style="display: flex; gap: 16px; align-items: flex-start">
+            <span
+              style="
+                flex: none;
+                width: 76px;
+                font-size: 12px;
+                font-weight: 600;
+                color: var(--muted);
+                padding-top: 12px;
+              "
+              >Ebéd</span
+            >
+            <div
+              style="
+                flex: 1;
+                display: flex;
+                gap: 14px;
+                align-items: center;
+                background: var(--surface);
+                border: 1px solid var(--border);
+                border-radius: 16px;
+                padding: 12px;
+              ">
+              <div
+                style="
+                  flex: none;
+                  width: 56px;
+                  height: 56px;
+                  border-radius: 12px;
+                  background: linear-gradient(135deg, var(--border), var(--surface-2));
+                "></div>
+              <div style="flex: 1; min-width: 0">
+                <div style="font-size: 14px; font-weight: 600; color: var(--text)">
+                  Csirke paprikás
+                </div>
+                <div style="font-size: 12px; color: var(--muted)">540 kcal · 45 perc</div>
+              </div>
+              <button
+                style="
+                  flex: none;
+                  background: var(--surface);
+                  border: 1px solid var(--border);
+                  color: var(--text);
+                  border-radius: 10px;
+                  padding: 8px 12px;
+                  font-size: 13px;
+                  font-weight: 500;
+                  font-family: inherit;
+                  cursor: pointer;
+                ">
+                Csere
+              </button>
+            </div>
+          </div>
+          <div style="display: flex; gap: 16px; align-items: flex-start">
+            <span
+              style="
+                flex: none;
+                width: 76px;
+                font-size: 12px;
+                font-weight: 600;
+                color: var(--muted);
+                padding-top: 12px;
+              "
+              >Uzsonna</span
+            >
+            <div
+              style="
+                flex: 1;
+                border: 1px dashed var(--border);
+                border-radius: 16px;
+                padding: 16px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 8px;
+                color: var(--accent);
+                font-size: 14px;
+                font-weight: 600;
+                cursor: pointer;
+              ">
+              + Recept
+            </div>
+            <span style="flex: none; font-size: 11px; color: var(--muted); padding-top: 12px"
+              >opcionális</span
+            >
+          </div>
+          <div style="display: flex; gap: 16px; align-items: flex-start">
+            <span
+              style="
+                flex: none;
+                width: 76px;
+                font-size: 12px;
+                font-weight: 600;
+                color: var(--muted);
+                padding-top: 12px;
+              "
+              >Vacsora</span
+            >
+            <div
+              style="
+                flex: 1;
+                display: flex;
+                gap: 14px;
+                align-items: center;
+                background: var(--surface);
+                border: 1px solid var(--border);
+                border-radius: 16px;
+                padding: 12px;
+              ">
+              <div
+                style="
+                  flex: none;
+                  width: 56px;
+                  height: 56px;
+                  border-radius: 12px;
+                  background: linear-gradient(135deg, var(--surface-2), var(--border));
+                "></div>
+              <div style="flex: 1; min-width: 0">
+                <div style="font-size: 14px; font-weight: 600; color: var(--text)">
+                  Krumplifőzelék
+                </div>
+                <div style="font-size: 12px; color: var(--muted)">410 kcal · 30 perc</div>
+              </div>
+              <button
+                style="
+                  flex: none;
+                  background: var(--surface);
+                  border: 1px solid var(--border);
+                  color: var(--text);
+                  border-radius: 10px;
+                  padding: 8px 12px;
+                  font-size: 13px;
+                  font-weight: 500;
+                  font-family: inherit;
+                  cursor: pointer;
+                ">
+                Csere
+              </button>
+            </div>
+          </div>
+          <div
+            style="
+              border: 1px dashed var(--border);
+              border-radius: 16px;
+              padding: 16px;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              gap: 8px;
+              color: var(--accent);
+              font-size: 14px;
+              font-weight: 600;
+              cursor: pointer;
+            ">
+            + Étkezés hozzáadása
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================== 16. STATES & A11Y ===================== -->
+      <section id="states" style="margin-bottom: 56px">
+        <h2 style="font-size: 20px; font-weight: 600; letter-spacing: -0.02em; margin: 0 0 4px">
+          16 · Állapotok & kisegítő
+        </h2>
+        <p style="color: var(--muted); font-size: 13px; margin: 0 0 20px">
+          Betöltés (skeleton), üres keresés, fókuszgyűrűk és érintési méret.
+        </p>
+        <div
+          style="
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 18px;
+            max-width: 820px;
+          ">
+          <!-- detail skeleton -->
+          <div
+            style="
+              border: 1px solid var(--border);
+              border-radius: 16px;
+              overflow: hidden;
+              background: var(--surface);
+            ">
+            <div class="skeleton" style="height: 120px; background: var(--surface-2)"></div>
+            <div style="padding: 16px; display: flex; flex-direction: column; gap: 12px">
+              <div
+                class="skeleton"
+                style="
+                  height: 18px;
+                  width: 55%;
+                  background: var(--surface-2);
+                  border-radius: 6px;
+                "></div>
+              <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 12px">
+                <div style="display: flex; flex-direction: column; gap: 8px">
+                  <div
+                    class="skeleton"
+                    style="height: 12px; background: var(--surface-2); border-radius: 5px"></div>
+                  <div
+                    class="skeleton"
+                    style="height: 12px; background: var(--surface-2); border-radius: 5px"></div>
+                  <div
+                    class="skeleton"
+                    style="height: 12px; background: var(--surface-2); border-radius: 5px"></div>
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 8px">
+                  <div
+                    class="skeleton"
+                    style="height: 12px; background: var(--surface-2); border-radius: 5px"></div>
+                  <div
+                    class="skeleton"
+                    style="
+                      height: 12px;
+                      width: 80%;
+                      background: var(--surface-2);
+                      border-radius: 5px;
+                    "></div>
+                  <div
+                    class="skeleton"
+                    style="
+                      height: 12px;
+                      width: 60%;
+                      background: var(--surface-2);
+                      border-radius: 5px;
+                    "></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- empty search -->
+          <div
+            style="
+              border: 1px dashed var(--border);
+              border-radius: 16px;
+              background: var(--surface);
+              padding: 36px 20px;
+              text-align: center;
+              display: flex;
+              flex-direction: column;
+              align-items: center;
+              justify-content: center;
+            ">
+            <div
+              style="
+                width: 48px;
+                height: 48px;
+                border-radius: 999px;
+                background: var(--surface-2);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: var(--muted);
+                font-size: 18px;
+              ">
+              ⌕
+            </div>
+            <div style="font-size: 15px; font-weight: 500; color: var(--text); margin-top: 12px">
+              Nincs találat
+            </div>
+            <div style="font-size: 13px; color: var(--muted); margin-top: 4px">
+              Nem találunk "pizza" keresésre receptet.
+            </div>
+            <button
+              class="btn-secondary"
+              style="
+                margin-top: 14px;
+                background: var(--surface);
+                color: var(--text);
+                border: 1px solid var(--border);
+                border-radius: 10px;
+                padding: 8px 16px;
+                font-size: 13px;
+                font-weight: 500;
+                font-family: inherit;
+                cursor: pointer;
+              ">
+              Keresés törlése
+            </button>
+          </div>
+          <!-- focus + touch -->
+          <div
+            style="
+              border: 1px solid var(--border);
+              border-radius: 16px;
+              background: var(--surface);
+              padding: 18px;
+            ">
+            <div
+              style="
+                font-size: 12px;
+                font-weight: 600;
+                text-transform: uppercase;
+                letter-spacing: 0.05em;
+                color: var(--muted);
+                margin-bottom: 14px;
+              ">
+              Fókusz & érintés
+            </div>
+            <button
+              style="
+                background: var(--surface);
+                color: var(--text);
+                border: 1px solid var(--accent);
+                border-radius: 10px;
+                padding: 10px 16px;
+                font-size: 14px;
+                font-family: inherit;
+                box-shadow: 0 0 0 3px rgba(var(--accent-rgb), 0.3);
+                outline: 2px solid var(--accent);
+                outline-offset: 2px;
+              ">
+              Gomb fókuszban
+            </button>
+            <div style="font-size: 12px; color: var(--muted); margin-top: 8px">
+              Billentyűzetes navigáció: látható gyűrű.
+            </div>
+            <div style="display: flex; gap: 14px; margin-top: 16px; align-items: flex-end">
+              <div style="display: flex; flex-direction: column; gap: 6px; align-items: center">
+                <button
+                  style="
+                    width: 44px;
+                    height: 44px;
+                    border-radius: 10px;
+                    background: var(--accent);
+                    color: #fff;
+                    border: none;
+                    font-size: 16px;
+                    font-family: inherit;
+                  ">
+                  +
+                </button>
+                <span style="font-size: 11px; color: var(--muted)">44px ✓</span>
+              </div>
+              <div style="display: flex; flex-direction: column; gap: 6px; align-items: center">
+                <button
+                  style="
+                    width: 24px;
+                    height: 24px;
+                    border-radius: 6px;
+                    background: var(--accent);
+                    color: #fff;
+                    border: none;
+                    font-size: 11px;
+                    font-family: inherit;
+                  ">
+                  +
+                </button>
+                <span style="font-size: 11px; color: var(--muted)">24px ✗</span>
+              </div>
+            </div>
+            <div style="font-size: 12px; color: var(--muted); margin-top: 10px">
+              Minimum érintési felület 44 × 44 px (iPhone).
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================== 17. SMALL BITS ===================== -->
+      <section id="bits" style="margin-bottom: 16px">
+        <h2 style="font-size: 20px; font-weight: 600; letter-spacing: -0.02em; margin: 0 0 4px">
+          17 · Egyéb elemek
+        </h2>
+        <p style="color: var(--muted); font-size: 13px; margin: 0 0 20px">
+          Jelvény, üres állapot, offline és frissítés sáv.
+        </p>
+        <div style="display: flex; flex-direction: column; gap: 14px; max-width: 520px">
+          <!-- badge -->
+          <div style="display: flex; gap: 8px; align-items: center">
+            <span
+              style="
+                background: var(--accent-soft);
+                color: var(--accent);
+                border-radius: 999px;
+                padding: 4px 12px;
+                font-size: 12px;
+                font-weight: 500;
+              "
+              >Admin</span
+            >
+            <span
+              style="
+                background: var(--surface);
+                color: var(--text);
+                border: 1px solid var(--border);
+                border-radius: 999px;
+                padding: 4px 12px;
+                font-size: 12px;
+              "
+              >Családtag</span
+            >
+          </div>
+          <!-- empty state -->
+          <div
+            style="
+              border: 1px dashed var(--border);
+              border-radius: 14px;
+              background: var(--surface);
+              padding: 36px 20px;
+              text-align: center;
+            ">
+            <div
+              style="
+                width: 48px;
+                height: 48px;
+                border-radius: 999px;
+                background: var(--surface-2);
+                margin: 0 auto 12px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+              ">
+              <span style="font-size: 20px; color: var(--muted)">Ø</span>
+            </div>
+            <div style="font-size: 15px; font-weight: 500; color: var(--text)">
+              Még nincs recept
+            </div>
+            <div style="font-size: 13px; color: var(--muted); margin-top: 4px">
+              Az első recept itt fog megjelenni.
+            </div>
+          </div>
+          <!-- empty daily menu state -->
+          <div
+            style="
+              border: 1px dashed var(--border);
+              border-radius: 14px;
+              background: var(--surface);
+              padding: 36px 20px;
+              text-align: center;
+            ">
+            <div
+              style="
+                width: 48px;
+                height: 48px;
+                border-radius: 999px;
+                background: var(--surface-2);
+                margin: 0 auto 12px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+              ">
+              <span style="font-size: 20px; color: var(--muted)">🍽</span>
+            </div>
+            <div style="font-size: 15px; font-weight: 500; color: var(--text)">
+              A mai nap még üres
+            </div>
+            <div style="font-size: 13px; color: var(--muted); margin-top: 4px">
+              Válassz egy étkezést, és rendelj hozzá receptet.
+            </div>
+            <button
+              class="btn-primary"
+              style="
+                background: var(--accent);
+                color: #fff;
+                border: none;
+                border-radius: 10px;
+                padding: 11px 18px;
+                font-size: 14px;
+                font-weight: 600;
+                font-family: inherit;
+                cursor: pointer;
+                margin-top: 16px;
+                transition: all 0.15s ease;
+              ">
+              + Étkezés hozzáadása
+            </button>
+          </div>
+          <!-- offline banner -->
+          <div
+            style="
+              background: var(--warning-bg);
+              color: var(--warning);
+              border: 1px solid rgba(251, 191, 36, 0.3);
+              border-radius: 10px;
+              padding: 10px 14px;
+              font-size: 13px;
+            ">
+            Offline — a gyorsítótárazott verziót látod
+          </div>
+          <!-- update banner -->
+          <div
+            style="
+              background: var(--accent-soft);
+              border: 1px solid rgba(var(--accent-rgb), 0.4);
+              border-radius: 10px;
+              padding: 10px 14px;
+              display: flex;
+              align-items: center;
+              justify-content: space-between;
+              gap: 12px;
+            ">
+            <span style="font-size: 13px; color: var(--text)">Új verzió érhető el.</span>
+            <button
+              class="btn-primary"
+              style="
+                background: var(--accent);
+                color: #fff;
+                border: none;
+                border-radius: 8px;
+                padding: 6px 14px;
+                font-size: 12px;
+                font-weight: 600;
+                font-family: inherit;
+                cursor: pointer;
+                transition: all 0.15s ease;
+              ">
+              Frissítés
+            </button>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <script>
+      const colorBlocks = document.querySelectorAll('div[style*="height: 72px"]');
+
+      function toHex(n) {
+        return parseInt(n, 10).toString(16).padStart(2, '0');
+      }
+
+      function formatColor(cssColor) {
+        const m = cssColor.match(/rgba?\((\d+), (\d+), (\d+)(?:, ([\d.]+))?\)/);
+        if (!m) return cssColor;
+        if (m[4] !== undefined && parseFloat(m[4]) < 1) {
+          return 'rgba(' + m[1] + ',' + m[2] + ',' + m[3] + ',' + parseFloat(m[4]).toFixed(2) + ')';
+        }
+        return '#' + toHex(m[1]) + toHex(m[2]) + toHex(m[3]);
+      }
+
+      function updateSwatches() {
+        colorBlocks.forEach(function (block) {
+          const label = block.parentElement.querySelector('div[style*="monospace"]');
+          if (label) label.textContent = formatColor(getComputedStyle(block).backgroundColor);
+        });
+      }
+
+      function applyTheme(name) {
+        document.documentElement.dataset.theme = name;
+        document.querySelectorAll('[data-theme-set]').forEach(function (b) {
+          b.classList.toggle('chip-active', b.dataset.themeSet === name);
+        });
+        try {
+          localStorage.setItem('ds-theme', name);
+        } catch (e) {}
+        updateSwatches();
+      }
+
+      function applyFont(name) {
+        document.documentElement.dataset.font = name;
+        const select = document.getElementById('font-select');
+        if (select) select.value = name;
+        try {
+          localStorage.setItem('ds-font', name);
+        } catch (e) {}
+      }
+
+      function updateTypeLabels() {
+        const type = document.documentElement.dataset.type || 'normal';
+        const typeScaleMap = {
+          compact: { 24: 23, 17: 16, 15: 14, 14: 13, 12: 11 },
+          normal: { 24: 24, 17: 17, 15: 15, 14: 14, 12: 12 },
+          spaced: { 24: 26, 17: 18, 15: 16, 14: 15, 12: 13 },
+        };
+        const map = typeScaleMap[type] || typeScaleMap.normal;
+        document.querySelectorAll('.type-size').forEach(function (el) {
+          const base = parseInt(el.dataset.base);
+          el.textContent = map[base] !== undefined ? map[base] : base;
+        });
+      }
+
+      function applyType(name) {
+        document.documentElement.dataset.type = name;
+        const select = document.getElementById('type-select');
+        if (select) select.value = name;
+        try {
+          localStorage.setItem('ds-type', name);
+        } catch (e) {}
+        updateTypeLabels();
+      }
+
+      document.querySelectorAll('[data-theme-set]').forEach(function (b) {
+        b.addEventListener('click', function () {
+          applyTheme(b.dataset.themeSet);
+        });
+      });
+      const fontSelect = document.getElementById('font-select');
+      if (fontSelect) {
+        fontSelect.addEventListener('change', function () {
+          applyFont(fontSelect.value);
+        });
+      }
+      const typeSelect = document.getElementById('type-select');
+      if (typeSelect) {
+        typeSelect.addEventListener('change', function () {
+          applyType(typeSelect.value);
+        });
+      }
+
+      const validThemes = ['default', 'brand-bg', 'blue', 'indigo', 'orange'];
+      const validFonts = [
+        'inter',
+        'manrope',
+        'grotesk',
+        'outfit',
+        'jakarta',
+        'figtree',
+        'plex',
+        'dmsans',
+      ];
+      const validTypes = ['normal', 'compact', 'spaced'];
+      let savedTheme = 'default';
+      let savedFont = 'inter';
+      let savedType = 'normal';
+      try {
+        savedTheme = localStorage.getItem('ds-theme') || 'default';
+        savedFont = localStorage.getItem('ds-font') || 'inter';
+        savedType = localStorage.getItem('ds-type') || 'normal';
+      } catch (e) {}
+      if (!validThemes.includes(savedTheme)) savedTheme = 'default';
+      if (!validFonts.includes(savedFont)) savedFont = 'inter';
+      if (!validTypes.includes(savedType)) savedType = 'normal';
+      applyTheme(savedTheme);
+      applyFont(savedFont);
+      applyType(savedType);
+    </script>
+  </body>
+</html>
