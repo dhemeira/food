@@ -22,6 +22,10 @@ Fill in `.env`:
 Then open http://localhost:5050 (local) or https://test.dhemeira.hu (via the tunnel). Stop with
 `docker compose down`.
 
+```sh
+docker compose down -v && docker compose up --build   # clean rebuild (also resets the node_modules volume)
+```
+
 ## Stack
 
 - **Frontend:** React 19 + TypeScript + Vite + Tailwind CSS v4 (`react-router-dom` for routing)
@@ -163,10 +167,10 @@ cloudflared tunnel token food-dev
 ```
 
 ```sh
-docker compose up          # web + tunnel (http://localhost:5050, or https://test.dhemeira.hu)
-docker compose up web      # app only
-docker compose down        # stop
-docker compose up --build  # rebuild after dependency changes
+docker compose up --build      # first run, or after changing the Dockerfile / .dockerignore
+docker compose up              # start (web + tunnel)
+docker compose up web          # app only
+docker compose down            # stop
 ```
 
 Prefer plain `npm run dev` (or `npm run dev:host` for the local tunnel) if you don't need container parity.
