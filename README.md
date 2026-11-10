@@ -4,6 +4,24 @@ A family recipe app: a React SPA backed by **Firebase** (free "Spark" tier) and 
 **Cloudflare Pages**. There is no backend server, no payment method, and no Cloudflare Worker —
 data lives in Firestore, and images are stored as base64 data URIs inside Firestore.
 
+## Quick start (new machine)
+
+Requires [Docker](https://docs.docker.com/get-docker/) only — no Node, cloudflared, or Firebase CLI.
+
+```sh
+git clone https://github.com/dhemeira/food.git && cd food
+cp .env.example .env   # fill in the values below
+docker compose up --build
+```
+
+Fill in `.env`:
+
+- `VITE_FIREBASE_*` — Firebase web config (Firebase console → Project settings → Your apps).
+- `CLOUDFLARED_TUNNEL_TOKEN` — get it with `cloudflared tunnel token food-dev` (or copy from another machine).
+
+Then open http://localhost:5050 (local) or https://test.dhemeira.hu (via the tunnel). Stop with
+`docker compose down`.
+
 ## Stack
 
 - **Frontend:** React 19 + TypeScript + Vite + Tailwind CSS v4 (`react-router-dom` for routing)

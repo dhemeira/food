@@ -9,10 +9,20 @@ services:
       - '5050:5050'
     volumes:
       - .:/app
-      - /app/node_modules
+      - node_modules:/app/node_modules
     environment:
       # File watching over Docker Desktop bind mounts is unreliable without this.
       - CHOKIDAR_USEPOLLING=true
+    healthcheck:
+      test:
+        - CMD
+        - node
+        - -e
+        - "fetch('http://localhost:5050').then((r) => process.exit(r.ok ? 0 : 1)).catch(() => process.exit(1))"
+      interval: 5s
+      timeout: 3s
+      retries: 12
+      start_period: 15s
 
   tunnel:
     image: cloudflare/cloudflared:2026.10.7
@@ -20,5 +30,9 @@ services:
     volumes:
       - ./cloudflared/config.yml:/etc/cloudflared/config.yml:ro
     depends_on:
-      - web
+      web:
+        condition: service_healthy
     restart: unless-stopped
+
+volumes:
+  node_modules:
