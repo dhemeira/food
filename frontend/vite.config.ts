@@ -3,12 +3,12 @@ import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import tailwindcss from '@tailwindcss/vite';
 
-const uiRoot = resolve(import.meta.dirname, '../packages/ui');
-
 export default defineConfig({
   plugins: [react(), tailwindcss()],
   server: {
+    host: '127.0.0.1',
     port: 5050,
+    strictPort: true,
     allowedHosts: ['test.dhemeira.hu'],
     fs: {
       allow: [resolve(import.meta.dirname, '..')],
@@ -17,7 +17,6 @@ export default defineConfig({
   resolve: {
     alias: {
       '~': import.meta.dirname + '/src',
-      '@dhemeira/ui': resolve(uiRoot, 'src/source.ts'),
     },
     dedupe: ['react', 'react-dom', 'react/jsx-runtime', '@heroicons/react'],
   },

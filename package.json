@@ -1,9 +1,6 @@
 {
   "name": "recipes-app",
   "private": true,
-  "workspaces": [
-    "packages/*"
-  ],
   "engines": {
     "node": ">=22"
   },

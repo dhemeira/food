@@ -14,7 +14,7 @@
     "format:fix": "prettier --write ."
   },
   "dependencies": {
-    "@dhemeira/ui": "file:../packages/ui",
+    "@dhemeira/ui": "^0.1.1",
     "@heroicons/react": "^2.2.0",
     "@tailwindcss/vite": "^4.3.0",
     "firebase": "^12.18.0",
