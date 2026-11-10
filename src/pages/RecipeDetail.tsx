@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { backend } from '~/backend';
 import WakeLock from '~/components/WakeLock';
@@ -14,6 +15,14 @@ function RecipeDetail() {
   const { user, isAdmin } = useAuth();
   const authorName = useUserDisplayName(recipe?.createdBy);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!recipe) return;
+    document.title = recipe.title;
+    return () => {
+      document.title = 'Receptek';
+    };
+  }, [recipe]);
 
   if (loading) {
     return <LoadingState />;
