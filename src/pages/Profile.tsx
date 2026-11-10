@@ -2,12 +2,15 @@ import { useState } from 'react';
 import { backend } from '~/backend';
 import { Button, Input } from '@dhemeira/ui';
 import { useAuth } from '~/context/auth';
+import { useDocumentTitle } from '~/hooks/useDocumentTitle';
 
 function Profile() {
   const { user } = useAuth();
   const [displayName, setDisplayName] = useState(user?.displayName ?? '');
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  useDocumentTitle('Profil');
 
   if (!user) {
     return null;

@@ -18,6 +18,7 @@ import {
   Select,
   Textarea,
 } from '@dhemeira/ui';
+import { useDocumentTitle } from '~/hooks/useDocumentTitle';
 import { useRecipe } from '~/hooks/useRecipe';
 import { useRecipeImage } from '~/hooks/useRecipeImage';
 import { processRecipeImage } from '~/lib/image';
@@ -248,6 +249,10 @@ function RecipeForm() {
   const { id } = useParams();
   const editing = Boolean(id);
   const { recipe, loading, error, reload } = useRecipe(editing ? id : undefined);
+
+  useDocumentTitle(
+    editing ? (recipe ? `${recipe.title} - Szerkesztés` : 'Szerkesztés') : 'Új recept'
+  );
 
   if (editing && loading) {
     return <LoadingState />;

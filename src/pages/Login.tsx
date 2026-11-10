@@ -1,9 +1,12 @@
 import { Navigate } from 'react-router-dom';
 import { Button, GlassSurface, LoadingState } from '@dhemeira/ui';
 import { useAuth } from '~/context/auth';
+import { useDocumentTitle } from '~/hooks/useDocumentTitle';
 
 function Login() {
   const { user, isAllowed, isLoading, signIn } = useAuth();
+
+  useDocumentTitle('Bejelentkezés');
 
   if (isLoading) {
     return <LoadingState />;

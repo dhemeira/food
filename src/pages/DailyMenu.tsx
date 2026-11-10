@@ -1,12 +1,15 @@
 import { useMemo } from 'react';
 import { LoadingState } from '@dhemeira/ui';
 import MealRow from '~/components/MealRow';
+import { useDocumentTitle } from '~/hooks/useDocumentTitle';
 import { useRecipes } from '~/hooks/useRecipes';
 import { MEAL_SLOTS, defaultAmountFor, mealKcal, omitMeal, useDailyMenu } from '~/lib/dailyMenu';
 
 function DailyMenu() {
   const { recipes, loading } = useRecipes();
   const [state, setState] = useDailyMenu();
+
+  useDocumentTitle('Napi menü');
 
   const byId = useMemo(() => new Map(recipes.map((r) => [r.id, r])), [recipes]);
 

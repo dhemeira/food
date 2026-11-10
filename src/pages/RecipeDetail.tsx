@@ -1,9 +1,9 @@
-import { useEffect } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { backend } from '~/backend';
 import WakeLock from '~/components/WakeLock';
 import { Button, EmptyState, ErrorState, LoadingState, Modal } from '@dhemeira/ui';
 import { useAuth } from '~/context/auth';
+import { useDocumentTitle } from '~/hooks/useDocumentTitle';
 import { useRecipe } from '~/hooks/useRecipe';
 import { useRecipeImage } from '~/hooks/useRecipeImage';
 import { useUserDisplayName } from '~/hooks/useUserDisplayName';
@@ -16,13 +16,7 @@ function RecipeDetail() {
   const authorName = useUserDisplayName(recipe?.createdBy);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    if (!recipe) return;
-    document.title = recipe.title;
-    return () => {
-      document.title = 'Receptek';
-    };
-  }, [recipe]);
+  useDocumentTitle(recipe?.title ?? 'Receptek');
 
   if (loading) {
     return <LoadingState />;
