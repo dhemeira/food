@@ -129,23 +129,29 @@ of truth; rules read it via `get()`.
 with Docker gets the same Node + cloudflared setup — no local toolchain drift.
 
 - `web` — Node `22.22.1` (from `.nvmrc`) running Vite on http://localhost:5050, source bind-mounted for HMR.
-- `tunnel` — `cloudflare/cloudflared:2026.10.7`, exposing the app through your Cloudflare tunnel.
+- `tunnel` — `cloudflare/cloudflared:2026.10.7` running your `food-dev` tunnel, exposing the app at
+  `test.dhemeira.hu`.
+
+The tunnel is self-contained: its routing lives in `cloudflared/config.yml` (pointing at
+`http://web:5050`, the Docker service name). The only per-machine secret is the tunnel token.
 
 One-time setup per machine:
 
 1. `cp .env.example .env` and fill in the Firebase vars.
-2. Add `CLOUDFLARED_TUNNEL_TOKEN` to `.env` (Cloudflare Zero Trust → Tunnels → your tunnel → token).
-   Point the tunnel's public hostname at `http://web:5050` (the compose service name, not localhost).
-3. If the public hostname isn't already in `vite.config.ts` → `server.allowedHosts`, add it.
+2. Put your tunnel token in `.env` as `CLOUDFLARED_TUNNEL_TOKEN`. Get it with:
 
 ```sh
-docker compose up          # web + tunnel (http://localhost:5050, or the tunnel URL)
+cloudflared tunnel token food-dev
+```
+
+```sh
+docker compose up          # web + tunnel (http://localhost:5050, or https://test.dhemeira.hu)
 docker compose up web      # app only
 docker compose down        # stop
 docker compose up --build  # rebuild after dependency changes
 ```
 
-Prefer plain `npm run dev` if you don't need container parity or the tunnel.
+Prefer plain `npm run dev` (or `npm run dev:host` for the local tunnel) if you don't need container parity.
 
 ## Gotchas
 
