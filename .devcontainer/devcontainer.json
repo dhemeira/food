@@ -12,6 +12,7 @@
   "containerEnv": {
     "CLAUDE_CONFIG_DIR": "/root/.claude"
   },
+  "postCreateCommand": "npm run prepare",
   "customizations": {
     "vscode": {
       "extensions": [
