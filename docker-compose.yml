@@ -13,6 +13,17 @@ services:
     environment:
       # File watching over Docker Desktop bind mounts is unreliable without this.
       - CHOKIDAR_USEPOLLING=true
+      # Claude Code gateway settings for the dev container. Values live in the
+      # gitignored .env file; empty defaults keep compose working without it.
+      - ANTHROPIC_BASE_URL=${ANTHROPIC_BASE_URL:-}
+      - ANTHROPIC_AUTH_TOKEN=${ANTHROPIC_AUTH_TOKEN:-}
+      - ANTHROPIC_MODEL=${ANTHROPIC_MODEL:-}
+      - ANTHROPIC_DEFAULT_OPUS_MODEL=${ANTHROPIC_DEFAULT_OPUS_MODEL:-}
+      - ANTHROPIC_DEFAULT_SONNET_MODEL=${ANTHROPIC_DEFAULT_SONNET_MODEL:-}
+      - ANTHROPIC_DEFAULT_HAIKU_MODEL=${ANTHROPIC_DEFAULT_HAIKU_MODEL:-}
+      - CLAUDE_CODE_SUBAGENT_MODEL=${CLAUDE_CODE_SUBAGENT_MODEL:-}
+      - CLAUDE_CODE_EFFORT_LEVEL=${CLAUDE_CODE_EFFORT_LEVEL:-}
+      - CLAUDE_CODE_AUTO_COMPACT_WINDOW=${CLAUDE_CODE_AUTO_COMPACT_WINDOW:-}
     healthcheck:
       test:
         - CMD
@@ -26,7 +37,7 @@ services:
 
   tunnel:
     image: cloudflare/cloudflared:2026.10.7
-    command: tunnel --no-autoupdate --config /etc/cloudflared/config.yml run --token ${CLOUDFLARED_TUNNEL_TOKEN}
+    command: 'tunnel --no-autoupdate --config /etc/cloudflared/config.yml run --token ${CLOUDFLARED_TUNNEL_TOKEN:?Set CLOUDFLARED_TUNNEL_TOKEN in .env}'
     volumes:
       - ./cloudflared/config.yml:/etc/cloudflared/config.yml:ro
     depends_on:

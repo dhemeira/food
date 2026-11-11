@@ -1,0 +1,3 @@
+# Normalize line endings to LF on every platform, regardless of the
+# local core.autocrlf setting. Prettier and .editorconfig both require LF.
+* text=auto eol=lf
