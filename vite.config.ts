@@ -1,4 +1,3 @@
-import { resolve } from 'node:path';
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import tailwindcss from '@tailwindcss/vite';
@@ -11,7 +10,9 @@ export default defineConfig({
     strictPort: true,
     allowedHosts: ['test.dhemeira.hu'],
     fs: {
-      allow: [resolve(import.meta.dirname, '..')],
+      // Only the project itself — the dev server is exposed publicly through
+      // the tunnel, and the parent of /app is the container root.
+      allow: [import.meta.dirname],
     },
   },
   resolve: {
