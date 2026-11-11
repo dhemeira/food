@@ -25,6 +25,28 @@
   --color-danger-hover: color-mix(in oklch, var(--color-danger), var(--color-text) 12%);
 }
 
+/*
+ * Liquid-glass material for floating chrome (the mobile tab bar).
+ *
+ * Stronger blur and a dark tint than GlassSurface's defaults, so the light
+ * icons stay legible while bright recipe photos scroll underneath. The
+ * package's inset highlight still supplies the edge. Unlayered on purpose: it
+ * must override the package's utility defaults (bg-text/10, backdrop-blur-xs)
+ * without depending on utility ordering.
+ */
+.liquid-glass {
+  background-color: color-mix(in oklch, var(--color-background) 60%, transparent);
+  -webkit-backdrop-filter: blur(14px) saturate(180%);
+  backdrop-filter: blur(14px) saturate(180%);
+}
+
+/* Without backdrop blur the tint must carry legibility on its own. */
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .liquid-glass {
+    background-color: color-mix(in oklch, var(--color-background) 94%, transparent);
+  }
+}
+
 @keyframes hint-pop {
   0% {
     opacity: 0;

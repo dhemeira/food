@@ -174,7 +174,7 @@ function Navbar() {
         </div>
       </TopNavbar>
 
-      <GlassSurface className="fixed right-5.5 bottom-5.5 left-5.5 z-20 rounded-full sm:hidden">
+      <GlassSurface className="liquid-glass fixed right-5.5 bottom-5.5 left-5.5 z-20 rounded-full sm:hidden">
         <TabBar className="h-15 gap-0.5 px-3 py-1.25">
           <Link
             to="/"
