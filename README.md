@@ -1,185 +1,93 @@
-# Recipes App
+# Receptek
 
-A family recipe app: a React SPA backed by **Firebase** (free "Spark" tier) and hosted on
-**Cloudflare Pages**. There is no backend server, no payment method, and no Cloudflare Worker —
-data lives in Firestore, and images are stored as base64 data URIs inside Firestore.
+A React 19 + TypeScript PWA for family recipes, backed by Firebase (Auth + Firestore) and built
+with Vite and Tailwind CSS 4. Development runs entirely in Docker.
 
-## Quick start (new machine)
-
-Requires [Docker](https://docs.docker.com/get-docker/) only — no Node, cloudflared, or Firebase CLI.
+## Setup
 
 ```sh
 git clone https://github.com/dhemeira/food.git && cd food
 cp .env.example .env   # fill in the values below
+```
+
+`.env` values:
+
+| Variable                   | Where to get it                                                           |
+| -------------------------- | ------------------------------------------------------------------------- |
+| `VITE_FIREBASE_*`          | Firebase console → Project settings → Your apps                           |
+| `CLOUDFLARED_TUNNEL_TOKEN` | `cloudflared tunnel token food-dev`                                       |
+| `ANTHROPIC_*`              | Optional Claude Code gateway settings for the dev container; may be blank |
+
+## Run
+
+```sh
 docker compose up --build
 ```
 
-Fill in `.env`:
+- App: http://localhost:5050
+- Public dev URL: https://test.dhemeira.hu — only while the stack is running
 
-- `VITE_FIREBASE_*` — Firebase web config (Firebase console → Project settings → Your apps).
-- `CLOUDFLARED_TUNNEL_TOKEN` — get it with `cloudflared tunnel token food-dev` (or copy from another machine).
+Stop with `docker compose down`.
 
-Then open http://localhost:5050 (local) or https://test.dhemeira.hu (via the tunnel). Stop with
-`docker compose down`.
+Alternatively, open the repo in VS Code and choose **Reopen in Container**. The dev container starts
+the same `web` + `tunnel` services and installs Claude Code inside `web`.
 
-```sh
-docker compose down -v && docker compose up --build   # clean rebuild (also resets the node_modules volume)
-```
+## How the dev environment works
 
-## Stack
+Two Compose services:
 
-- **Frontend:** React 19 + TypeScript + Vite + Tailwind CSS v4 (`react-router-dom` for routing)
-- **Auth:** Firebase Auth — Google sign-in only
-- **Data:** Firestore (free tier)
-- **Hosting:** Cloudflare Pages (custom domain `food.dheimeira.hu`)
-- **CI:** GitHub Actions auto-deploys Firestore rules on push
+- **`web`** — Node 22.22.1 running the Vite dev server on port 5050. The repo is bind-mounted at
+  `/app` for HMR; `node_modules` lives in the `node_modules` named volume and is installed with
+  `npm ci` when the image is built. File watching uses polling (`CHOKIDAR_USEPOLLING=true`) because
+  bind-mount events are unreliable on Docker Desktop. A healthcheck gates the tunnel on the dev
+  server responding.
+- **`tunnel`** — `cloudflare/cloudflared:2026.10.7` connected to the `food-dev` tunnel. Ingress is
+  in `cloudflared/config.yml`: `test.dhemeira.hu` → `http://web:5050`. It starts only after `web`
+  is healthy. `CLOUDFLARED_TUNNEL_TOKEN` is required — Compose fails fast if it is missing.
 
-## Directory layout
+The dev container (`.devcontainer/devcontainer.json`) uses the `web` service, starts `web` and
+`tunnel`, persists Claude Code config in the `food-claude-config` volume mounted at `/root/.claude`,
+and installs the Claude Code CLI.
 
-```
-recipes-app/
-├── src/                          # the React app (Pages build root)
-│   ├── backend/                  # ← swappable data layer (the important part)
-│   │   ├── Backend.ts            #    Backend interface (the contract)
-│   │   ├── index.ts              #    factory: creates + exports the singleton `backend`
-│   │   ├── types.ts              #    domain types (User, Recipe, RecipeImage, …)
-│   │   └── firebase/             #    Firebase implementation (only files importing Firebase)
-│   ├── context/                  # AuthProvider + useAuth
-│   ├── hooks/                    # useRecipes, useRecipe, useRecipeImage
-│   ├── lib/                      # image.ts — client-side crop/resize to base64
-│   ├── components/               # Navbar, Search, RecipeList, ProtectedRoute
-│   └── pages/                    # Home, Login, RecipeDetail, RecipeForm, NotFound
-├── public/                       # static assets (PWA icons, manifest, sw.js)
-├── index.html
-├── vite.config.ts
-├── Dockerfile                    # reproducible dev image (Node 22.22.1)
-├── docker-compose.yml            # web + cloudflared tunnel (single `up`)
-├── firestore.rules               # security rules (source of truth, deployed by CI)
-├── firestore.indexes.json        # composite indexes (empty — none needed yet)
-├── firebase.json                 # Firebase CLI config (points at the two files above)
-├── wrangler.jsonc                # Pages/Wrangler config (assets: ./dist)
-└── .github/workflows/            # deploy-firestore.yml
-```
+### Things that bite
 
-## The swappable backend (key design decision)
+- **One connector per tunnel.** Never run a second cloudflared for `food-dev`: no host-side
+  `cloudflared tunnel run food-dev`, no Windows `Cloudflared` service, no `npm run dev:host` while
+  Compose is up. Cloudflare load-balances requests across connectors; a second connector with no
+  ingress returns empty 503s, so the site works or fails depending on which connector a request
+  lands on. Check for duplicates with `Get-Process cloudflared` / `Get-Service *cloudflared*`
+  (Windows), `docker ps`, or Cloudflare dashboard → Zero Trust → Networks → Tunnels → `food-dev`.
+- **The dev server is public while the tunnel is up.** Keep `server.fs.allow` in `vite.config.ts`
+  scoped to the project; widening it exposes container files (including secrets) through
+  `https://test.dhemeira.hu/@fs/...`.
+- **Dependency changes need a clean volume rebuild.** The `node_modules` volume is populated from
+  the image once, so `--build` alone will not pick up a changed `package-lock.json`:
 
-All UI code talks to a `Backend` **interface**, never to the Firebase SDK directly. `Backend` has
-four facets:
+  ```sh
+  docker compose down -v && docker compose up --build
+  ```
 
-- `auth` — `signInWithGoogle` / `signOut` / `currentUser` / `onAuthChange`
-- `recipes` — `list` / `watch` (realtime) / `get` / `create` / `update` / `remove`
-- `users` — `watchRole`
-- `images` — `set` / `get` / `remove`
+- **`test.dhemeira.hu` is only up while this stack runs.** Closing the dev container or Docker
+  Desktop takes it down.
+- **Keep secrets in `.env`** (gitignored). `.env.example` is the template.
 
-`src/backend/index.ts` builds a `FirebaseBackend` and exports it as `backend`.
-Components and hooks import `backend` (or the `useX` hooks), never the Firebase SDK. To swap the
-backend (e.g. a REST API), implement `Backend` once and change that single factory line.
-
-Domain types in `types.ts` are Firebase-agnostic. `firebase/converters.ts` maps Firestore
-documents ↔ domain objects.
-
-## Data model
-
-| Collection        | Doc id      | Fields                                                                                                                                        | Notes                                                                                                |
-| ----------------- | ----------- | --------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------- |
-| `recipes`         | auto        | `title`, `description`, `calorieValue`, `calorieUnit`, `hasImage`, `thumb`, `ingredients[]`, `steps[]`, `createdBy`, `createdAt`, `updatedAt` | `thumb` is a small base64 data URI, denormalized so the list query carries it with **no extra read** |
-| `recipeImages`    | = recipe id | `full` (1000×400 data URI), `updatedAt`                                                                                                       | read only on the detail view                                                                         |
-| `settings/config` | `config`    | `allowedEmails[]`                                                                                                                             | who may write — edit in the console                                                                  |
-| `users`           | = auth uid  | `role: 'admin' \| 'family'`                                                                                                                   | admins may delete                                                                                    |
-
-`ingredients` = `{ quantity, name }`; `steps` = `{ instruction }`. Both are embedded arrays — a
-recipe is fully replaced on save.
-
-## Image pipeline
-
-1. `RecipeForm` picks a file → `lib/image.ts` `processRecipeImage()` center-crops it on a canvas
-   (`fit=cover`) to two JPEG data URIs: `full` 1000×400 and `thumb` 400×160.
-2. On save, `images.set(id, { full, thumb })` does one batched write: `full` → `recipeImages/{id}`,
-   and `thumb` + `hasImage` → `recipes/{id}`.
-3. The homepage renders `recipe.thumb` directly; the detail view renders `recipeImages/{id}.full`
-   via `useRecipeImage`.
-4. `images.remove(id)` clears `thumb`/`hasImage` and deletes the full image. `recipes.remove(id)`
-   also deletes the image doc (batched).
-
-Firestore caps a document at 1 MiB; `processRecipeImage` rejects anything over ~900 KB combined.
-
-## Auth, roles, allowlist
-
-- **Guests (signed out) can read** recipes and images (public read).
-- Only emails in `settings/config.allowedEmails` can create/update recipes and set/remove images.
-- Only `users/{uid}.role == 'admin'` can delete.
-
-All of this is enforced in `firestore.rules`. Bootstrap = create the `settings/config` and `users`
-docs manually in the console (project owners bypass rules). The allowlist doc is the single source
-of truth; rules read it via `get()`.
-
-## How the frontend flows
-
-- `main.tsx` → `App` → `AuthProvider` wraps `BrowserRouter`.
-- `AuthProvider` subscribes to auth state + the current user's role; exposes
-  `{ user, isAdmin, isLoading, signIn, signOut }` through `useAuth()`.
-- `useRecipes` = realtime `onSnapshot` over `recipes` ordered by `updatedAt desc`. Offline
-  persistence is enabled in `backend/firebase/app.ts` via `persistentLocalCache()`.
-- `useRecipe(id)` = one-shot get; `useRecipeImage(id, enabled)` = one-shot get of the full image.
-- Routes: `/` home, `/login`, `/recipe/:id`, and `/recipe/new` + `/recipe/:id/edit` (behind
-  `ProtectedRoute`).
-- Search is client-side — `Home` filters the cached list (case-insensitive substring across
-  title + description).
-
-## Security rules + CI
-
-- `firestore.rules` is the source of truth, stored in the repo.
-- `firebase.json` maps `firestore.rules` and `firestore.indexes.json`.
-- `.github/workflows/deploy-firestore.yml` runs `firebase deploy --only firestore` on pushes to
-  `master` that touch those files. Requires `FIREBASE_TOKEN` + `FIREBASE_PROJECT_ID` secrets.
-
-## Dev conventions
-
-- Node 22 (`.nvmrc` → `22.22.1`). `npm install` at the repo root, then `npm run dev`.
-- Scripts: `dev`, `dev:host` (Vite + local cloudflared tunnel), `build` (`tsc -b && vite build`),
-  `lint`, `format:check`/`format:fix`.
-- `~` aliases to `src` (set in `vite.config.ts` + `tsconfig.app.json`).
-- Env: `.env` at the repo root holds the `VITE_FIREBASE_*` vars (see `.env.example`). These are
-  inlined at build time, so they must also be set as build environment variables in Cloudflare Pages.
-- Lint/prettier run on commit via husky + lint-staged.
-- UI components come from the published [`@dhemeira/ui`](https://github.com/dhemeira/ui) package.
-  Its source is scanned by Tailwind via `@source` in `src/index.css`.
-
-## Docker (reproducible dev environment)
-
-`docker compose up` builds and starts both the Vite app and a Cloudflare tunnel, so any machine
-with Docker gets the same Node + cloudflared setup — no local toolchain drift.
-
-- `web` — Node `22.22.1` (from `.nvmrc`) running Vite on http://localhost:5050, source bind-mounted for HMR.
-- `tunnel` — `cloudflare/cloudflared:2026.10.7` running your `food-dev` tunnel, exposing the app at
-  `test.dhemeira.hu`.
-
-The tunnel is self-contained: its routing lives in `cloudflared/config.yml` (pointing at
-`http://web:5050`, the Docker service name). The only per-machine secret is the tunnel token.
-
-One-time setup per machine:
-
-1. `cp .env.example .env` and fill in the Firebase vars.
-2. Put your tunnel token in `.env` as `CLOUDFLARED_TUNNEL_TOKEN`. Get it with:
+## Common commands
 
 ```sh
-cloudflared tunnel token food-dev
+docker compose logs -f web          # Vite output
+docker compose logs -f tunnel       # cloudflared output
+docker compose restart tunnel
+docker compose down -v && docker compose up --build   # clean rebuild
+
+npm run lint                        # ESLint
+npm run format:check                # Prettier
+npm run build                       # tsc -b && vite build
 ```
 
-```sh
-docker compose up --build      # first run, or after changing the Dockerfile / .dockerignore
-docker compose up              # start (web + tunnel)
-docker compose up web          # app only
-docker compose down            # stop
-```
+Without Docker (Node 22): `npm install && npm run dev`.
 
-Prefer plain `npm run dev` (or `npm run dev:host` for the local tunnel) if you don't need container parity.
+## Data and production
 
-## Gotchas
-
-- Firestore is billed per **document read**, not per request — batching many docs into one query
-  reduces round-trips, not reads.
-- Images are public-readable; the app is write-gated by the allowlist only.
-- Editing `firestore.rules` does nothing until pushed (CI) or deployed manually
-  (`firebase deploy --only firestore`).
-- Vite warns about a large chunk (the Firebase SDK) — expected and ignorable.
+- Data lives in Firestore; `firestore.rules` and `firestore.indexes.json` are the source of truth
+  and deploy via GitHub Actions on push.
+- Production is Cloudflare Pages at https://food.dhemeira.hu.
