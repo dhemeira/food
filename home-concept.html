@@ -1,0 +1,1485 @@
+<!doctype html>
+<html lang="hu">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="dark" />
+    <title>Home concept — Receptek</title>
+
+    <!--
+      Home + detail concept — standalone mock, not production code.
+
+      Real titles, photos, calories, ingredients and steps come from Firestore.
+      The cooked counts are placeholders for evaluating the counter and ordering.
+      Palette/type tokens live in :root; the typeface is Plus Jakarta Sans only.
+      Design language: public/concept/DESIGN.md. Open changes: public/concept/CHANGES.md.
+    -->
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
+      rel="stylesheet" />
+
+    <style>
+      :root {
+        --bg: #14110e;
+        --surface: #1c1814;
+        --surface-2: #241f19;
+        --border: #322b23;
+        --border-hover: #4a3f33;
+        --text: #f4eee4;
+        --text-soft: #d6ccbe;
+        --muted: #a99e90;
+        --muted-2: #7d7468;
+        --accent: #e07a56;
+        --accent-hover: #ea8c6b;
+        --accent-soft: rgba(224, 122, 86, 0.14);
+        --on-accent: #1b110c;
+        --danger: #e2685a;
+        --shadow-soft: 0 12px 32px rgba(0, 0, 0, 0.28);
+        --radius-sm: 8px;
+        --radius-md: 12px;
+        --radius-lg: 16px;
+        --radius-xl: 24px;
+        --radius-pill: 999px;
+        --font: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+      }
+
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+      }
+
+      html {
+        background: var(--bg);
+      }
+
+      body {
+        margin: 0;
+        min-height: 100dvh;
+        background: var(--bg);
+        color: var(--text);
+        font-family: var(--font);
+        font-size: 16px;
+        line-height: 1.5;
+        -webkit-font-smoothing: antialiased;
+        text-rendering: optimizeLegibility;
+      }
+
+      img {
+        display: block;
+        max-width: 100%;
+      }
+
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+
+      button,
+      input {
+        font: inherit;
+      }
+
+      [hidden] {
+        display: none !important;
+      }
+
+      ::selection {
+        background: var(--accent);
+        color: var(--on-accent);
+      }
+
+      :focus-visible {
+        outline: 2px solid var(--accent);
+        outline-offset: 2px;
+      }
+
+      .shell {
+        width: 100%;
+        max-width: 1120px;
+        margin-inline: auto;
+        padding-inline: 16px;
+      }
+
+      /* ------------------------------------------------------------------ top bar */
+
+      .topbar {
+        display: none;
+        position: sticky;
+        top: 0;
+        z-index: 40;
+        background: rgba(20, 17, 14, 0.84);
+        border-bottom: 1px solid var(--border);
+        backdrop-filter: blur(14px);
+        -webkit-backdrop-filter: blur(14px);
+      }
+
+      .topbar-inner {
+        display: flex;
+        align-items: center;
+        gap: 24px;
+        height: 64px;
+      }
+
+      .brand {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 0.95rem;
+        font-weight: 600;
+        letter-spacing: -0.01em;
+      }
+
+      .brand-mark {
+        width: 30px;
+        height: 30px;
+        flex: none;
+      }
+
+      .topnav {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        margin-left: auto;
+      }
+
+      .topnav > a {
+        padding: 8px 10px;
+        border-radius: var(--radius-sm);
+        color: var(--muted);
+        font-size: 0.875rem;
+        font-weight: 500;
+        transition:
+          color 150ms ease,
+          background-color 150ms ease;
+      }
+
+      .topnav > a:hover {
+        color: var(--text);
+        background: var(--surface-2);
+      }
+
+      .topnav > a[aria-current='page'] {
+        color: var(--text);
+      }
+
+      /* Search lives in the navbar on desktop and grows on hover/focus. */
+      .nav-search {
+        position: relative;
+        display: flex;
+        align-items: center;
+        width: 136px;
+        height: 38px;
+        margin-right: 8px;
+        border: 1px solid var(--border);
+        border-radius: var(--radius-pill);
+        background: var(--surface);
+        transition:
+          width 200ms ease,
+          background-color 150ms ease,
+          border-color 150ms ease;
+      }
+
+      .nav-search:hover,
+      .nav-search:focus-within {
+        width: 240px;
+        border-color: var(--border-hover);
+        background: var(--surface-2);
+      }
+
+      .nav-search svg,
+      .search svg {
+        position: absolute;
+        left: 13px;
+        width: 16px;
+        height: 16px;
+        color: var(--muted);
+        pointer-events: none;
+      }
+
+      .nav-search input,
+      .search input {
+        width: 100%;
+        height: 100%;
+        padding: 0 14px 0 38px;
+        border: 0;
+        border-radius: inherit;
+        background: transparent;
+        color: var(--text);
+        font-size: 0.875rem;
+        outline: none;
+        appearance: none;
+      }
+
+      .nav-search input::placeholder,
+      .search input::placeholder {
+        color: var(--muted-2);
+      }
+
+      .nav-search input::-webkit-search-cancel-button,
+      .search input::-webkit-search-cancel-button {
+        appearance: none;
+      }
+
+      .avatar {
+        display: grid;
+        place-items: center;
+        width: 34px;
+        height: 34px;
+        margin-left: 6px;
+        border: 0;
+        border-radius: var(--radius-pill);
+        background: linear-gradient(135deg, #e78a64, #b34f3b);
+        color: var(--on-accent);
+        font-size: 0.72rem;
+        font-weight: 700;
+        letter-spacing: 0.02em;
+        cursor: pointer;
+      }
+
+      /* --------------------------------------------------------------- mobile brand */
+
+      .mobile-brand {
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        padding-top: 16px;
+        font-size: 0.95rem;
+        font-weight: 600;
+        letter-spacing: -0.01em;
+      }
+
+      .mobile-brand .brand-mark {
+        width: 28px;
+        height: 28px;
+      }
+
+      /* ---------------------------------------------------------------- page head */
+
+      main {
+        padding-bottom: 120px;
+      }
+
+      .page-head {
+        padding-top: 18px;
+      }
+
+      .title-row {
+        display: flex;
+        align-items: baseline;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+
+      h1 {
+        margin: 0;
+        font-size: clamp(2rem, 5vw, 2.75rem);
+        font-weight: 600;
+        line-height: 1.05;
+        letter-spacing: -0.035em;
+      }
+
+      .count {
+        color: var(--muted);
+        font-size: 0.8125rem;
+        font-weight: 500;
+        font-variant-numeric: tabular-nums;
+      }
+
+      /* Only shown on mobile — desktop uses the navbar search. */
+      .search {
+        position: relative;
+        display: flex;
+        align-items: center;
+        width: 100%;
+        height: 46px;
+        max-width: 440px;
+        margin-top: 18px;
+        border: 1px solid var(--border);
+        border-radius: var(--radius-pill);
+        background: var(--surface);
+        transition:
+          border-color 150ms ease,
+          background-color 150ms ease;
+      }
+
+      .search:hover {
+        border-color: var(--border-hover);
+      }
+
+      .search:focus-within {
+        border-color: var(--accent);
+        background: var(--surface-2);
+        box-shadow: 0 0 0 3px var(--accent-soft);
+      }
+
+      .search input {
+        height: 44px;
+        padding-left: 40px;
+        font-size: 0.9375rem;
+      }
+
+      /* -------------------------------------------------------------------- grid */
+
+      .grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 16px;
+        margin-top: 24px;
+      }
+
+      .card {
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        border: 1px solid var(--border);
+        border-radius: var(--radius-lg);
+        background: var(--surface);
+        transition:
+          border-color 200ms ease,
+          background-color 200ms ease;
+      }
+
+      .card:hover {
+        border-color: var(--border-hover);
+        background: var(--surface-2);
+      }
+
+      .card-media {
+        aspect-ratio: 2 / 1;
+        overflow: hidden;
+        background: var(--surface-2);
+      }
+
+      .card-media img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 500ms cubic-bezier(0.2, 0.7, 0.2, 1);
+      }
+
+      .card:hover .card-media img {
+        transform: scale(1.04);
+      }
+
+      .card-media--empty {
+        display: grid;
+        place-items: center;
+      }
+
+      .card-media--empty svg {
+        width: 30px;
+        height: 30px;
+        opacity: 0.35;
+      }
+
+      .card-body {
+        padding: 12px 14px 14px;
+      }
+
+      .card-title {
+        display: -webkit-box;
+        min-height: 2.6em;
+        margin: 0;
+        overflow: hidden;
+        font-size: 1rem;
+        font-weight: 600;
+        line-height: 1.3;
+        letter-spacing: -0.015em;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 2;
+      }
+
+      .card-meta {
+        display: flex;
+        flex-direction: column;
+        gap: 1px;
+        min-height: 2.5em;
+        margin-top: 4px;
+        color: var(--muted);
+        font-size: 0.78125rem;
+        line-height: 1.25;
+        font-variant-numeric: tabular-nums;
+      }
+
+      .empty {
+        margin: 32px 0;
+        color: var(--muted);
+        font-size: 0.95rem;
+      }
+
+      /* ------------------------------------------------------------------ detail */
+
+      .detail-view {
+        padding-top: 16px;
+      }
+
+      .detail-card {
+        overflow: hidden;
+        border: 1px solid var(--border);
+        border-radius: var(--radius-xl);
+        background: var(--surface);
+      }
+
+      .detail-hero {
+        position: relative;
+        min-height: 250px;
+        aspect-ratio: 2.5 / 1;
+        overflow: hidden;
+        background: var(--surface-2);
+      }
+
+      .detail-hero > img {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      .detail-hero--empty {
+        background:
+          radial-gradient(120% 140% at 15% 0%, rgba(224, 122, 86, 0.16), transparent 60%),
+          var(--surface-2);
+      }
+
+      .hero-shade {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(to top, rgba(20, 17, 14, 0.97), rgba(20, 17, 14, 0) 58%);
+      }
+
+      .hero-back {
+        position: absolute;
+        top: 14px;
+        left: 14px;
+        display: grid;
+        place-items: center;
+        width: 40px;
+        height: 40px;
+        border: 1px solid rgba(255, 255, 255, 0.16);
+        border-radius: var(--radius-pill);
+        background: rgba(20, 17, 14, 0.62);
+        color: var(--text);
+        cursor: pointer;
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+        transition: background-color 150ms ease;
+      }
+
+      .hero-back:hover {
+        background: rgba(20, 17, 14, 0.85);
+      }
+
+      .hero-back svg {
+        width: 20px;
+        height: 20px;
+      }
+
+      .hero-actions {
+        position: absolute;
+        top: 14px;
+        right: 14px;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        gap: 8px;
+      }
+
+      .hero-share {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        height: 40px;
+        padding: 0 14px;
+        border: 1px solid rgba(255, 255, 255, 0.16);
+        border-radius: var(--radius-pill);
+        background: rgba(20, 17, 14, 0.62);
+        color: var(--text);
+        font-size: 0.8125rem;
+        font-weight: 500;
+        cursor: pointer;
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+        transition: background-color 150ms ease;
+      }
+
+      .hero-share:hover {
+        background: rgba(20, 17, 14, 0.85);
+      }
+
+      .hero-share svg {
+        width: 16px;
+        height: 16px;
+      }
+
+      .hero-content {
+        position: absolute;
+        right: 16px;
+        bottom: 16px;
+        left: 16px;
+      }
+
+      .hero-content h2 {
+        margin: 0;
+        font-size: clamp(1.5rem, 4vw, 2.25rem);
+        font-weight: 600;
+        line-height: 1.1;
+        letter-spacing: -0.03em;
+        text-wrap: balance;
+      }
+
+      .hero-pills {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        margin-top: 10px;
+      }
+
+      .hero-pills:empty {
+        display: none;
+      }
+
+      .hero-pill {
+        padding: 5px 11px;
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        border-radius: var(--radius-pill);
+        background: rgba(255, 255, 255, 0.08);
+        color: var(--text);
+        font-size: 0.75rem;
+        font-weight: 500;
+        font-variant-numeric: tabular-nums;
+      }
+
+      .detail-body {
+        padding: 12px 12px 16px;
+      }
+
+      /* Cooked counter floats over the hero image. */
+      .cook-pill {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        padding: 4px 5px 4px 12px;
+        border: 1px solid rgba(255, 255, 255, 0.16);
+        border-radius: var(--radius-pill);
+        background: rgba(20, 17, 14, 0.62);
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+      }
+
+      .cook-label {
+        margin-right: 2px;
+        color: rgba(244, 238, 228, 0.72);
+        font-size: 0.625rem;
+        font-weight: 600;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+      }
+
+      .cook-btn {
+        display: grid;
+        place-items: center;
+        width: 30px;
+        height: 30px;
+        border: 1px solid rgba(255, 255, 255, 0.14);
+        border-radius: var(--radius-pill);
+        background: rgba(255, 255, 255, 0.08);
+        color: var(--text);
+        font-size: 0.95rem;
+        line-height: 1;
+        cursor: pointer;
+        transition:
+          background-color 150ms ease,
+          border-color 150ms ease,
+          opacity 150ms ease;
+      }
+
+      .cook-btn:hover:not(:disabled) {
+        background: rgba(255, 255, 255, 0.16);
+      }
+
+      .cook-btn:disabled {
+        opacity: 0.35;
+        cursor: default;
+      }
+
+      .cook-btn--add {
+        border-color: transparent;
+        background: var(--accent);
+        color: var(--on-accent);
+      }
+
+      .cook-btn--add:hover:not(:disabled) {
+        background: var(--accent-hover);
+      }
+
+      .cook-value {
+        min-width: 34px;
+        color: var(--text);
+        text-align: center;
+        font-size: 0.875rem;
+        font-weight: 600;
+        font-variant-numeric: tabular-nums;
+      }
+
+      .detail-description {
+        margin: 18px 2px 0;
+        color: var(--text-soft);
+        font-size: 0.9375rem;
+        line-height: 1.65;
+      }
+
+      .detail-grid {
+        display: grid;
+        grid-template-columns: minmax(0, 400px) minmax(0, 1fr);
+        gap: 40px;
+        align-items: start;
+        margin-top: 20px;
+      }
+
+      .detail-grid--single {
+        grid-template-columns: minmax(0, 1fr);
+      }
+
+      .ingredients-card {
+        padding: 16px;
+        border: 1px solid var(--border);
+        border-radius: 18px;
+        background: var(--surface-2);
+      }
+
+      .micro-label {
+        margin: 0 0 14px;
+        color: var(--muted);
+        font-size: 0.6875rem;
+        font-weight: 600;
+        letter-spacing: 0.11em;
+        text-transform: uppercase;
+      }
+
+      .ingredients-card ul,
+      .steps-block ol {
+        display: flex;
+        flex-direction: column;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+      }
+
+      .ingredients-card ul {
+        gap: 10px;
+      }
+
+      .ingredients-card li {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        gap: 12px;
+        font-size: 0.9375rem;
+      }
+
+      .ingredient-qty {
+        color: var(--muted);
+        white-space: nowrap;
+        font-variant-numeric: tabular-nums;
+      }
+
+      .steps-block ol {
+        gap: 18px;
+      }
+
+      .step {
+        display: flex;
+        gap: 14px;
+      }
+
+      .step-number {
+        display: grid;
+        place-items: center;
+        flex: none;
+        width: 32px;
+        height: 32px;
+        border-radius: var(--radius-pill);
+        background: var(--accent-soft);
+        color: var(--accent);
+        font-size: 0.8125rem;
+        font-weight: 600;
+        font-variant-numeric: tabular-nums;
+      }
+
+      .step-text {
+        padding-top: 4px;
+        font-size: 0.9375rem;
+        line-height: 1.7;
+      }
+
+      .detail-actions {
+        display: flex;
+        gap: 8px;
+        margin-top: 28px;
+        padding-top: 20px;
+        border-top: 1px solid var(--border);
+      }
+
+      .action-btn {
+        height: 40px;
+        padding: 0 16px;
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        background: var(--surface-2);
+        color: var(--text);
+        font-size: 0.875rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition:
+          background-color 150ms ease,
+          border-color 150ms ease;
+      }
+
+      .action-btn:hover {
+        border-color: var(--border-hover);
+        background: var(--surface);
+      }
+
+      .action-btn--danger {
+        border-color: rgba(226, 104, 90, 0.35);
+        background: transparent;
+        color: var(--danger);
+      }
+
+      .action-btn--danger:hover {
+        border-color: rgba(226, 104, 90, 0.6);
+        background: rgba(226, 104, 90, 0.1);
+      }
+
+      /* ------------------------------------------------------------------ tab bar */
+
+      .tabbar {
+        position: fixed;
+        right: 10px;
+        bottom: calc(10px + env(safe-area-inset-bottom));
+        left: 10px;
+        z-index: 50;
+        display: flex;
+        align-items: center;
+        gap: 2px;
+        padding: 6px;
+        border: 1px solid var(--border);
+        border-radius: var(--radius-pill);
+        background: rgba(28, 24, 20, 0.94);
+        box-shadow: var(--shadow-soft);
+        backdrop-filter: blur(16px) saturate(140%);
+        -webkit-backdrop-filter: blur(16px) saturate(140%);
+      }
+
+      .tab {
+        display: grid;
+        place-items: center;
+        flex: 1;
+        height: 46px;
+        border: 0;
+        border-radius: var(--radius-pill);
+        background: transparent;
+        color: var(--muted);
+        cursor: pointer;
+        transition:
+          color 150ms ease,
+          background-color 150ms ease;
+      }
+
+      .tab svg {
+        width: 22px;
+        height: 22px;
+      }
+
+      .tab:hover {
+        color: var(--text);
+      }
+
+      .tab[aria-current='page'] {
+        background: var(--accent-soft);
+        color: var(--accent);
+      }
+
+      /* --------------------------------------------------------------- breakpoints */
+
+      @media (min-width: 640px) {
+        .grid {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+          gap: 20px;
+        }
+      }
+
+      @media (min-width: 720px) {
+        .shell {
+          padding-inline: 24px;
+        }
+
+        .topbar {
+          display: block;
+        }
+
+        .mobile-brand,
+        .search {
+          display: none;
+        }
+
+        main {
+          padding-bottom: 56px;
+        }
+
+        .page-head {
+          padding-top: 44px;
+        }
+
+        .tabbar {
+          display: none;
+        }
+
+        .detail-view {
+          padding-top: 32px;
+        }
+
+        .detail-hero {
+          min-height: 320px;
+        }
+
+        .hero-content {
+          right: 32px;
+          bottom: 26px;
+          left: 32px;
+        }
+
+        .detail-body {
+          padding: 30px 32px 34px;
+        }
+
+        .ingredients-card {
+          padding: 24px;
+        }
+      }
+
+      @media (min-width: 1024px) {
+        .shell {
+          padding-inline: 32px;
+        }
+
+        .grid {
+          grid-template-columns: repeat(3, minmax(0, 1fr));
+          gap: 24px;
+        }
+      }
+
+      @media (max-width: 819px) {
+        .detail-grid {
+          grid-template-columns: minmax(0, 1fr);
+          gap: 20px;
+        }
+      }
+
+      @media (max-width: 719px) {
+        .detail-actions {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+        }
+
+        .action-btn {
+          padding: 0 12px;
+        }
+      }
+
+      @media (hover: none) {
+        .card:hover .card-media img {
+          transform: none;
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        *,
+        *::before,
+        *::after {
+          transition-duration: 0.01ms !important;
+          animation-duration: 0.01ms !important;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <svg width="0" height="0" aria-hidden="true" style="position: absolute">
+      <defs>
+        <linearGradient id="logo-grad" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stop-color="#fb923c" />
+          <stop offset="1" stop-color="#e11d48" />
+        </linearGradient>
+      </defs>
+    </svg>
+
+    <header class="topbar">
+      <div class="shell topbar-inner">
+        <a class="brand js-home" href="#">
+          <svg class="brand-mark" viewBox="0 0 512 512" aria-hidden="true">
+            <rect width="512" height="512" rx="112" fill="url(#logo-grad)" />
+            <g transform="translate(256 256) scale(0.36) translate(-480 480)" fill="#fff">
+              <path
+                d="M320-80v-70q-107-42-173.5-130T80-480h80v-320l720-80v60l-460 52v68h460v60H420v160h460q0 112-66.5 200T640-150v70H320Zm0-620h40v-62l-40 5v57Zm-100 0h40v-50l-40 4v46Zm100 220h40v-160h-40v160Zm-100 0h40v-160h-40v160Z" />
+            </g>
+          </svg>
+          <span>Receptek</span>
+        </a>
+
+        <nav class="topnav" aria-label="Fő navigáció">
+          <label class="nav-search">
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.8"
+              aria-hidden="true">
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+            </svg>
+            <input
+              class="js-search"
+              type="search"
+              placeholder="Keresés…"
+              autocomplete="off"
+              aria-label="Keresés a receptek között" />
+          </label>
+
+          <a class="js-home" href="#" aria-current="page">Receptek</a>
+          <a class="js-noop" href="#">Új recept</a>
+          <a class="js-noop" href="#">Napi menü</a>
+          <button class="avatar" type="button" aria-label="Fiók">PL</button>
+        </nav>
+      </div>
+    </header>
+
+    <main class="shell">
+      <section id="homeView">
+        <div class="mobile-brand">
+          <svg class="brand-mark" viewBox="0 0 512 512" aria-hidden="true">
+            <rect width="512" height="512" rx="112" fill="url(#logo-grad)" />
+            <g transform="translate(256 256) scale(0.36) translate(-480 480)" fill="#fff">
+              <path
+                d="M320-80v-70q-107-42-173.5-130T80-480h80v-320l720-80v60l-460 52v68h460v60H420v160h460q0 112-66.5 200T640-150v70H320Zm0-620h40v-62l-40 5v57Zm-100 0h40v-50l-40 4v46Zm100 220h40v-160h-40v160Zm-100 0h40v-160h-40v160Z" />
+            </g>
+          </svg>
+          <span>Receptek</span>
+        </div>
+
+        <header class="page-head">
+          <div class="title-row">
+            <h1>Receptek</h1>
+            <span class="count" id="count"></span>
+          </div>
+
+          <label class="search">
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.8"
+              aria-hidden="true">
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+            </svg>
+            <input
+              class="js-search"
+              type="search"
+              placeholder="Keresés a receptek között…"
+              autocomplete="off"
+              aria-label="Keresés a receptek között" />
+          </label>
+        </header>
+
+        <div class="grid" id="grid"></div>
+        <p class="empty" id="empty" hidden>Nincs a keresésnek megfelelő recept.</p>
+      </section>
+
+      <section id="detailView" class="detail-view" hidden>
+        <article class="detail-card">
+          <div class="detail-hero" id="detailHero">
+            <img id="detailImage" alt="" />
+            <div class="hero-shade"></div>
+            <button
+              class="hero-back"
+              id="backButton"
+              type="button"
+              aria-label="Vissza a receptekhez">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.8"
+                aria-hidden="true">
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
+              </svg>
+            </button>
+
+            <div class="hero-actions">
+              <button class="hero-share" id="shareButton" type="button">
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                  aria-hidden="true">
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5m-13.5-9L12 3m0 0 4.5 4.5M12 3v13.5" />
+                </svg>
+                <span>Megosztás</span>
+              </button>
+
+              <div class="cook-pill">
+                <span class="cook-label">Főzve</span>
+                <button
+                  class="cook-btn"
+                  id="cookMinus"
+                  type="button"
+                  aria-label="Főzés visszavonása">
+                  −
+                </button>
+                <span class="cook-value" id="cookValue" aria-live="polite"></span>
+                <button
+                  class="cook-btn cook-btn--add"
+                  id="cookPlus"
+                  type="button"
+                  aria-label="Főzés hozzáadása">
+                  +
+                </button>
+              </div>
+            </div>
+
+            <div class="hero-content">
+              <h2 id="detailTitle"></h2>
+              <div class="hero-pills" id="heroPills"></div>
+            </div>
+          </div>
+
+          <div class="detail-body">
+            <p class="detail-description" id="detailDescription" hidden></p>
+
+            <div class="detail-grid" id="detailGrid">
+              <section
+                class="ingredients-card"
+                id="ingredientsCard"
+                aria-labelledby="ingredientsTitle">
+                <h3 class="micro-label" id="ingredientsTitle">Hozzávalók</h3>
+                <ul id="ingredientsList"></ul>
+              </section>
+
+              <section class="steps-block" id="stepsBlock" aria-labelledby="stepsTitle">
+                <h3 class="micro-label" id="stepsTitle">Elkészítés</h3>
+                <ol id="stepsList"></ol>
+              </section>
+            </div>
+
+            <div class="detail-actions">
+              <button class="action-btn" type="button">Szerkesztés</button>
+              <button class="action-btn action-btn--danger" type="button">Törlés</button>
+            </div>
+          </div>
+        </article>
+      </section>
+    </main>
+
+    <nav class="tabbar" aria-label="Fő navigáció">
+      <button class="tab" type="button" data-tab="home" aria-label="Kezdőlap" aria-current="page">
+        <svg
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.7"
+          aria-hidden="true">
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="m2.25 12 8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
+        </svg>
+      </button>
+
+      <button class="tab" type="button" data-tab="new" aria-label="Új recept">
+        <svg
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.7"
+          aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+        </svg>
+      </button>
+
+      <button class="tab" type="button" data-tab="search" aria-label="Keresés">
+        <svg
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.7"
+          aria-hidden="true">
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+        </svg>
+      </button>
+
+      <button class="tab" type="button" data-tab="menu" aria-label="Napi menü">
+        <svg
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.7"
+          aria-hidden="true">
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5" />
+        </svg>
+      </button>
+
+      <button class="tab" type="button" data-tab="profile" aria-label="Fiók">
+        <svg
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.7"
+          aria-hidden="true">
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
+        </svg>
+      </button>
+    </nav>
+
+    <script src="/concept/concept-data.js"></script>
+    <script>
+      const LOGO_MARK = `
+        <svg viewBox="0 0 512 512" aria-hidden="true">
+          <rect width="512" height="512" rx="112" fill="url(#logo-grad)" />
+          <g transform="translate(256 256) scale(0.36) translate(-480 480)" fill="#fff">
+            <path d="M320-80v-70q-107-42-173.5-130T80-480h80v-320l720-80v60l-460 52v68h460v60H420v160h460q0 112-66.5 200T640-150v70H320Zm0-620h40v-62l-40 5v57Zm-100 0h40v-50l-40 4v46Zm100 220h40v-160h-40v160Zm-100 0h40v-160h-40v160Z" />
+          </g>
+        </svg>`;
+
+      const recipes = (window.CONCEPT_RECIPES ?? []).map((recipe) => ({
+        ...recipe,
+        lastCookedAt: recipe.updatedAt,
+      }));
+
+      const grid = document.getElementById('grid');
+      const count = document.getElementById('count');
+      const empty = document.getElementById('empty');
+      const homeView = document.getElementById('homeView');
+      const detailView = document.getElementById('detailView');
+      const detailHero = document.getElementById('detailHero');
+      const detailImage = document.getElementById('detailImage');
+      const detailTitle = document.getElementById('detailTitle');
+      const detailDescription = document.getElementById('detailDescription');
+      const heroPills = document.getElementById('heroPills');
+      const detailGrid = document.getElementById('detailGrid');
+      const ingredientsCard = document.getElementById('ingredientsCard');
+      const ingredientsList = document.getElementById('ingredientsList');
+      const stepsBlock = document.getElementById('stepsBlock');
+      const stepsList = document.getElementById('stepsList');
+      const cookValue = document.getElementById('cookValue');
+      const cookMinus = document.getElementById('cookMinus');
+      const cookPlus = document.getElementById('cookPlus');
+      const backButton = document.getElementById('backButton');
+      const shareButton = document.getElementById('shareButton');
+      const searchInputs = Array.from(document.querySelectorAll('.js-search'));
+      const tabs = Array.from(document.querySelectorAll('.tab'));
+
+      let query = '';
+      let current = null;
+
+      function sortRecipes(rows) {
+        return [...rows].sort(
+          (a, b) =>
+            b.cooked - a.cooked ||
+            String(b.lastCookedAt ?? '').localeCompare(String(a.lastCookedAt ?? ''))
+        );
+      }
+
+      function buildCard(recipe) {
+        const card = document.createElement('a');
+        card.className = 'card';
+        card.href = '#recipe/' + recipe.id;
+        card.dataset.id = recipe.id;
+
+        const media = document.createElement('div');
+        media.className = 'card-media';
+
+        if (recipe.thumb) {
+          const img = document.createElement('img');
+          img.src = recipe.thumb;
+          img.alt = '';
+          img.loading = 'lazy';
+          media.append(img);
+        } else {
+          media.classList.add('card-media--empty');
+          media.innerHTML = LOGO_MARK;
+        }
+
+        const body = document.createElement('div');
+        body.className = 'card-body';
+
+        const title = document.createElement('h3');
+        title.className = 'card-title';
+        title.textContent = recipe.title;
+
+        const meta = document.createElement('div');
+        meta.className = 'card-meta';
+
+        if (recipe.calorie) {
+          const calorie = document.createElement('span');
+          calorie.textContent = recipe.calorie;
+          meta.append(calorie);
+        }
+
+        if (recipe.cooked > 0) {
+          const cooked = document.createElement('span');
+          cooked.textContent = recipe.cooked + '× főzve';
+          meta.append(cooked);
+        }
+
+        body.append(title, meta);
+        card.append(media, body);
+        return card;
+      }
+
+      function renderGrid() {
+        const needle = query.trim().toLocaleLowerCase('hu');
+        const visible = sortRecipes(recipes).filter(
+          (recipe) => !needle || recipe.title.toLocaleLowerCase('hu').includes(needle)
+        );
+
+        grid.replaceChildren(...visible.map(buildCard));
+        count.textContent = visible.length + ' recept';
+        empty.hidden = visible.length !== 0;
+      }
+
+      function setActiveTab(name) {
+        for (const tab of tabs) {
+          if (tab.dataset.tab === name) tab.setAttribute('aria-current', 'page');
+          else tab.removeAttribute('aria-current');
+        }
+      }
+
+      function makePill(text) {
+        const pill = document.createElement('span');
+        pill.className = 'hero-pill';
+        pill.textContent = text;
+        return pill;
+      }
+
+      function renderHeroPills(recipe) {
+        heroPills.replaceChildren();
+        if (recipe.calorie) heroPills.append(makePill(recipe.calorie));
+      }
+
+      function renderIngredients(recipe) {
+        ingredientsList.replaceChildren();
+
+        if (recipe.ingredients.length === 0) {
+          ingredientsCard.hidden = true;
+          return;
+        }
+
+        ingredientsCard.hidden = false;
+
+        for (const ingredient of recipe.ingredients) {
+          const item = document.createElement('li');
+          const name = document.createElement('span');
+          name.textContent = ingredient.name;
+          item.append(name);
+
+          if (ingredient.quantity) {
+            const quantity = document.createElement('span');
+            quantity.className = 'ingredient-qty';
+            quantity.textContent = ingredient.quantity;
+            item.append(quantity);
+          }
+
+          ingredientsList.append(item);
+        }
+      }
+
+      function renderSteps(recipe) {
+        stepsList.replaceChildren();
+
+        if (recipe.steps.length === 0) {
+          stepsBlock.hidden = true;
+          return;
+        }
+
+        stepsBlock.hidden = false;
+
+        recipe.steps.forEach((instruction, index) => {
+          const item = document.createElement('li');
+          item.className = 'step';
+
+          const number = document.createElement('span');
+          number.className = 'step-number';
+          number.textContent = String(index + 1);
+
+          const text = document.createElement('span');
+          text.className = 'step-text';
+          text.textContent = instruction;
+
+          item.append(number, text);
+          stepsList.append(item);
+        });
+      }
+
+      function updateCookControls() {
+        if (!current) return;
+        cookValue.textContent = current.cooked + '×';
+        cookMinus.disabled = current.cooked === 0;
+      }
+
+      function openDetail(id) {
+        const recipe = recipes.find((item) => item.id === id);
+        if (!recipe) return;
+
+        current = recipe;
+        homeView.hidden = true;
+        detailView.hidden = false;
+
+        if (recipe.full) {
+          detailImage.src = recipe.full;
+          detailImage.alt = '';
+          detailImage.hidden = false;
+          detailHero.classList.remove('detail-hero--empty');
+        } else {
+          detailImage.removeAttribute('src');
+          detailImage.hidden = true;
+          detailHero.classList.add('detail-hero--empty');
+        }
+
+        detailTitle.textContent = recipe.title;
+        renderHeroPills(recipe);
+        updateCookControls();
+
+        if (recipe.description) {
+          detailDescription.hidden = false;
+          detailDescription.textContent = recipe.description;
+        } else {
+          detailDescription.hidden = true;
+          detailDescription.textContent = '';
+        }
+
+        renderIngredients(recipe);
+        renderSteps(recipe);
+        detailGrid.classList.toggle(
+          'detail-grid--single',
+          recipe.ingredients.length === 0 || recipe.steps.length === 0
+        );
+
+        window.scrollTo(0, 0);
+      }
+
+      function showHome(scroll = true) {
+        current = null;
+        detailView.hidden = true;
+        homeView.hidden = false;
+        renderGrid();
+        setActiveTab('home');
+        if (scroll) window.scrollTo(0, 0);
+      }
+
+      function handleSearch(value, source) {
+        query = value;
+        for (const input of searchInputs) {
+          if (input !== source) input.value = value;
+        }
+        if (!detailView.hidden) {
+          current = null;
+          detailView.hidden = true;
+          homeView.hidden = false;
+        }
+        renderGrid();
+      }
+
+      for (const input of searchInputs) {
+        input.addEventListener('input', () => handleSearch(input.value, input));
+      }
+
+      grid.addEventListener('click', (event) => {
+        const card = event.target.closest('.card');
+        if (!card) return;
+        event.preventDefault();
+        openDetail(card.dataset.id);
+      });
+
+      backButton.addEventListener('click', () => showHome());
+
+      shareButton.addEventListener('click', () => {
+        if (!current) return;
+        const url = location.origin + location.pathname + '#recipe/' + current.id;
+
+        if (navigator.share) {
+          void navigator.share({ title: current.title, url }).catch(() => undefined);
+        } else if (navigator.clipboard) {
+          void navigator.clipboard.writeText(url).catch(() => undefined);
+        }
+      });
+
+      cookPlus.addEventListener('click', () => {
+        if (!current) return;
+        current.cooked += 1;
+        current.lastCookedAt = new Date().toISOString();
+        updateCookControls();
+      });
+
+      cookMinus.addEventListener('click', () => {
+        if (!current || current.cooked === 0) return;
+        current.cooked -= 1;
+        updateCookControls();
+      });
+
+      for (const tab of tabs) {
+        tab.addEventListener('click', () => {
+          const name = tab.dataset.tab;
+          if (name === 'home') {
+            showHome();
+            return;
+          }
+          if (name === 'search') {
+            showHome(false);
+            document.querySelector('.search input')?.focus();
+            return;
+          }
+          setActiveTab(name);
+        });
+      }
+
+      for (const link of document.querySelectorAll('.js-home')) {
+        link.addEventListener('click', (event) => {
+          event.preventDefault();
+          showHome();
+        });
+      }
+
+      for (const link of document.querySelectorAll('.js-noop')) {
+        link.addEventListener('click', (event) => event.preventDefault());
+      }
+
+      renderGrid();
+    </script>
+  </body>
+</html>
