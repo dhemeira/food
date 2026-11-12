@@ -15,6 +15,7 @@
   --color-accent-hover: color-mix(in oklch, var(--color-accent), var(--color-text) 12%);
   --color-accent-soft: rgba(129 140 248 / 0.14);
   --color-text: #eef0fb;
+  --color-text-muted: #8b8fb0;
   --color-success: #34d399;
   --color-success-bg: #0d2818;
   --color-warning: #fbbf24;

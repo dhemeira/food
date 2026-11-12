@@ -9,7 +9,7 @@ interface RecipeCardProps {
 function RecipeCard({ recipe }: RecipeCardProps) {
   return (
     <Link
-      className="bg-surface border-border box-content flex w-full max-w-100 flex-col gap-1 overflow-hidden rounded-xl border"
+      className="bg-surface border-border hover:border-accent/35 hover:bg-surface-2 box-content flex w-full max-w-100 flex-col gap-1 overflow-hidden rounded-xl border transition-transform duration-200 ease-out hover:-translate-y-0.75"
       to={`/recipe/${recipe.id}`}
       onClick={() => {
         void requestWakeLock();
@@ -27,10 +27,10 @@ function RecipeCard({ recipe }: RecipeCardProps) {
       <div className="flex flex-col gap-1 px-4 py-2">
         <span className="line-clamp-2">{recipe.title}</span>
         {recipe.calorieValue ? (
-          <span>
-            {recipe.calorieValue}
-            {recipe.calorieUnit}
-          </span>
+          <div className="text-text-muted flex items-center gap-1 text-sm">
+            <span>{recipe.calorieValue}</span>
+            <span>{recipe.calorieUnit ?? 'kcal'}</span>
+          </div>
         ) : null}
       </div>
     </Link>
