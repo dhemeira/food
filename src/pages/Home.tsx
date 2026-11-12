@@ -1,6 +1,5 @@
 import { useMemo } from 'react';
 import RecipeList from '~/components/RecipeList';
-import { LoadingState } from '@dhemeira/ui';
 import { useDocumentTitle } from '~/hooks/useDocumentTitle';
 import { useRecipes } from '~/hooks/useRecipes';
 import { matchesRecipeQuery } from '~/lib/search';
@@ -17,7 +16,7 @@ function Home() {
     [recipes, query]
   );
 
-  return <div>{loading ? <LoadingState /> : <RecipeList recipes={results} />}</div>;
+  return <RecipeList recipes={results} loading={loading} />;
 }
 
 export default Home;

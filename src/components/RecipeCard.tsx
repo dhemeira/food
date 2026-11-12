@@ -24,8 +24,8 @@ function RecipeCard({ recipe }: RecipeCardProps) {
       ) : (
         <div className="from-surface-2 to-border aspect-2/1 max-h-50 w-full bg-linear-135"></div>
       )}
-      <div className="flex flex-col gap-1 px-4 py-2">
-        <span className="line-clamp-2">{recipe.title}</span>
+      <div className="flex flex-col gap-0 px-4 py-2">
+        <span className="line-clamp-2 text-lg">{recipe.title}</span>
         {recipe.calorieValue ? (
           <div className="text-text-muted flex items-center gap-1 text-sm">
             <span>{recipe.calorieValue}</span>
