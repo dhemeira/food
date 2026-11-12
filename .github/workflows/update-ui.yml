@@ -1,0 +1,68 @@
+name: Update @dhemeira/ui
+
+on:
+  schedule:
+    # Fridays at 06:00 UTC.
+    - cron: '0 6 * * 5'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    env:
+      HUSKY: 0
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci --no-audit --no-fund
+
+      - name: Update within the semver range
+        run: npm update @dhemeira/ui --no-audit --no-fund
+
+      - name: Check for changes
+        id: check
+        run: |
+          if git diff --quiet -- package-lock.json; then
+            echo "updated=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "updated=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Build
+        if: steps.check.outputs.updated == 'true'
+        run: npm run build
+
+      - name: Open or refresh pull request
+        if: steps.check.outputs.updated == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          version=$(node -p "require('./node_modules/@dhemeira/ui/package.json').version")
+          branch="chore/update-dhemeira-ui"
+          title="Update @dhemeira/ui to $version"
+          body=$(printf 'Updates `@dhemeira/ui` to `%s`, the newest release within the `>=0.1.1 <1.0.0` range.\n\nThe production build passes with this version.' "$version")
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout -B "$branch"
+          git add package-lock.json
+          git commit -m "$title"
+          git push --force origin "$branch"
+
+          number=$(gh pr list --head "$branch" --state open --json number --jq '.[0].number')
+
+          if [ -n "$number" ]; then
+            gh pr edit "$number" --title "$title" --body "$body"
+          else
+            gh pr create --base master --head "$branch" --title "$title" --body "$body"
+          fi
