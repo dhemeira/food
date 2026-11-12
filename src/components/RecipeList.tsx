@@ -12,7 +12,7 @@ function RecipeList({ recipes }: RecipeListProps) {
   }
 
   return (
-    <div className="flex flex-wrap justify-center gap-2">
+    <div className="mx-auto grid w-full max-w-205 auto-rows-fr grid-cols-1 justify-items-center gap-4 sm:grid-cols-2">
       {recipes.map((recipe) => (
         <RecipeCard key={recipe.id} recipe={recipe} />
       ))}

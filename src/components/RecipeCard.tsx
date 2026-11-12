@@ -9,23 +9,23 @@ interface RecipeCardProps {
 function RecipeCard({ recipe }: RecipeCardProps) {
   return (
     <Link
-      className="bg-surface border-border flex w-full max-w-100 flex-col gap-1 overflow-hidden rounded-xl border"
+      className="bg-surface border-border box-content flex w-full max-w-100 flex-col gap-1 overflow-hidden rounded-xl border"
       to={`/recipe/${recipe.id}`}
       onClick={() => {
         void requestWakeLock();
       }}>
       {recipe.thumb ? (
         <img
-          className="aspect-5/2 max-h-40 w-full object-cover"
+          className="aspect-2/1 max-h-50 w-full object-cover"
           src={recipe.thumb}
           alt=""
           loading="lazy"
         />
       ) : (
-        <div className="from-surface-2 to-border aspect-5/2 max-h-40 w-full bg-linear-135"></div>
+        <div className="from-surface-2 to-border aspect-2/1 max-h-50 w-full bg-linear-135"></div>
       )}
       <div className="flex flex-col gap-1 px-4 py-2">
-        <span>{recipe.title}</span>
+        <span className="line-clamp-2">{recipe.title}</span>
         {recipe.calorieValue ? (
           <span>
             {recipe.calorieValue}

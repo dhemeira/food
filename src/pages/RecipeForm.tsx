@@ -197,8 +197,15 @@ function RecipeEditor({ editing, initial }: RecipeEditorProps) {
       {processing ? <LoadingState label="Feldolgozás…" /> : null}
 
       {processed ? (
-        <div>
-          <img src={processed.full} alt="Új kép előnézete" width={400} height={160} />
+        <div className="flex flex-col gap-2">
+          <div>
+            <img src={processed.full} alt="Részletes nézet előnézete" width={400} height={160} />
+            <p className="text-text/60 text-sm">Részletes nézet</p>
+          </div>
+          <div>
+            <img src={processed.thumb} alt="Kártya előnézete" width={400} height={200} />
+            <p className="text-text/60 text-sm">Kártya</p>
+          </div>
           <Button
             type="button"
             variant="secondary"
@@ -215,9 +222,18 @@ function RecipeEditor({ editing, initial }: RecipeEditorProps) {
         loadingImage ? (
           <LoadingState label="Kép betöltése…" />
         ) : existingImage ? (
-          <div>
-            <img src={existingImage} alt="" width={400} height={160} />
-            <span>Jelenlegi kép</span>
+          <div className="flex flex-col gap-2">
+            <p>Jelenlegi kép</p>
+            <div>
+              <img src={existingImage} alt="" width={400} height={160} />
+              <p className="text-text/60 text-sm">Részletes nézet</p>
+            </div>
+            {initial.thumb ? (
+              <div>
+                <img src={initial.thumb} alt="" width={400} height={200} />
+                <p className="text-text/60 text-sm">Kártya</p>
+              </div>
+            ) : null}
           </div>
         ) : null
       ) : null}
