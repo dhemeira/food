@@ -8,7 +8,7 @@ function DevBanner() {
 
   return (
     <GlassSurface
-      className="bg-warning/20! text-warning fixed right-5.5 bottom-26 flex aspect-square w-fit items-center justify-center rounded-full border p-2 text-center text-sm font-medium sm:bottom-5.5"
+      className="text-warning fixed right-5.5 bottom-26 flex aspect-square w-fit items-center justify-center rounded-full border p-2 text-center text-sm font-medium sm:bottom-5.5"
       title="Fejlesztői verzió">
       <WrenchIcon className="size-6" />
     </GlassSurface>

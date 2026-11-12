@@ -1,5 +1,6 @@
 @import 'tailwindcss';
 @import '@dhemeira/ui/styles.css';
+@import 'react-image-crop/dist/ReactCrop.css';
 
 @source '../node_modules/@dhemeira/ui/src';
 
@@ -14,6 +15,7 @@
   --color-accent-hover: color-mix(in oklch, var(--color-accent), var(--color-text) 12%);
   --color-accent-soft: rgba(129 140 248 / 0.14);
   --color-text: #eef0fb;
+  --color-text-muted: #8b8fb0;
   --color-success: #34d399;
   --color-success-bg: #0d2818;
   --color-warning: #fbbf24;
@@ -82,4 +84,24 @@
   input[type='search']::-webkit-search-cancel-button:hover {
     background-color: var(--color-text);
   }
+}
+
+.recipe-crop {
+  --rc-border-color: var(--color-accent);
+  --rc-drag-handle-bg-colour: var(--color-accent);
+  --rc-focus-color: var(--color-accent);
+  display: block;
+  width: fit-content;
+}
+
+.recipe-crop .ReactCrop__crop-selection {
+  animation: none !important;
+  background-image: none !important;
+  border: 2px solid var(--color-accent);
+  border-radius: 2px;
+}
+
+.recipe-crop .ReactCrop__drag-handle {
+  border-color: var(--color-text);
+  border-radius: 2px;
 }
