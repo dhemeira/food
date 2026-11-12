@@ -1,7 +1,6 @@
-import { Link } from 'react-router-dom';
 import type { Recipe } from '~/backend';
 import { EmptyState } from '@dhemeira/ui';
-import { requestWakeLock } from '~/lib/wakeLock';
+import RecipeCard from './RecipeCard';
 
 interface RecipeListProps {
   recipes: Recipe[];
@@ -13,23 +12,11 @@ function RecipeList({ recipes }: RecipeListProps) {
   }
 
   return (
-    <ul>
+    <div className="flex flex-wrap justify-center gap-2">
       {recipes.map((recipe) => (
-        <li key={recipe.id}>
-          <Link
-            to={`/recipe/${recipe.id}`}
-            onClick={() => {
-              void requestWakeLock();
-            }}>
-            {recipe.thumb ? (
-              <img src={recipe.thumb} alt="" width={400} height={160} loading="lazy" />
-            ) : null}
-            <span>{recipe.title}</span>
-            {recipe.description ? <span>{recipe.description}</span> : null}
-          </Link>
-        </li>
+        <RecipeCard key={recipe.id} recipe={recipe} />
       ))}
-    </ul>
+    </div>
   );
 }
 
