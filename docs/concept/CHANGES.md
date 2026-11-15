@@ -34,4 +34,9 @@
 3. Mobile detail body horizontal padding reduced to 8px.
 4. Theme comparison and testing helpers: `?theme=indigo|terracotta|olive` for shareable links, `?ab=1` for a persistent random assignment, and `window.CONCEPT_THEME` exposes the active variant for analytics.
 
+## 2026-11-15 — fifth pass
+
+1. Removed the `?theme` query-param and `?ab=1` helpers.
+2. Replaced the named theme switch with three unlabelled colour swatches for Indigó, Terrakotta and Olíva. The colour names remain as accessible labels only.
+
 DESIGN.md is intentionally not updated for these passes; it will be refreshed at the end of the session.

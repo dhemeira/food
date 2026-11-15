@@ -819,38 +819,56 @@
         gap: 8px;
       }
 
-      .theme-switch {
+      .theme-picker {
         display: inline-flex;
+        align-items: center;
         gap: 4px;
-        padding: 4px;
-        border: 1px solid var(--border);
-        border-radius: var(--radius-pill);
-        background: var(--surface);
       }
 
-      .theme-btn {
-        height: 40px;
-        padding: 0 16px;
+      .theme-swatch {
+        display: grid;
+        place-items: center;
+        width: 44px;
+        height: 44px;
+        padding: 0;
         border: 0;
         border-radius: var(--radius-pill);
         background: transparent;
-        color: var(--muted);
-        font-family: inherit;
-        font-size: 0.75rem;
-        font-weight: 600;
         cursor: pointer;
+      }
+
+      .theme-swatch::before {
+        content: '';
+        width: 24px;
+        height: 24px;
+        border: 1px solid rgba(255, 255, 255, 0.22);
+        border-radius: var(--radius-pill);
+        background: var(--swatch);
         transition:
-          background-color 150ms ease,
-          color 150ms ease;
+          box-shadow 150ms ease,
+          transform 150ms ease;
       }
 
-      .theme-btn:hover {
-        color: var(--text);
+      .theme-swatch:hover::before {
+        transform: scale(1.08);
       }
 
-      .theme-btn[aria-pressed='true'] {
-        background: var(--accent-soft);
-        color: var(--accent);
+      .theme-swatch[aria-pressed='true']::before {
+        box-shadow:
+          0 0 0 2px var(--bg),
+          0 0 0 4px var(--text);
+      }
+
+      .theme-swatch[data-theme-set='indigo'] {
+        --swatch: #9a8ce0;
+      }
+
+      .theme-swatch[data-theme-set='terracotta'] {
+        --swatch: #e07a56;
+      }
+
+      .theme-swatch[data-theme-set='olive'] {
+        --swatch: #a1b274;
       }
 
       .page-footer {
@@ -1301,16 +1319,25 @@
 
       <footer class="page-footer">
         <span class="page-footer-label">Színtéma</span>
-        <div class="theme-switch" role="group" aria-label="Színtéma">
-          <button class="theme-btn" type="button" data-theme-set="indigo" aria-pressed="true">
-            Indigó
-          </button>
-          <button class="theme-btn" type="button" data-theme-set="terracotta" aria-pressed="false">
-            Terrakotta
-          </button>
-          <button class="theme-btn" type="button" data-theme-set="olive" aria-pressed="false">
-            Olíva
-          </button>
+        <div class="theme-picker" role="group" aria-label="Színtéma">
+          <button
+            class="theme-swatch"
+            type="button"
+            data-theme-set="indigo"
+            aria-label="Indigó"
+            aria-pressed="true"></button>
+          <button
+            class="theme-swatch"
+            type="button"
+            data-theme-set="terracotta"
+            aria-label="Terrakotta"
+            aria-pressed="false"></button>
+          <button
+            class="theme-swatch"
+            type="button"
+            data-theme-set="olive"
+            aria-label="Olíva"
+            aria-pressed="false"></button>
         </div>
       </footer>
     </main>
@@ -1702,7 +1729,6 @@
 
       function applyTheme(theme) {
         document.documentElement.dataset.theme = theme;
-        window.CONCEPT_THEME = theme;
         for (const button of themeButtons) {
           button.setAttribute('aria-pressed', String(button.dataset.themeSet === theme));
         }
@@ -1720,24 +1746,8 @@
       }
 
       try {
-        const params = new URLSearchParams(location.search);
-        const forcedTheme = params.get('theme');
         const savedTheme = localStorage.getItem('concept-theme');
-        const assignedTheme = localStorage.getItem('concept-ab-theme');
-
-        if (themes.includes(forcedTheme)) {
-          // Shareable comparison links: ?theme=indigo|terracotta|olive
-          applyTheme(forcedTheme);
-        } else if (params.get('ab') === '1') {
-          // Persistent random assignment for a simple color A/B test.
-          const theme = themes.includes(assignedTheme)
-            ? assignedTheme
-            : themes[Math.floor(Math.random() * themes.length)];
-          localStorage.setItem('concept-ab-theme', theme);
-          applyTheme(theme);
-        } else if (themes.includes(savedTheme)) {
-          applyTheme(savedTheme);
-        }
+        if (themes.includes(savedTheme)) applyTheme(savedTheme);
       } catch {
         // Ignore unavailable storage.
       }
