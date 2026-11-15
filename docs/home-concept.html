@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="hu">
+<html lang="hu" data-theme="indigo">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -23,19 +23,23 @@
 
     <style>
       :root {
-        --bg: #14110e;
-        --surface: #1c1814;
-        --surface-2: #241f19;
-        --border: #322b23;
-        --border-hover: #4a3f33;
-        --text: #f4eee4;
-        --text-soft: #d6ccbe;
-        --muted: #a99e90;
-        --muted-2: #7d7468;
-        --accent: #e07a56;
-        --accent-hover: #ea8c6b;
-        --accent-soft: rgba(224, 122, 86, 0.14);
-        --on-accent: #1b110c;
+        --bg: #14121b;
+        --bg-rgb: 20, 18, 27;
+        --surface: #1b1825;
+        --surface-rgb: 27, 24, 37;
+        --surface-2: #231f2e;
+        --border: #332c41;
+        --border-hover: #453b55;
+        --text: #f0edf7;
+        --text-rgb: 240, 237, 247;
+        --text-soft: #d2cbdf;
+        --muted: #9c93ac;
+        --muted-2: #746b84;
+        --accent: #9a8ce0;
+        --accent-hover: #8a7bd1;
+        --accent-rgb: 154, 140, 224;
+        --accent-soft: rgba(154, 140, 224, 0.16);
+        --on-accent: #17121f;
         --danger: #e2685a;
         --shadow-soft: 0 12px 32px rgba(0, 0, 0, 0.28);
         --radius-sm: 8px;
@@ -44,6 +48,48 @@
         --radius-xl: 24px;
         --radius-pill: 999px;
         --font: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+      }
+
+      /* The original warm palette, kept available through the in-page toggle. */
+      html[data-theme='terracotta'] {
+        --bg: #14110e;
+        --bg-rgb: 20, 17, 14;
+        --surface: #1c1814;
+        --surface-rgb: 28, 24, 20;
+        --surface-2: #241f19;
+        --border: #322b23;
+        --border-hover: #4a3f33;
+        --text: #f4eee4;
+        --text-rgb: 244, 238, 228;
+        --text-soft: #d6ccbe;
+        --muted: #a99e90;
+        --muted-2: #7d7468;
+        --accent: #e07a56;
+        --accent-hover: #ea8c6b;
+        --accent-rgb: 224, 122, 86;
+        --accent-soft: rgba(224, 122, 86, 0.14);
+        --on-accent: #1b110c;
+      }
+
+      /* Third palette: a muted olive, warm and editorial next to the food photography. */
+      html[data-theme='olive'] {
+        --bg: #12140f;
+        --bg-rgb: 18, 20, 15;
+        --surface: #191c15;
+        --surface-rgb: 25, 28, 21;
+        --surface-2: #20241b;
+        --border: #303627;
+        --border-hover: #424a36;
+        --text: #eef0e7;
+        --text-rgb: 238, 240, 231;
+        --text-soft: #ced3c2;
+        --muted: #969d88;
+        --muted-2: #6f7663;
+        --accent: #a1b274;
+        --accent-hover: #8f9f65;
+        --accent-rgb: 161, 178, 116;
+        --accent-soft: rgba(161, 178, 116, 0.16);
+        --on-accent: #11140c;
       }
 
       *,
@@ -111,7 +157,7 @@
         position: sticky;
         top: 0;
         z-index: 40;
-        background: rgba(20, 17, 14, 0.84);
+        background: rgba(var(--bg-rgb), 0.84);
         border-bottom: 1px solid var(--border);
         backdrop-filter: blur(14px);
         -webkit-backdrop-filter: blur(14px);
@@ -127,15 +173,15 @@
       .brand {
         display: inline-flex;
         align-items: center;
-        gap: 10px;
+        gap: 8px;
         font-size: 0.95rem;
         font-weight: 600;
         letter-spacing: -0.01em;
       }
 
       .brand-mark {
-        width: 30px;
-        height: 30px;
+        width: 32px;
+        height: 32px;
         flex: none;
       }
 
@@ -147,7 +193,7 @@
       }
 
       .topnav > a {
-        padding: 8px 10px;
+        padding: 8px 12px;
         border-radius: var(--radius-sm);
         color: var(--muted);
         font-size: 0.875rem;
@@ -204,7 +250,7 @@
       .search input {
         width: 100%;
         height: 100%;
-        padding: 0 14px 0 38px;
+        padding: 0 16px 0 40px;
         border: 0;
         border-radius: inherit;
         background: transparent;
@@ -227,9 +273,9 @@
       .avatar {
         display: grid;
         place-items: center;
-        width: 34px;
-        height: 34px;
-        margin-left: 6px;
+        width: 36px;
+        height: 36px;
+        margin-left: 8px;
         border: 0;
         border-radius: var(--radius-pill);
         background: linear-gradient(135deg, #e78a64, #b34f3b);
@@ -264,13 +310,13 @@
       }
 
       .page-head {
-        padding-top: 18px;
+        padding-top: 16px;
       }
 
       .title-row {
         display: flex;
         align-items: baseline;
-        gap: 10px;
+        gap: 8px;
         flex-wrap: wrap;
       }
 
@@ -295,9 +341,9 @@
         display: flex;
         align-items: center;
         width: 100%;
-        height: 46px;
+        height: 48px;
         max-width: 440px;
-        margin-top: 18px;
+        margin-top: 16px;
         border: 1px solid var(--border);
         border-radius: var(--radius-pill);
         background: var(--surface);
@@ -317,7 +363,7 @@
       }
 
       .search input {
-        height: 44px;
+        height: 48px;
         padding-left: 40px;
         font-size: 0.9375rem;
       }
@@ -349,9 +395,23 @@
       }
 
       .card-media {
+        position: relative;
         aspect-ratio: 2 / 1;
         overflow: hidden;
         background: var(--surface-2);
+      }
+
+      /* The same bottom shade as the detail hero, scaled down for cards. */
+      .card-media::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(to top, rgba(var(--bg-rgb), 0.6), rgba(var(--bg-rgb), 0) 55%);
+        pointer-events: none;
+      }
+
+      .card-media--empty::after {
+        display: none;
       }
 
       .card-media img {
@@ -371,13 +431,13 @@
       }
 
       .card-media--empty svg {
-        width: 30px;
-        height: 30px;
+        width: 32px;
+        height: 32px;
         opacity: 0.35;
       }
 
       .card-body {
-        padding: 12px 14px 14px;
+        padding: 12px 16px 16px;
       }
 
       .card-title {
@@ -426,8 +486,9 @@
 
       .detail-hero {
         position: relative;
-        min-height: 250px;
-        aspect-ratio: 2.5 / 1;
+        width: 100%;
+        min-height: 256px;
+        aspect-ratio: 5 / 2;
         overflow: hidden;
         background: var(--surface-2);
       }
@@ -442,27 +503,27 @@
 
       .detail-hero--empty {
         background:
-          radial-gradient(120% 140% at 15% 0%, rgba(224, 122, 86, 0.16), transparent 60%),
+          radial-gradient(120% 140% at 15% 0%, rgba(var(--accent-rgb), 0.16), transparent 60%),
           var(--surface-2);
       }
 
       .hero-shade {
         position: absolute;
         inset: 0;
-        background: linear-gradient(to top, rgba(20, 17, 14, 0.97), rgba(20, 17, 14, 0) 58%);
+        background: linear-gradient(to top, rgba(var(--bg-rgb), 0.97), rgba(var(--bg-rgb), 0) 58%);
       }
 
       .hero-back {
         position: absolute;
-        top: 14px;
-        left: 14px;
+        top: 16px;
+        left: 16px;
         display: grid;
         place-items: center;
-        width: 40px;
-        height: 40px;
+        width: 44px;
+        height: 44px;
         border: 1px solid rgba(255, 255, 255, 0.16);
         border-radius: var(--radius-pill);
-        background: rgba(20, 17, 14, 0.62);
+        background: rgba(var(--bg-rgb), 0.62);
         color: var(--text);
         cursor: pointer;
         backdrop-filter: blur(8px);
@@ -471,7 +532,7 @@
       }
 
       .hero-back:hover {
-        background: rgba(20, 17, 14, 0.85);
+        background: rgba(var(--bg-rgb), 0.85);
       }
 
       .hero-back svg {
@@ -481,8 +542,8 @@
 
       .hero-actions {
         position: absolute;
-        top: 14px;
-        right: 14px;
+        top: 16px;
+        right: 16px;
         display: flex;
         flex-direction: column;
         align-items: flex-end;
@@ -492,12 +553,12 @@
       .hero-share {
         display: inline-flex;
         align-items: center;
-        gap: 6px;
-        height: 40px;
-        padding: 0 14px;
+        gap: 8px;
+        height: 44px;
+        padding: 0 16px;
         border: 1px solid rgba(255, 255, 255, 0.16);
         border-radius: var(--radius-pill);
-        background: rgba(20, 17, 14, 0.62);
+        background: rgba(var(--bg-rgb), 0.62);
         color: var(--text);
         font-size: 0.8125rem;
         font-weight: 500;
@@ -508,7 +569,7 @@
       }
 
       .hero-share:hover {
-        background: rgba(20, 17, 14, 0.85);
+        background: rgba(var(--bg-rgb), 0.85);
       }
 
       .hero-share svg {
@@ -532,11 +593,27 @@
         text-wrap: balance;
       }
 
+      .hero-title-row {
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        gap: 12px;
+      }
+
+      .hero-title-row h2 {
+        flex: 1 1 auto;
+        min-width: 0;
+      }
+
+      .hero-title-row .cook-pill {
+        flex: none;
+      }
+
       .hero-pills {
         display: flex;
         flex-wrap: wrap;
-        gap: 6px;
-        margin-top: 10px;
+        gap: 8px;
+        margin-top: 12px;
       }
 
       .hero-pills:empty {
@@ -544,7 +621,7 @@
       }
 
       .hero-pill {
-        padding: 5px 11px;
+        padding: 4px 12px;
         border: 1px solid rgba(255, 255, 255, 0.15);
         border-radius: var(--radius-pill);
         background: rgba(255, 255, 255, 0.08);
@@ -555,25 +632,25 @@
       }
 
       .detail-body {
-        padding: 12px 12px 16px;
+        padding: 12px 16px 16px;
       }
 
-      /* Cooked counter floats over the hero image. */
+      /* Cooked counter sits at the bottom of the hero, on the title row. */
       .cook-pill {
         display: flex;
         align-items: center;
         gap: 4px;
-        padding: 4px 5px 4px 12px;
+        padding: 4px 4px 4px 12px;
         border: 1px solid rgba(255, 255, 255, 0.16);
         border-radius: var(--radius-pill);
-        background: rgba(20, 17, 14, 0.62);
+        background: rgba(var(--bg-rgb), 0.62);
         backdrop-filter: blur(8px);
         -webkit-backdrop-filter: blur(8px);
       }
 
       .cook-label {
-        margin-right: 2px;
-        color: rgba(244, 238, 228, 0.72);
+        margin-right: 4px;
+        color: rgba(var(--text-rgb), 0.72);
         font-size: 0.625rem;
         font-weight: 600;
         letter-spacing: 0.1em;
@@ -583,8 +660,8 @@
       .cook-btn {
         display: grid;
         place-items: center;
-        width: 30px;
-        height: 30px;
+        width: 44px;
+        height: 44px;
         border: 1px solid rgba(255, 255, 255, 0.14);
         border-radius: var(--radius-pill);
         background: rgba(255, 255, 255, 0.08);
@@ -596,6 +673,11 @@
           background-color 150ms ease,
           border-color 150ms ease,
           opacity 150ms ease;
+      }
+
+      .cook-btn svg {
+        width: 16px;
+        height: 16px;
       }
 
       .cook-btn:hover:not(:disabled) {
@@ -618,7 +700,7 @@
       }
 
       .cook-value {
-        min-width: 34px;
+        min-width: 40px;
         color: var(--text);
         text-align: center;
         font-size: 0.875rem;
@@ -627,10 +709,12 @@
       }
 
       .detail-description {
-        margin: 18px 2px 0;
+        max-width: 65ch;
+        margin: 20px 0 0;
         color: var(--text-soft);
         font-size: 0.9375rem;
         line-height: 1.65;
+        text-wrap: pretty;
       }
 
       .detail-grid {
@@ -638,7 +722,7 @@
         grid-template-columns: minmax(0, 400px) minmax(0, 1fr);
         gap: 40px;
         align-items: start;
-        margin-top: 20px;
+        margin-top: 24px;
       }
 
       .detail-grid--single {
@@ -648,12 +732,12 @@
       .ingredients-card {
         padding: 16px;
         border: 1px solid var(--border);
-        border-radius: 18px;
+        border-radius: var(--radius-lg);
         background: var(--surface-2);
       }
 
       .micro-label {
-        margin: 0 0 14px;
+        margin: 0 0 16px;
         color: var(--muted);
         font-size: 0.6875rem;
         font-weight: 600;
@@ -671,7 +755,7 @@
       }
 
       .ingredients-card ul {
-        gap: 10px;
+        gap: 12px;
       }
 
       .ingredients-card li {
@@ -680,6 +764,7 @@
         justify-content: space-between;
         gap: 12px;
         font-size: 0.9375rem;
+        text-wrap: pretty;
       }
 
       .ingredient-qty {
@@ -689,12 +774,12 @@
       }
 
       .steps-block ol {
-        gap: 18px;
+        gap: 20px;
       }
 
       .step {
         display: flex;
-        gap: 14px;
+        gap: 16px;
       }
 
       .step-number {
@@ -712,24 +797,104 @@
       }
 
       .step-text {
+        max-width: 65ch;
         padding-top: 4px;
         font-size: 0.9375rem;
         line-height: 1.7;
+        text-wrap: pretty;
       }
 
       .detail-actions {
         display: flex;
-        gap: 8px;
-        margin-top: 28px;
-        padding-top: 20px;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 12px;
+        margin-top: 32px;
+        padding-top: 24px;
         border-top: 1px solid var(--border);
       }
 
+      .detail-actions__buttons {
+        display: flex;
+        gap: 8px;
+      }
+
+      .theme-picker {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+      }
+
+      .theme-swatch {
+        display: grid;
+        place-items: center;
+        width: 44px;
+        height: 44px;
+        padding: 0;
+        border: 0;
+        border-radius: var(--radius-pill);
+        background: transparent;
+        cursor: pointer;
+      }
+
+      .theme-swatch::before {
+        content: '';
+        width: 24px;
+        height: 24px;
+        border: 1px solid rgba(255, 255, 255, 0.22);
+        border-radius: var(--radius-pill);
+        background: var(--swatch);
+        transition:
+          box-shadow 150ms ease,
+          transform 150ms ease;
+      }
+
+      .theme-swatch:hover::before {
+        transform: scale(1.08);
+      }
+
+      .theme-swatch[aria-pressed='true']::before {
+        box-shadow:
+          0 0 0 2px var(--bg),
+          0 0 0 4px var(--text);
+      }
+
+      .theme-swatch[data-theme-set='indigo'] {
+        --swatch: #9a8ce0;
+      }
+
+      .theme-swatch[data-theme-set='terracotta'] {
+        --swatch: #e07a56;
+      }
+
+      .theme-swatch[data-theme-set='olive'] {
+        --swatch: #a1b274;
+      }
+
+      .page-footer {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 16px;
+        margin-top: 32px;
+        padding-top: 24px;
+        border-top: 1px solid var(--border);
+      }
+
+      .page-footer-label {
+        color: var(--muted);
+        font-size: 0.6875rem;
+        font-weight: 600;
+        letter-spacing: 0.11em;
+        text-transform: uppercase;
+      }
+
       .action-btn {
-        height: 40px;
+        height: 44px;
         padding: 0 16px;
         border: 1px solid var(--border);
-        border-radius: 10px;
+        border-radius: var(--radius-md);
         background: var(--surface-2);
         color: var(--text);
         font-size: 0.875rem;
@@ -760,17 +925,17 @@
 
       .tabbar {
         position: fixed;
-        right: 10px;
-        bottom: calc(10px + env(safe-area-inset-bottom));
-        left: 10px;
+        right: 12px;
+        bottom: calc(12px + env(safe-area-inset-bottom));
+        left: 12px;
         z-index: 50;
         display: flex;
         align-items: center;
-        gap: 2px;
-        padding: 6px;
+        gap: 4px;
+        padding: 8px;
         border: 1px solid var(--border);
         border-radius: var(--radius-pill);
-        background: rgba(28, 24, 20, 0.94);
+        background: rgba(var(--surface-rgb), 0.94);
         box-shadow: var(--shadow-soft);
         backdrop-filter: blur(16px) saturate(140%);
         -webkit-backdrop-filter: blur(16px) saturate(140%);
@@ -780,7 +945,7 @@
         display: grid;
         place-items: center;
         flex: 1;
-        height: 46px;
+        height: 48px;
         border: 0;
         border-radius: var(--radius-pill);
         background: transparent;
@@ -792,8 +957,8 @@
       }
 
       .tab svg {
-        width: 22px;
-        height: 22px;
+        width: 24px;
+        height: 24px;
       }
 
       .tab:hover {
@@ -833,7 +998,7 @@
         }
 
         .page-head {
-          padding-top: 44px;
+          padding-top: 48px;
         }
 
         .tabbar {
@@ -850,12 +1015,12 @@
 
         .hero-content {
           right: 32px;
-          bottom: 26px;
+          bottom: 32px;
           left: 32px;
         }
 
         .detail-body {
-          padding: 30px 32px 34px;
+          padding: 32px;
         }
 
         .ingredients-card {
@@ -882,9 +1047,46 @@
       }
 
       @media (max-width: 719px) {
-        .detail-actions {
+        .detail-view {
+          margin-inline: -16px;
+          padding-top: 0;
+        }
+
+        .detail-card {
+          border: 0;
+          border-radius: 0;
+        }
+
+        .detail-body {
+          padding: 8px 8px 16px;
+        }
+
+        .detail-actions__buttons {
           display: grid;
           grid-template-columns: 1fr 1fr;
+          gap: 8px;
+          width: 100%;
+        }
+
+        .step {
+          display: block;
+        }
+
+        .step-number {
+          display: inline-grid;
+          margin-right: 8px;
+          vertical-align: middle;
+        }
+
+        .step-text {
+          display: inline;
+          padding-top: 0;
+          font-size: 1rem;
+        }
+
+        .ingredients-card li,
+        .detail-description {
+          font-size: 1rem;
         }
 
         .action-btn {
@@ -1043,29 +1245,46 @@
                 </svg>
                 <span>Megosztás</span>
               </button>
-
-              <div class="cook-pill">
-                <span class="cook-label">Főzve</span>
-                <button
-                  class="cook-btn"
-                  id="cookMinus"
-                  type="button"
-                  aria-label="Főzés visszavonása">
-                  −
-                </button>
-                <span class="cook-value" id="cookValue" aria-live="polite"></span>
-                <button
-                  class="cook-btn cook-btn--add"
-                  id="cookPlus"
-                  type="button"
-                  aria-label="Főzés hozzáadása">
-                  +
-                </button>
-              </div>
             </div>
 
             <div class="hero-content">
-              <h2 id="detailTitle"></h2>
+              <div class="hero-title-row">
+                <h2 id="detailTitle"></h2>
+
+                <div class="cook-pill">
+                  <span class="cook-label">Főzve</span>
+                  <button
+                    class="cook-btn"
+                    id="cookMinus"
+                    type="button"
+                    aria-label="Főzés visszavonása">
+                    <svg
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      aria-hidden="true">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14" />
+                    </svg>
+                  </button>
+                  <span class="cook-value" id="cookValue" aria-live="polite"></span>
+                  <button
+                    class="cook-btn cook-btn--add"
+                    id="cookPlus"
+                    type="button"
+                    aria-label="Főzés hozzáadása">
+                    <svg
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      aria-hidden="true">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M12 5v14m-7-7h14" />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+
               <div class="hero-pills" id="heroPills"></div>
             </div>
           </div>
@@ -1089,12 +1308,38 @@
             </div>
 
             <div class="detail-actions">
-              <button class="action-btn" type="button">Szerkesztés</button>
-              <button class="action-btn action-btn--danger" type="button">Törlés</button>
+              <div class="detail-actions__buttons">
+                <button class="action-btn" type="button">Szerkesztés</button>
+                <button class="action-btn action-btn--danger" type="button">Törlés</button>
+              </div>
             </div>
           </div>
         </article>
       </section>
+
+      <footer class="page-footer">
+        <span class="page-footer-label">Színtéma</span>
+        <div class="theme-picker" role="group" aria-label="Színtéma">
+          <button
+            class="theme-swatch"
+            type="button"
+            data-theme-set="indigo"
+            aria-label="Indigó"
+            aria-pressed="true"></button>
+          <button
+            class="theme-swatch"
+            type="button"
+            data-theme-set="terracotta"
+            aria-label="Terrakotta"
+            aria-pressed="false"></button>
+          <button
+            class="theme-swatch"
+            type="button"
+            data-theme-set="olive"
+            aria-label="Olíva"
+            aria-pressed="false"></button>
+        </div>
+      </footer>
     </main>
 
     <nav class="tabbar" aria-label="Fő navigáció">
@@ -1253,7 +1498,7 @@
 
         if (recipe.cooked > 0) {
           const cooked = document.createElement('span');
-          cooked.textContent = recipe.cooked + '× főzve';
+          cooked.textContent = recipe.cooked + 'x főzve';
           meta.append(cooked);
         }
 
@@ -1348,7 +1593,7 @@
 
       function updateCookControls() {
         if (!current) return;
-        cookValue.textContent = current.cooked + '×';
+        cookValue.textContent = current.cooked + 'x';
         cookMinus.disabled = current.cooked === 0;
       }
 
@@ -1477,6 +1722,34 @@
 
       for (const link of document.querySelectorAll('.js-noop')) {
         link.addEventListener('click', (event) => event.preventDefault());
+      }
+
+      const themes = ['indigo', 'terracotta', 'olive'];
+      const themeButtons = [...document.querySelectorAll('[data-theme-set]')];
+
+      function applyTheme(theme) {
+        document.documentElement.dataset.theme = theme;
+        for (const button of themeButtons) {
+          button.setAttribute('aria-pressed', String(button.dataset.themeSet === theme));
+        }
+      }
+
+      for (const button of themeButtons) {
+        button.addEventListener('click', () => {
+          applyTheme(button.dataset.themeSet);
+          try {
+            localStorage.setItem('concept-theme', button.dataset.themeSet);
+          } catch {
+            // file:// may disallow storage.
+          }
+        });
+      }
+
+      try {
+        const savedTheme = localStorage.getItem('concept-theme');
+        if (themes.includes(savedTheme)) applyTheme(savedTheme);
+      } catch {
+        // Ignore unavailable storage.
       }
 
       renderGrid();
