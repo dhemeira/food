@@ -111,6 +111,8 @@ To update Claude Code, change `CLAUDE_CODE_VERSION` in `.env` and rebuild with
 ## Docs and production
 
 - `docs/design-system.html` — standalone design reference.
+- `docs/home-concept.html` — standalone home + detail design concept (open it directly or via the dev
+  server at `/docs/home-concept.html`).
 - `TODO.md` — project backlog.
 - Firestore rules and indexes deploy via GitHub Actions.
 - Production: Cloudflare Pages at https://food.dhemeira.hu.
