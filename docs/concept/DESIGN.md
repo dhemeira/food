@@ -1,6 +1,6 @@
 # Receptek home concept — design language
 
-Status: standalone concept, not production code. Last updated 2026-11-12.
+Status: standalone concept, not production code. Last updated 2026-11-15.
 
 This is the handoff document for the home + recipe-detail concept in `docs/home-concept.html`. Read it together with `CHANGES.md` before iterating.
 
@@ -29,45 +29,45 @@ The detail layout is based on section **08 · Részlet nézet** of `docs/design-
 
 ## Direction
 
-**Warm editorial dark.** The photography supplies the color and appetite; the UI stays quiet around it. One accent, one material, one motion language. No glassmorphism gradients, no hover lifts, no bouncy easing, no invented copy.
+**Editorial dark, three accent variants.** The photography supplies the color and appetite; the UI stays quiet around it. One accent, one material, one motion language. No glassmorphism gradients, no hover lifts, no bouncy easing, no invented copy. The default is a softened indigo with warm charcoal surfaces; the terracotta and sage palettes are available through the page-footer theme switch.
 
 This is deliberately the opposite of the earlier "AI slop" mix of glass gradients and stacked effects. If a change makes the page more decorative, it is probably wrong.
 
 ## Principles
 
 1. **Photography first.** Large, consistent 2:1 card crops; a full-bleed detail hero. Don't shrink the images into thumbnails.
-2. **One accent.** Terracotta is used for primary actions, active states and the cook counter. Everything else is warm neutral.
-3. **Quiet chrome.** Flat surfaces, 1px borders, one soft shadow for the floating mobile bar. No gradients as fills.
+2. **One accent.** The softened indigo is used for primary actions, active states and the cook counter. Everything else is neutral; the terracotta and sage variants only swap the accent and surface tint.
+3. **Quiet chrome.** Flat surfaces, 1px borders; the only shadow is the floating mobile bar. Card and hero images carry a quiet bottom shade for depth, not a filled decorative gradient.
 4. **Type does the hierarchy.** One family, a small set of sizes, deliberate weights and tight tracking on headings.
 5. **Real content.** Use actual recipe data. No lorem ipsum, no fake times/authors/servings, no decorative labels.
 6. **One motion language.** Short ease transitions and a single image-scale hover. No lift, no squash, no spring.
 
 ## Color tokens
 
-All colors live in `:root` in `home-concept.html`.
+All colors live in `:root` in `docs/home-concept.html`. The softened indigo palette is the default; `html[data-theme='terracotta']` and `html[data-theme='sage']` switch the accent and surface tint, and the page-footer toggle changes them live.
 
-| Token            | Value                      | Use                                            |
-| ---------------- | -------------------------- | ---------------------------------------------- |
-| `--bg`           | `#14110e`                  | Page background                                |
-| `--surface`      | `#1c1814`                  | Cards, inputs, raised surfaces                 |
-| `--surface-2`    | `#241f19`                  | Hover surfaces, ingredient card, hovered cards |
-| `--border`       | `#322b23`                  | Default hairline                               |
-| `--border-hover` | `#4a3f33`                  | Hover border                                   |
-| `--text`         | `#f4eee4`                  | Primary text                                   |
-| `--text-soft`    | `#d6ccbe`                  | Descriptions                                   |
-| `--muted`        | `#a99e90`                  | Secondary text, metadata, labels               |
-| `--muted-2`      | `#7d7468`                  | Placeholders                                   |
-| `--accent`       | `#e07a56`                  | Primary action, active tab, cook `+`           |
-| `--accent-hover` | `#ea8c6b`                  | Accent hover                                   |
-| `--accent-soft`  | `rgba(224, 122, 86, 0.14)` | Active pill, step numbers                      |
-| `--on-accent`    | `#1b110c`                  | Text/icons on accent                           |
-| `--danger`       | `#e2685a`                  | Delete action                                  |
+| Token            | Indigo (default)            | Terracotta                 | Sage (Zsálya)               | Use                                            |
+| ---------------- | --------------------------- | -------------------------- | --------------------------- | ---------------------------------------------- |
+| `--bg`           | `#14121b`                   | `#14110e`                  | `#131510`                   | Page background                                |
+| `--surface`      | `#1b1825`                   | `#1c1814`                  | `#1a1d16`                   | Cards, inputs, raised surfaces                 |
+| `--surface-2`    | `#231f2e`                   | `#241f19`                  | `#22261d`                   | Hover surfaces, ingredient card, hovered cards |
+| `--border`       | `#332c41`                   | `#322b23`                  | `#33382a`                   | Default hairline                               |
+| `--border-hover` | `#453b55`                   | `#4a3f33`                  | `#464d3a`                   | Hover border                                   |
+| `--text`         | `#f0edf7`                   | `#f4eee4`                  | `#eef1e6`                   | Primary text                                   |
+| `--text-soft`    | `#d2cbdf`                   | `#d6ccbe`                  | `#cfd4c3`                   | Descriptions                                   |
+| `--muted`        | `#9c93ac`                   | `#a99e90`                  | `#98a08c`                   | Secondary text, metadata, labels               |
+| `--muted-2`      | `#746b84`                   | `#7d7468`                  | `#717a67`                   | Placeholders                                   |
+| `--accent`       | `#9a8ce0`                   | `#e07a56`                  | `#a8c18f`                   | Primary action, active tab, cook `+`           |
+| `--accent-hover` | `#8a7bd1`                   | `#ea8c6b`                  | `#96b07d`                   | Accent hover                                   |
+| `--accent-soft`  | `rgba(154, 140, 224, 0.16)` | `rgba(224, 122, 86, 0.14)` | `rgba(168, 193, 143, 0.16)` | Active pill, step numbers                      |
+| `--on-accent`    | `#17121f`                   | `#1b110c`                  | `#11150c`                   | Text/icons on accent                           |
+| `--danger`       | `#e2685a`                   | `#e2685a`                  | `#e2685a`                   | Delete action                                  |
 
 Rules:
 
 - Use `--accent` sparingly: one filled action per view at most.
-- Separation comes from borders and surfaces, not shadows.
-- The logo gradient and the avatar gradient are brand assets and are allowed. The hero's bottom gradient is a functional legibility shade, not decoration.
+- Separation comes from borders and surfaces; cards do not use box shadows.
+- The logo gradient and the avatar gradient are brand assets and are allowed. The hero's bottom gradient is a functional legibility shade; the card image's bottom shade is a quiet depth cue, not a fill.
 
 ## Typography
 
@@ -93,7 +93,7 @@ Rules: tight tracking on headings only; never fake hierarchy with color alone; n
 - Spacing follows a 4px rhythm. Avoid arbitrary values.
 - Page shell: `max-width: 1120px`; horizontal padding `16px` mobile, `24px` at 720px, `32px` at 1024px.
 - Radii: `8px` small controls, `12px` inputs/buttons, `16px` cards/ingredients-adjacent surfaces (ingredient card uses `18px`), `24px` detail card, `999px` pills and the mobile bar.
-- Elevation: one shadow token (`--shadow-soft`) used only by the floating mobile tab bar. Cards use borders, not shadows.
+- Elevation: one shadow token (`--shadow-soft`), used only by the floating mobile tab bar. Cards use borders and the image-bottom shade, not box shadows.
 
 ## Layout and breakpoints
 
@@ -122,7 +122,7 @@ Logo + wordmark row, then a page head with `Receptek` and the recipe count on on
 ### Recipe card
 
 - 2:1 image, `object-fit: cover`; subtle scale to `1.04` on hover over 500ms.
-- Card radius 16px, 1px border, `--surface`; hover changes the border and surface only — no lift.
+- Card radius 16px, 1px border, `--surface`; the 2:1 image carries the same quiet bottom shade as the detail hero. Hover changes the border and surface only — no lift.
 - Title: 2 lines reserved, clamped.
 - Meta: two stacked muted rows — calories (when present) and `N× főzve` (when > 0). No middle dot. Two lines reserved so cards align.
 - Missing image: centered logo mark at 35% opacity.
@@ -136,14 +136,18 @@ Floating full pill, 10px from the bottom + safe area, blurred dark surface, one 
 
 - Card fills the full shell width (no 1000px cap), radius 24px, 1px border, `--surface`.
 - Hero: 2.5:1 (min-height 250px mobile, 320px at ≥720), full image, bottom legibility shade.
-- Back button top-left (40px translucent circle). Share button top-right. The cooked counter is currently in the same top-right stack; `CHANGES.md` asks to move it to the bottom of the image, on the title row, right-aligned.
+- Back button top-left (40px translucent circle). Share button top-right. The cooked counter sits at the bottom of the hero, right-aligned on the title row, and stays there on mobile.
 - Title bottom-left; calorie pill below it. No author/time/servings.
 - Cook counter: `−  N×  +`; `+` is the accent-filled control; `−` is disabled at zero. Keep it readable over the image.
 - Description below the hero when present.
 - Content grid: ingredients card `400px` + steps `1fr`, 40px gap; single column below 820px, with steps after ingredients.
 - Ingredients: name left, quantity right (muted, nowrap), micro-label header.
-- Steps: numbered accent-soft circles, 32px, instruction text beside.
-- Footer: `Szerkesztés` and `Törlés` buttons; `CHANGES.md` asks to right-align them. `Törlés` uses the danger token. They are visual-only in the mock.
+- Steps: numbered accent-soft circles, 32px; instruction text beside on desktop and under the number below 720px.
+- Footer: `Szerkesztés` and `Törlés`, right-aligned. The action buttons are visual-only in the mock. The theme switch lives in the page footer.
+
+### Page footer
+
+At the bottom of the page, outside both views: a `Színtéma` label and the Indigó / Terrakotta / Zsálya switch. The choice persists in local storage. The page's reserved bottom space keeps it clear of the fixed mobile tab bar.
 
 ## Behavior
 
@@ -175,6 +179,6 @@ Production note: the data model needs `cookedCount` and `lastCookedAt` on the re
 1. Read this file and `CHANGES.md` before editing.
 2. The HTML is the visual source of truth; the data and images live in `docs/concept/`.
 3. Do not add a second typeface, glass gradients, hover lifts, or decorative copy.
-4. Keep the warm palette unless the user explicitly asks for a new direction.
+4. Keep the three palettes (soft indigo default, terracotta, sage) unless the user explicitly asks for a new direction.
 5. Test at 390px, 768px and 1280px. The mobile detail must keep steps under ingredients.
 6. Implement the open items in `CHANGES.md` before inventing new ones.

@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="hu">
+<html lang="hu" data-theme="indigo">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -23,19 +23,23 @@
 
     <style>
       :root {
-        --bg: #14110e;
-        --surface: #1c1814;
-        --surface-2: #241f19;
-        --border: #322b23;
-        --border-hover: #4a3f33;
-        --text: #f4eee4;
-        --text-soft: #d6ccbe;
-        --muted: #a99e90;
-        --muted-2: #7d7468;
-        --accent: #e07a56;
-        --accent-hover: #ea8c6b;
-        --accent-soft: rgba(224, 122, 86, 0.14);
-        --on-accent: #1b110c;
+        --bg: #14121b;
+        --bg-rgb: 20, 18, 27;
+        --surface: #1b1825;
+        --surface-rgb: 27, 24, 37;
+        --surface-2: #231f2e;
+        --border: #332c41;
+        --border-hover: #453b55;
+        --text: #f0edf7;
+        --text-rgb: 240, 237, 247;
+        --text-soft: #d2cbdf;
+        --muted: #9c93ac;
+        --muted-2: #746b84;
+        --accent: #9a8ce0;
+        --accent-hover: #8a7bd1;
+        --accent-rgb: 154, 140, 224;
+        --accent-soft: rgba(154, 140, 224, 0.16);
+        --on-accent: #17121f;
         --danger: #e2685a;
         --shadow-soft: 0 12px 32px rgba(0, 0, 0, 0.28);
         --radius-sm: 8px;
@@ -44,6 +48,48 @@
         --radius-xl: 24px;
         --radius-pill: 999px;
         --font: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+      }
+
+      /* The original warm palette, kept available through the in-page toggle. */
+      html[data-theme='terracotta'] {
+        --bg: #14110e;
+        --bg-rgb: 20, 17, 14;
+        --surface: #1c1814;
+        --surface-rgb: 28, 24, 20;
+        --surface-2: #241f19;
+        --border: #322b23;
+        --border-hover: #4a3f33;
+        --text: #f4eee4;
+        --text-rgb: 244, 238, 228;
+        --text-soft: #d6ccbe;
+        --muted: #a99e90;
+        --muted-2: #7d7468;
+        --accent: #e07a56;
+        --accent-hover: #ea8c6b;
+        --accent-rgb: 224, 122, 86;
+        --accent-soft: rgba(224, 122, 86, 0.14);
+        --on-accent: #1b110c;
+      }
+
+      /* Third recommendation: a muted sage palette, warmer and calmer than indigo. */
+      html[data-theme='sage'] {
+        --bg: #131510;
+        --bg-rgb: 19, 21, 16;
+        --surface: #1a1d16;
+        --surface-rgb: 26, 29, 22;
+        --surface-2: #22261d;
+        --border: #33382a;
+        --border-hover: #464d3a;
+        --text: #eef1e6;
+        --text-rgb: 238, 241, 230;
+        --text-soft: #cfd4c3;
+        --muted: #98a08c;
+        --muted-2: #717a67;
+        --accent: #a8c18f;
+        --accent-hover: #96b07d;
+        --accent-rgb: 168, 193, 143;
+        --accent-soft: rgba(168, 193, 143, 0.16);
+        --on-accent: #11150c;
       }
 
       *,
@@ -111,7 +157,7 @@
         position: sticky;
         top: 0;
         z-index: 40;
-        background: rgba(20, 17, 14, 0.84);
+        background: rgba(var(--bg-rgb), 0.84);
         border-bottom: 1px solid var(--border);
         backdrop-filter: blur(14px);
         -webkit-backdrop-filter: blur(14px);
@@ -349,9 +395,23 @@
       }
 
       .card-media {
+        position: relative;
         aspect-ratio: 2 / 1;
         overflow: hidden;
         background: var(--surface-2);
+      }
+
+      /* The same bottom shade as the detail hero, scaled down for cards. */
+      .card-media::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(to top, rgba(var(--bg-rgb), 0.6), rgba(var(--bg-rgb), 0) 55%);
+        pointer-events: none;
+      }
+
+      .card-media--empty::after {
+        display: none;
       }
 
       .card-media img {
@@ -426,6 +486,7 @@
 
       .detail-hero {
         position: relative;
+        width: 100%;
         min-height: 250px;
         aspect-ratio: 2.5 / 1;
         overflow: hidden;
@@ -442,14 +503,14 @@
 
       .detail-hero--empty {
         background:
-          radial-gradient(120% 140% at 15% 0%, rgba(224, 122, 86, 0.16), transparent 60%),
+          radial-gradient(120% 140% at 15% 0%, rgba(var(--accent-rgb), 0.16), transparent 60%),
           var(--surface-2);
       }
 
       .hero-shade {
         position: absolute;
         inset: 0;
-        background: linear-gradient(to top, rgba(20, 17, 14, 0.97), rgba(20, 17, 14, 0) 58%);
+        background: linear-gradient(to top, rgba(var(--bg-rgb), 0.97), rgba(var(--bg-rgb), 0) 58%);
       }
 
       .hero-back {
@@ -462,7 +523,7 @@
         height: 40px;
         border: 1px solid rgba(255, 255, 255, 0.16);
         border-radius: var(--radius-pill);
-        background: rgba(20, 17, 14, 0.62);
+        background: rgba(var(--bg-rgb), 0.62);
         color: var(--text);
         cursor: pointer;
         backdrop-filter: blur(8px);
@@ -471,7 +532,7 @@
       }
 
       .hero-back:hover {
-        background: rgba(20, 17, 14, 0.85);
+        background: rgba(var(--bg-rgb), 0.85);
       }
 
       .hero-back svg {
@@ -497,7 +558,7 @@
         padding: 0 14px;
         border: 1px solid rgba(255, 255, 255, 0.16);
         border-radius: var(--radius-pill);
-        background: rgba(20, 17, 14, 0.62);
+        background: rgba(var(--bg-rgb), 0.62);
         color: var(--text);
         font-size: 0.8125rem;
         font-weight: 500;
@@ -508,7 +569,7 @@
       }
 
       .hero-share:hover {
-        background: rgba(20, 17, 14, 0.85);
+        background: rgba(var(--bg-rgb), 0.85);
       }
 
       .hero-share svg {
@@ -530,6 +591,22 @@
         line-height: 1.1;
         letter-spacing: -0.03em;
         text-wrap: balance;
+      }
+
+      .hero-title-row {
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        gap: 12px;
+      }
+
+      .hero-title-row h2 {
+        flex: 1 1 auto;
+        min-width: 0;
+      }
+
+      .hero-title-row .cook-pill {
+        flex: none;
       }
 
       .hero-pills {
@@ -558,7 +635,7 @@
         padding: 12px 12px 16px;
       }
 
-      /* Cooked counter floats over the hero image. */
+      /* Cooked counter sits at the bottom of the hero, on the title row. */
       .cook-pill {
         display: flex;
         align-items: center;
@@ -566,14 +643,14 @@
         padding: 4px 5px 4px 12px;
         border: 1px solid rgba(255, 255, 255, 0.16);
         border-radius: var(--radius-pill);
-        background: rgba(20, 17, 14, 0.62);
+        background: rgba(var(--bg-rgb), 0.62);
         backdrop-filter: blur(8px);
         -webkit-backdrop-filter: blur(8px);
       }
 
       .cook-label {
         margin-right: 2px;
-        color: rgba(244, 238, 228, 0.72);
+        color: rgba(var(--text-rgb), 0.72);
         font-size: 0.625rem;
         font-weight: 600;
         letter-spacing: 0.1em;
@@ -680,6 +757,7 @@
         justify-content: space-between;
         gap: 12px;
         font-size: 0.9375rem;
+        text-wrap: pretty;
       }
 
       .ingredient-qty {
@@ -715,14 +793,75 @@
         padding-top: 4px;
         font-size: 0.9375rem;
         line-height: 1.7;
+        text-wrap: pretty;
       }
 
       .detail-actions {
         display: flex;
-        gap: 8px;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 12px;
         margin-top: 28px;
         padding-top: 20px;
         border-top: 1px solid var(--border);
+      }
+
+      .detail-actions__buttons {
+        display: flex;
+        gap: 8px;
+      }
+
+      .theme-switch {
+        display: inline-flex;
+        gap: 2px;
+        padding: 3px;
+        border: 1px solid var(--border);
+        border-radius: var(--radius-pill);
+        background: var(--surface);
+      }
+
+      .theme-btn {
+        height: 30px;
+        padding: 0 12px;
+        border: 0;
+        border-radius: var(--radius-pill);
+        background: transparent;
+        color: var(--muted);
+        font-family: inherit;
+        font-size: 0.75rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition:
+          background-color 150ms ease,
+          color 150ms ease;
+      }
+
+      .theme-btn:hover {
+        color: var(--text);
+      }
+
+      .theme-btn[aria-pressed='true'] {
+        background: var(--accent-soft);
+        color: var(--accent);
+      }
+
+      .page-footer {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-top: 32px;
+        padding-top: 20px;
+        border-top: 1px solid var(--border);
+      }
+
+      .page-footer-label {
+        color: var(--muted);
+        font-size: 0.6875rem;
+        font-weight: 600;
+        letter-spacing: 0.11em;
+        text-transform: uppercase;
       }
 
       .action-btn {
@@ -770,7 +909,7 @@
         padding: 6px;
         border: 1px solid var(--border);
         border-radius: var(--radius-pill);
-        background: rgba(28, 24, 20, 0.94);
+        background: rgba(var(--surface-rgb), 0.94);
         box-shadow: var(--shadow-soft);
         backdrop-filter: blur(16px) saturate(140%);
         -webkit-backdrop-filter: blur(16px) saturate(140%);
@@ -882,9 +1021,20 @@
       }
 
       @media (max-width: 719px) {
-        .detail-actions {
+        .detail-actions__buttons {
           display: grid;
           grid-template-columns: 1fr 1fr;
+          gap: 8px;
+          width: 100%;
+        }
+
+        .step {
+          flex-direction: column;
+          gap: 8px;
+        }
+
+        .step-text {
+          padding-top: 0;
         }
 
         .action-btn {
@@ -1043,29 +1193,32 @@
                 </svg>
                 <span>Megosztás</span>
               </button>
-
-              <div class="cook-pill">
-                <span class="cook-label">Főzve</span>
-                <button
-                  class="cook-btn"
-                  id="cookMinus"
-                  type="button"
-                  aria-label="Főzés visszavonása">
-                  −
-                </button>
-                <span class="cook-value" id="cookValue" aria-live="polite"></span>
-                <button
-                  class="cook-btn cook-btn--add"
-                  id="cookPlus"
-                  type="button"
-                  aria-label="Főzés hozzáadása">
-                  +
-                </button>
-              </div>
             </div>
 
             <div class="hero-content">
-              <h2 id="detailTitle"></h2>
+              <div class="hero-title-row">
+                <h2 id="detailTitle"></h2>
+
+                <div class="cook-pill">
+                  <span class="cook-label">Főzve</span>
+                  <button
+                    class="cook-btn"
+                    id="cookMinus"
+                    type="button"
+                    aria-label="Főzés visszavonása">
+                    −
+                  </button>
+                  <span class="cook-value" id="cookValue" aria-live="polite"></span>
+                  <button
+                    class="cook-btn cook-btn--add"
+                    id="cookPlus"
+                    type="button"
+                    aria-label="Főzés hozzáadása">
+                    +
+                  </button>
+                </div>
+              </div>
+
               <div class="hero-pills" id="heroPills"></div>
             </div>
           </div>
@@ -1089,12 +1242,29 @@
             </div>
 
             <div class="detail-actions">
-              <button class="action-btn" type="button">Szerkesztés</button>
-              <button class="action-btn action-btn--danger" type="button">Törlés</button>
+              <div class="detail-actions__buttons">
+                <button class="action-btn" type="button">Szerkesztés</button>
+                <button class="action-btn action-btn--danger" type="button">Törlés</button>
+              </div>
             </div>
           </div>
         </article>
       </section>
+
+      <footer class="page-footer">
+        <span class="page-footer-label">Színtéma</span>
+        <div class="theme-switch" role="group" aria-label="Színtéma">
+          <button class="theme-btn" type="button" data-theme-set="indigo" aria-pressed="true">
+            Indigó
+          </button>
+          <button class="theme-btn" type="button" data-theme-set="terracotta" aria-pressed="false">
+            Terrakotta
+          </button>
+          <button class="theme-btn" type="button" data-theme-set="sage" aria-pressed="false">
+            Zsálya
+          </button>
+        </div>
+      </footer>
     </main>
 
     <nav class="tabbar" aria-label="Fő navigáció">
@@ -1477,6 +1647,35 @@
 
       for (const link of document.querySelectorAll('.js-noop')) {
         link.addEventListener('click', (event) => event.preventDefault());
+      }
+
+      const themeButtons = [...document.querySelectorAll('[data-theme-set]')];
+
+      function applyTheme(theme) {
+        document.documentElement.dataset.theme = theme;
+        for (const button of themeButtons) {
+          button.setAttribute('aria-pressed', String(button.dataset.themeSet === theme));
+        }
+      }
+
+      for (const button of themeButtons) {
+        button.addEventListener('click', () => {
+          applyTheme(button.dataset.themeSet);
+          try {
+            localStorage.setItem('concept-theme', button.dataset.themeSet);
+          } catch {
+            // file:// may disallow storage.
+          }
+        });
+      }
+
+      try {
+        const savedTheme = localStorage.getItem('concept-theme');
+        if (savedTheme === 'indigo' || savedTheme === 'terracotta' || savedTheme === 'sage') {
+          applyTheme(savedTheme);
+        }
+      } catch {
+        // Ignore unavailable storage.
       }
 
       renderGrid();
