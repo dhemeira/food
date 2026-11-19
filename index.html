@@ -1,16 +1,37 @@
 <!doctype html>
-<html lang="hu">
+<html lang="hu" data-theme="indigo">
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <link rel="manifest" href="/manifest.json" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#11111e" />
+    <meta name="theme-color" content="#14121b" />
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <title>Receptek</title>
     <meta name="description" content="Kedvenc receptjeink, bárhol is legyünk." />
+    <script>
+      // Apply the saved palette before the first paint so the app never
+      // flashes the default indigo on launch.
+      (function () {
+        try {
+          var theme = localStorage.getItem('receptek-appearance');
+          var colors = {
+            indigo: '#14121b',
+            terracotta: '#14110e',
+            olive: '#12140f',
+          };
+          if (theme && colors[theme]) {
+            document.documentElement.dataset.theme = theme;
+            var meta = document.querySelector('meta[name="theme-color"]');
+            if (meta) meta.setAttribute('content', colors[theme]);
+          }
+        } catch (error) {
+          // Storage can be unavailable; <html> already has the default theme.
+        }
+      })();
+    </script>
   </head>
 
   <body>
