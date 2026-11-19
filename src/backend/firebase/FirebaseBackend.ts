@@ -14,6 +14,7 @@ import {
   onSnapshot,
   orderBy,
   query,
+  runTransaction,
   serverTimestamp,
   setDoc,
   updateDoc,
@@ -118,6 +119,10 @@ function createRecipesApi(auth: Auth, firestore: Firestore): RecipesApi {
         createdBy: uid,
         createdAt: serverTimestamp(),
         updatedAt: serverTimestamp(),
+        // Explicit so new recipes start with a real counter; older documents
+        // without the field read as 0 in the converter.
+        cookedCount: 0,
+        lastCookedAt: null,
       });
 
       // Read back to get the server-resolved timestamps for the returned Recipe.
@@ -131,6 +136,26 @@ function createRecipesApi(auth: Auth, firestore: Firestore): RecipesApi {
       await updateDoc(doc(recipes, id), {
         ...recipeToFields(input),
         updatedAt: serverTimestamp(),
+      });
+    },
+
+    async cook(id, delta) {
+      const ref = doc(recipes, id);
+
+      return runTransaction(firestore, async (transaction) => {
+        const snapshot = await transaction.get(ref);
+        if (!snapshot.exists()) throw new Error('A recept nem található.');
+
+        const data = snapshot.data();
+        const current = typeof data.cookedCount === 'number' ? data.cookedCount : 0;
+        const next = Math.max(0, current + delta);
+
+        transaction.update(
+          ref,
+          delta > 0 ? { cookedCount: next, lastCookedAt: serverTimestamp() } : { cookedCount: next }
+        );
+
+        return next;
       });
     },
 

@@ -4,27 +4,103 @@
 
 @source '../node_modules/@dhemeira/ui/src';
 
-@theme {
-  --color-background: #11111e;
-  --color-surface: #181827;
-  --color-surface-2: #1f1f33;
-  --color-border: #2d2d4c;
-  --color-border-hover: #3c3c63;
-  --color-border-focus: #4b4b7c;
-  --color-accent: #818cf8;
-  --color-accent-hover: color-mix(in oklch, var(--color-accent), var(--color-text) 12%);
-  --color-accent-soft: rgba(129 140 248 / 0.14);
-  --color-text: #eef0fb;
-  --color-text-muted: #8b8fb0;
+/* ---------------------------------------------------------------- palettes */
+
+/*
+ * Three palettes from the home concept (`docs/home-concept.html`). The
+ * unlayered `:root` rules below intentionally sit outside Tailwind's layers so
+ * they also re-point the `--color-ui-*` tokens that @dhemeira/ui components
+ * use. Switching `data-theme` on <html> re-themes both the app and the
+ * library without changing the library itself.
+ */
+
+:root {
+  --app-bg: #14121b;
+  --app-surface: #1b1825;
+  --app-surface-2: #231f2e;
+  --app-border: #332c41;
+  --app-border-hover: #453b55;
+  --app-text: #f0edf7;
+  --app-text-soft: #d2cbdf;
+  --app-muted: #9c93ac;
+  --app-muted-2: #746b84;
+  --app-accent: #9a8ce0;
+  --app-accent-hover: #8a7bd1;
+  --app-accent-soft: rgba(154, 140, 224, 0.16);
+  --app-on-accent: #17121f;
+  --app-danger: #e2685a;
+
+  /* @dhemeira/ui tokens */
+  --color-ui-background: var(--app-bg);
+  --color-ui-surface: var(--app-surface);
+  --color-ui-surface-2: var(--app-surface-2);
+  --color-ui-border: var(--app-border);
+  --color-ui-border-hover: var(--app-border-hover);
+  --color-ui-border-focus: var(--app-accent);
+  --color-ui-accent: var(--app-accent);
+  --color-ui-accent-hover: var(--app-accent-hover);
+  --color-ui-accent-soft: var(--app-accent-soft);
+  --color-ui-text: var(--app-text);
+  --color-ui-danger: var(--app-danger);
+  --color-ui-danger-hover: color-mix(in oklch, var(--app-danger), var(--app-text) 12%);
+}
+
+html[data-theme='terracotta'] {
+  --app-bg: #14110e;
+  --app-surface: #1c1814;
+  --app-surface-2: #241f19;
+  --app-border: #322b23;
+  --app-border-hover: #4a3f33;
+  --app-text: #f4eee4;
+  --app-text-soft: #d6ccbe;
+  --app-muted: #a99e90;
+  --app-muted-2: #7d7468;
+  --app-accent: #e07a56;
+  --app-accent-hover: #ea8c6b;
+  --app-accent-soft: rgba(224, 122, 86, 0.14);
+  --app-on-accent: #1b110c;
+}
+
+html[data-theme='olive'] {
+  --app-bg: #12140f;
+  --app-surface: #191c15;
+  --app-surface-2: #20241b;
+  --app-border: #303627;
+  --app-border-hover: #424a36;
+  --app-text: #eef0e7;
+  --app-text-soft: #ced3c2;
+  --app-muted: #969d88;
+  --app-muted-2: #6f7663;
+  --app-accent: #a1b274;
+  --app-accent-hover: #8f9f65;
+  --app-accent-soft: rgba(161, 178, 116, 0.16);
+  --app-on-accent: #11140c;
+}
+
+@theme inline {
+  --color-background: var(--app-bg);
+  --color-surface: var(--app-surface);
+  --color-surface-2: var(--app-surface-2);
+  --color-border: var(--app-border);
+  --color-border-hover: var(--app-border-hover);
+  --color-border-focus: var(--app-accent);
+  --color-accent: var(--app-accent);
+  --color-accent-hover: var(--app-accent-hover);
+  --color-accent-soft: var(--app-accent-soft);
+  --color-on-accent: var(--app-on-accent);
+  --color-text: var(--app-text);
+  --color-text-soft: var(--app-text-soft);
+  --color-text-muted: var(--app-muted);
+  --color-text-faint: var(--app-muted-2);
   --color-success: #34d399;
   --color-success-bg: #0d2818;
   --color-warning: #fbbf24;
   --color-warning-bg: #2a1f05;
   --color-warning-border: #b45309;
-  --color-danger: #dc2626;
+  --color-danger: var(--app-danger);
+  --color-danger-hover: color-mix(in oklch, var(--app-danger), var(--app-text) 12%);
   --font-sans: 'Plus Jakarta Sans Variable', sans-serif;
   --default-font-family: 'Plus Jakarta Sans Variable', sans-serif;
-  --color-danger-hover: color-mix(in oklch, var(--color-danger), var(--color-text) 12%);
 }
 
 @keyframes hint-pop {
@@ -47,9 +123,24 @@
 }
 
 @layer base {
+  html {
+    color-scheme: dark;
+    background: var(--app-bg);
+  }
+
   body {
     @apply bg-background text-text;
     -webkit-font-smoothing: antialiased;
+  }
+
+  ::selection {
+    background: var(--app-accent);
+    color: var(--app-on-accent);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--app-accent);
+    outline-offset: 2px;
   }
 
   button {
@@ -86,6 +177,88 @@
   }
 }
 
+@layer components {
+  /* Quiet bottom shade that keeps hero and card titles legible over photos. */
+  .media-shade {
+    background: linear-gradient(
+      to top,
+      color-mix(in srgb, var(--app-bg) 97%, transparent),
+      transparent 58%
+    );
+  }
+
+  .card-media-shade {
+    background: linear-gradient(
+      to top,
+      color-mix(in srgb, var(--app-bg) 60%, transparent),
+      transparent 55%
+    );
+  }
+
+  .hero-empty {
+    background:
+      radial-gradient(
+        120% 140% at 15% 0%,
+        color-mix(in srgb, var(--app-accent) 16%, transparent),
+        transparent 60%
+      ),
+      var(--app-surface-2);
+  }
+
+  @media (hover: hover) {
+    .card:hover .card-image {
+      transform: scale(1.04);
+    }
+  }
+
+  /* Unlabelled appearance picker. The colour names live in aria-labels. */
+  .theme-swatch {
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    border: 0;
+    border-radius: 999px;
+    background: transparent;
+    cursor: pointer;
+  }
+
+  .theme-swatch::before {
+    content: '';
+    width: 24px;
+    height: 24px;
+    border: 1px solid rgba(255, 255, 255, 0.22);
+    border-radius: 999px;
+    background: var(--swatch);
+    transition:
+      box-shadow 150ms ease,
+      transform 150ms ease;
+  }
+
+  .theme-swatch:hover::before {
+    transform: scale(1.08);
+  }
+
+  .theme-swatch[aria-pressed='true']::before {
+    box-shadow:
+      0 0 0 2px var(--app-bg),
+      0 0 0 4px var(--app-text);
+  }
+
+  .theme-swatch[data-theme-set='indigo'] {
+    --swatch: #9a8ce0;
+  }
+
+  .theme-swatch[data-theme-set='terracotta'] {
+    --swatch: #e07a56;
+  }
+
+  .theme-swatch[data-theme-set='olive'] {
+    --swatch: #a1b274;
+  }
+}
+
 .recipe-crop {
   --rc-border-color: var(--color-accent);
   --rc-drag-handle-bg-colour: var(--color-accent);
@@ -104,4 +277,13 @@
 .recipe-crop .ReactCrop__drag-handle {
   border-color: var(--color-text);
   border-radius: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
 }

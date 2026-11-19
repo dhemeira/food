@@ -1,5 +1,4 @@
 import type { Recipe } from '~/backend';
-import { EmptyState } from '@dhemeira/ui';
 import RecipeCard from './RecipeCard';
 
 interface RecipeListProps {
@@ -11,11 +10,11 @@ const SKELETON_IDS = Array.from({ length: 6 }, (_, index) => `skeleton-${String(
 
 function RecipeCardSkeleton() {
   return (
-    <div className="bg-surface border-border box-content flex w-full max-w-100 flex-col gap-1 overflow-hidden rounded-xl border">
-      <div className="bg-surface-2 aspect-2/1 max-h-50 w-full"></div>
-      <div className="flex h-16 flex-col gap-2 px-4 py-2">
-        <div className="bg-surface-2 h-4 w-1/2 rounded"></div>
-        <div className="bg-surface-2 h-3 w-1/4 rounded"></div>
+    <div className="border-border bg-surface flex animate-pulse flex-col overflow-hidden rounded-2xl border">
+      <div className="bg-surface-2 aspect-2/1 w-full" />
+      <div className="flex flex-col gap-2 px-4 pt-3 pb-4">
+        <div className="bg-surface-2 h-4 w-1/2 rounded" />
+        <div className="bg-surface-2 h-3 w-1/4 rounded" />
       </div>
     </div>
   );
@@ -23,12 +22,16 @@ function RecipeCardSkeleton() {
 
 function RecipeList({ recipes, loading }: RecipeListProps) {
   if (!loading && recipes.length === 0) {
-    return <EmptyState message="Nincs találat." />;
+    return (
+      <p className="text-text-muted order-3 mt-8 text-[0.95rem]">
+        Nincs a keresésnek megfelelő recept.
+      </p>
+    );
   }
 
   return (
     <div
-      className="mx-auto grid w-full max-w-205 auto-rows-fr grid-cols-1 justify-items-center gap-4 sm:grid-cols-2"
+      className="order-3 mt-6 grid w-full grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-5 lg:grid-cols-3 lg:gap-6"
       aria-busy={loading}>
       {loading
         ? SKELETON_IDS.map((id) => <RecipeCardSkeleton key={id} />)

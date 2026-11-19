@@ -44,6 +44,8 @@ export function recipeFromFirestore(id: string, data: DocumentData): Recipe {
     createdBy: typeof data.createdBy === 'string' ? data.createdBy : null,
     createdAt: timestampToIso(data.createdAt),
     updatedAt: timestampToIso(data.updatedAt),
+    cookedCount: typeof data.cookedCount === 'number' ? data.cookedCount : 0,
+    lastCookedAt: timestampToIso(data.lastCookedAt),
   };
 }
 

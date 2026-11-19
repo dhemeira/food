@@ -33,6 +33,10 @@ export interface Recipe {
   createdBy: string | null;
   createdAt: string | null;
   updatedAt: string | null;
+  /** How many times the household has cooked this recipe. Missing docs read as 0. */
+  cookedCount: number;
+  /** When the counter was last incremented. */
+  lastCookedAt: string | null;
 }
 
 export interface RecipeInput {

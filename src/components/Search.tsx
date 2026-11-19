@@ -8,6 +8,8 @@ import {
   useSearchQuery,
 } from '~/lib/searchStore';
 
+type SearchVariant = 'page' | 'nav';
+
 interface SearchProps {
   /**
    * Register this input as the one the mobile tab bar focuses. Only the field
@@ -17,9 +19,34 @@ interface SearchProps {
   register?: boolean;
   /** Called when the field gains focus, e.g. to navigate to the home route. */
   onFocus?: () => void;
+  variant?: SearchVariant;
+  placeholder?: string;
 }
 
-function Search({ register = false, onFocus }: SearchProps) {
+const ROOT_CLASS: Record<SearchVariant, string> = {
+  page:
+    'relative mt-4 flex h-12 w-full max-w-[440px] items-center rounded-full border border-border ' +
+    'bg-surface transition-colors hover:border-border-hover focus-within:border-accent ' +
+    'focus-within:bg-surface-2 focus-within:ring-[3px] focus-within:ring-accent-soft',
+  nav:
+    'relative flex h-[38px] w-34 min-w-0 items-center rounded-full border border-border bg-surface ' +
+    'transition-[width,background-color,border-color] duration-200 hover:w-60 ' +
+    'hover:border-border-hover hover:bg-surface-2 focus-within:w-60 ' +
+    'focus-within:border-border-hover focus-within:bg-surface-2',
+};
+
+const INPUT_CLASS: Record<SearchVariant, string> = {
+  // 16px keeps iOS Safari from zooming the page when the field is focused.
+  page: 'h-full w-full min-w-0 rounded-full bg-transparent pr-4 pl-10 text-base',
+  nav: 'h-full w-full min-w-0 rounded-full bg-transparent pr-4 pl-10 text-base',
+};
+
+function Search({
+  register = false,
+  onFocus,
+  variant = 'page',
+  placeholder = 'Keresés…',
+}: SearchProps) {
   const query = useSearchQuery();
   const inputRef = useRef<HTMLInputElement | null>(null);
 
@@ -34,9 +61,9 @@ function Search({ register = false, onFocus }: SearchProps) {
   }, [register]);
 
   return (
-    <div className="bg-surface-2 sm:bg-background has-focus:bg-text/20 relative flex items-center rounded-full brightness-80 has-focus:brightness-100">
+    <div className={ROOT_CLASS[variant]}>
       <MagnifyingGlassIcon
-        className="text-text/50 pointer-events-none absolute top-1/2 left-4 size-4 -translate-y-1/2"
+        className="text-text-muted pointer-events-none absolute top-1/2 left-[13px] size-4 -translate-y-1/2"
         aria-hidden="true"
       />
       {/* Padding lives on the input so the whole pill is one native focus
@@ -45,8 +72,9 @@ function Search({ register = false, onFocus }: SearchProps) {
         ref={inputRef}
         type="search"
         value={query}
-        placeholder="Keresés…"
+        placeholder={placeholder}
         enterKeyHint="search"
+        aria-label="Keresés a receptek között"
         onChange={(event) => {
           setSearchQuery(event.target.value);
         }}
@@ -67,8 +95,8 @@ function Search({ register = false, onFocus }: SearchProps) {
           setSearchFocused(false);
         }}
         className={
-          'text-text placeholder:text-text/50 w-full bg-transparent py-2.5 pr-9 pl-10 transition-all outline-none sm:hover:w-60 sm:focus:w-60 [&::-webkit-search-cancel-button]:hidden' +
-          (query ? ' sm:w-60' : ' sm:w-34')
+          INPUT_CLASS[variant] +
+          ' text-text placeholder:text-text-faint outline-none [&::-webkit-search-cancel-button]:hidden'
         }
       />
       {query ? (
@@ -83,7 +111,7 @@ function Search({ register = false, onFocus }: SearchProps) {
             setSearchQuery('');
             inputRef.current?.focus();
           }}
-          className="text-text/45 hover:text-text absolute top-0 right-3 bottom-0 flex aspect-square items-center justify-center">
+          className="text-text-muted hover:text-text absolute top-1/2 right-3 grid size-6 -translate-y-1/2 place-items-center rounded-full">
           <XMarkIcon className="size-4" aria-hidden="true" />
         </button>
       ) : null}

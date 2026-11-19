@@ -1,5 +1,8 @@
 {
   "files.eol": "\n",
+  "accessibility.signals.terminalBell": {
+    "sound": "on"
+  },
   "tailwindCSS.experimental.classRegex": [
     ["\\b[A-Za-z]*[cC]lass(?:es)?\\b\\s*[:=]\\s*([^;]+);", "['\"`]([^'\"`\\r\\n]+)['\"`]"]
   ]

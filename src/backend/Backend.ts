@@ -15,6 +15,8 @@ export interface RecipesApi {
   get(id: string): Promise<Recipe | null>;
   create(input: RecipeInput): Promise<Recipe>;
   update(id: string, input: RecipeInput): Promise<void>;
+  /** Adjust the cooked counter by ±1, clamped at 0. Returns the new count. */
+  cook(id: string, delta: 1 | -1): Promise<number>;
   remove(id: string): Promise<void>;
 }
 
